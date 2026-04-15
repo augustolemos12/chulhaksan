@@ -1,0 +1,344 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//
+// ENUMS
+//
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum StudentCategory {
+  CHILD
+  ADULT
+}
+
+enum PaymentMethod {
+  ONLINE
+  CASH
+  FULL_YEAR
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Belt {
+  WHITE
+  WHITE_YELLOW
+
+  YELLOW
+  GREEN_STRIPE
+  GREEN
+  BLUE_STRIPE
+
+  BLUE
+  RED_STRIPE
+  RED
+  BLACK_STRIPE
+
+  DAN
+}
+
+//
+// USERS
+//
+
+model User {
+  id       Int    @id @default(autoincrement())
+  dni      String @unique
+  password String
+
+  role   Role
+  status UserStatus @default(ACTIVE)
+
+  mustChangePassword Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher Teacher?
+  student Student?
+}
+
+//
+// TEACHERS
+//
+
+model Teacher {
+  id     Int @id @default(autoincrement())
+  userId Int @unique
+
+  firstName String
+  lastName  String
+  phone     String?
+  email     String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  gyms     TeacherGym[]
+  students Student[]
+
+  mpAccount MercadoPagoAccount?
+}
+
+model MercadoPagoAccount {
+  id        Int @id @default(autoincrement())
+  teacherId Int @unique
+
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+
+  createdAt DateTime @default(now())
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+}
+
+//
+// GYMS
+//
+
+model Gym {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  isActive Boolean @default(true)
+
+  teachers TeacherGym[]
+  students Student[]
+
+  classPlans  ClassPlan[]
+  attendances Attendance[]
+}
+
+model TeacherGym {
+  id Int @id @default(autoincrement())
+
+  teacherId Int
+  gymId     Int
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  gym     Gym     @relation(fields: [gymId], references: [id])
+
+  @@unique([teacherId, gymId])
+}
+
+//
+// STUDENTS
+//
+
+model Student {
+  id     Int @id @default(autoincrement())
+  userId Int @unique
+
+  dni String @unique
+
+  firstName String
+  lastName  String
+
+  category StudentCategory
+
+  phone   String?
+  email   String?
+  address String?
+
+  gymId     Int
+  teacherId Int
+
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  gym     Gym     @relation(fields: [gymId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+
+  belts       StudentBelt[]
+  attendances Attendance[]
+  fees        Fee[]
+  formAccess  StudentFormAccess[]
+}
+
+//
+// BELTS (HISTORIAL REAL)
+//
+
+model StudentBelt {
+  id Int @id @default(autoincrement())
+
+  studentId Int
+  belt      Belt
+
+  achievedAt DateTime @default(now())
+  isCurrent  Boolean  @default(true)
+
+  student Student @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+}
+
+//
+// FEES (CUOTAS)
+//
+
+model Fee {
+  id Int @id @default(autoincrement())
+
+  studentId Int
+
+  month Int
+  year  Int
+
+  baseAmount  Int
+  finalAmount Int
+
+  dueDate DateTime
+
+  isPaid Boolean   @default(false)
+  paidAt DateTime?
+
+  paymentMethod PaymentMethod?
+
+  lateFeeApplied Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  student  Student       @relation(fields: [studentId], references: [id])
+  payments Transaction[]
+
+  @@unique([studentId, month, year])
+}
+
+model FeeConfig {
+  id Int @id @default(autoincrement())
+
+  baseAmount Int
+  lateFee    Int
+
+  validFrom DateTime
+
+  createdAt DateTime @default(now())
+}
+
+//
+// PAYMENTS (TRANSACCIONES)
+//
+
+model Transaction {
+  id Int @id @default(autoincrement())
+
+  feeId Int
+
+  externalId   String? // MP id
+  preferenceId String?
+
+  status PaymentStatus
+
+  rawData Json?
+
+  createdAt DateTime  @default(now())
+  paidAt    DateTime?
+
+  fee Fee @relation(fields: [feeId], references: [id])
+}
+
+//
+// ATTENDANCE
+//
+
+model Attendance {
+  id Int @id @default(autoincrement())
+
+  studentId Int
+  gymId     Int
+
+  date    DateTime
+  present Boolean
+
+  student Student @relation(fields: [studentId], references: [id])
+  gym     Gym     @relation(fields: [gymId], references: [id])
+
+  @@unique([studentId, date])
+}
+
+//
+// CLASS PLAN (CLASES POR MES)
+//
+
+model ClassPlan {
+  id Int @id @default(autoincrement())
+
+  gymId Int
+
+  month Int
+  year  Int
+
+  totalClasses Int
+
+  gym Gym @relation(fields: [gymId], references: [id])
+
+  @@unique([gymId, month, year])
+}
+
+//
+// FORMS (CONTENIDO)
+//
+
+model Form {
+  id Int @id @default(autoincrement())
+
+  title String
+  url   String
+
+  requiredBelt Belt
+
+  createdAt           DateTime            @default(now())
+  studentFormAccesses StudentFormAccess[]
+}
+
+model StudentFormAccess {
+  id Int @id @default(autoincrement())
+
+  studentId Int
+  formId    Int
+
+  unlockedAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+  form    Form    @relation(fields: [formId], references: [id])
+
+  @@unique([studentId, formId])
+}
+
+//
+// EVENTS (EVENTO DEL MES)
+//
+
+model Event {
+  id Int @id @default(autoincrement())
+
+  title    String
+  imageUrl String
+
+  createdAt DateTime @default(now())
+}
