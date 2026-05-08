@@ -4,8 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -35,7 +34,6 @@ enum StudentCategory {
 enum PaymentMethod {
   ONLINE
   CASH
-  FULL_YEAR
 }
 
 enum PaymentStatus {
@@ -61,6 +59,13 @@ enum Belt {
   DAN
 }
 
+enum FeeStatus {
+  PENDING
+  PAID
+  FULL_YEAR
+  OVERDUE
+}
+
 //
 // USERS
 //
@@ -77,6 +82,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
   teacher Teacher?
   student Student?
@@ -95,7 +101,11 @@ model Teacher {
   phone     String?
   email     String?
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
   gyms     TeacherGym[]
   students Student[]
@@ -112,8 +122,9 @@ model MercadoPagoAccount {
   expiresAt    DateTime
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  teacher Teacher @relation(fields: [teacherId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 }
 
 //
@@ -125,6 +136,9 @@ model Gym {
   name String
 
   isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
   teachers TeacherGym[]
   students Student[]
@@ -139,8 +153,8 @@ model TeacherGym {
   teacherId Int
   gymId     Int
 
-  teacher Teacher @relation(fields: [teacherId], references: [id])
-  gym     Gym     @relation(fields: [gymId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  gym     Gym     @relation(fields: [gymId], references: [id], onDelete: Cascade)
 
   @@unique([teacherId, gymId])
 }
@@ -152,8 +166,6 @@ model TeacherGym {
 model Student {
   id     Int @id @default(autoincrement())
   userId Int @unique
-
-  dni String @unique
 
   firstName String
   lastName  String
@@ -168,8 +180,12 @@ model Student {
   teacherId Int
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
-  user    User    @relation(fields: [userId], references: [id])
+  currentBelt Belt @default(WHITE)
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   gym     Gym     @relation(fields: [gymId], references: [id])
   teacher Teacher @relation(fields: [teacherId], references: [id])
 
@@ -177,6 +193,9 @@ model Student {
   attendances Attendance[]
   fees        Fee[]
   formAccess  StudentFormAccess[]
+
+  @@index([teacherId])
+  @@index([gymId])
 }
 
 //
@@ -190,9 +209,8 @@ model StudentBelt {
   belt      Belt
 
   achievedAt DateTime @default(now())
-  isCurrent  Boolean  @default(true)
 
-  student Student @relation(fields: [studentId], references: [id])
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId])
 }
@@ -209,12 +227,13 @@ model Fee {
   month Int
   year  Int
 
+  status FeeStatus @default(PENDING)
+
   baseAmount  Int
   finalAmount Int
 
   dueDate DateTime
 
-  isPaid Boolean   @default(false)
   paidAt DateTime?
 
   paymentMethod PaymentMethod?
@@ -222,11 +241,14 @@ model Fee {
   lateFeeApplied Boolean @default(false)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
-  student  Student       @relation(fields: [studentId], references: [id])
+  student  Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   payments Transaction[]
 
   @@unique([studentId, month, year])
+  @@index([studentId])
 }
 
 model FeeConfig {
@@ -238,6 +260,7 @@ model FeeConfig {
   validFrom DateTime
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 //
@@ -257,9 +280,10 @@ model Transaction {
   rawData Json?
 
   createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   paidAt    DateTime?
 
-  fee Fee @relation(fields: [feeId], references: [id])
+  fee Fee @relation(fields: [feeId], references: [id], onDelete: Cascade)
 }
 
 //
@@ -275,10 +299,12 @@ model Attendance {
   date    DateTime
   present Boolean
 
-  student Student @relation(fields: [studentId], references: [id])
-  gym     Gym     @relation(fields: [gymId], references: [id])
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  gym     Gym     @relation(fields: [gymId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, date])
+  @@index([gymId])
+  @@index([date])
 }
 
 //
@@ -295,7 +321,7 @@ model ClassPlan {
 
   totalClasses Int
 
-  gym Gym @relation(fields: [gymId], references: [id])
+  gym Gym @relation(fields: [gymId], references: [id], onDelete: Cascade)
 
   @@unique([gymId, month, year])
 }
@@ -313,6 +339,7 @@ model Form {
   requiredBelt Belt
 
   createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
   studentFormAccesses StudentFormAccess[]
 }
 
@@ -324,8 +351,8 @@ model StudentFormAccess {
 
   unlockedAt DateTime @default(now())
 
-  student Student @relation(fields: [studentId], references: [id])
-  form    Form    @relation(fields: [formId], references: [id])
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  form    Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, formId])
 }
@@ -341,4 +368,5 @@ model Event {
   imageUrl String
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
