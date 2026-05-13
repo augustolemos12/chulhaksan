@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -11,22 +12,22 @@ export default {
         accentLight: '#FDE047', // Amarillo claro
 
         // Fondos ultra limpios (Estilo Minimalista Atlético)
-        background: '#F8FAFC',
-        surface: '#FFFFFF',
+        background: 'var(--color-background)',
+        surface: 'var(--color-surface)',
 
         // Texto de alto contraste
-        text: '#0F172A',
-        muted: '#64748B',
+        text: 'var(--color-text)',
+        muted: 'var(--color-muted)',
 
-        border: '#E2E8F0',
+        border: 'var(--color-border)',
 
         success: '#10B981',
         danger: '#EF4444',
       },
 
       fontFamily: {
-        display: ['Outfit', 'sans-serif'], // Fuente más moderna y geométrica
-        sans: ['Outfit', 'sans-serif'],
+        display: ['Montserrat', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
       },
 
       borderRadius: {

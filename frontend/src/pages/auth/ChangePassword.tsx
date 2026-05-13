@@ -44,12 +44,12 @@ export function ChangePassword() {
     };
 
     return (
-        <div className="min-h-screen bg-background-light text-[#1b0d0d] flex flex-col items-center px-6">
+        <div className="min-h-screen bg-background text-text flex flex-col items-center px-6">
             <div className="w-full max-w-sm sm:max-w-md mt-16">
                 <h2 className="text-2xl font-bold tracking-tight text-center">
                     Actualizá tu contraseña
                 </h2>
-                <p className="text-sm text-gray-500 mt-2 text-center">
+                <p className="text-sm text-muted mt-2 text-center">
                     Por seguridad, necesitás definir una nueva contraseña para continuar.
                 </p>
             </div>
@@ -67,7 +67,7 @@ export function ChangePassword() {
                             lock
                         </span>
                         <input
-                            className="form-input flex w-full rounded-xl text-[#1a1a2e] border-slate-200 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary h-[52px] placeholder:text-slate-300 pl-12 pr-12 text-base font-normal transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                            className="form-input flex w-full rounded-xl text-[#1a1a2e] border-border bg-surface focus:ring-2 focus:ring-primary/20 focus:border-primary h-[52px] placeholder:text-slate-300 pl-12 pr-12 text-base font-normal transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                             placeholder="••••••••"
                             type={showPassword ? 'text' : 'password'}
                             value={password}
@@ -92,7 +92,7 @@ export function ChangePassword() {
                         Confirmar contraseña
                     </label>
                     <input
-                        className="form-input flex w-full rounded-xl text-[#1a1a2e] border-slate-200 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary h-[52px] placeholder:text-slate-300 px-4 text-base font-normal transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
+                        className="form-input flex w-full rounded-xl text-[#1a1a2e] border-border bg-surface focus:ring-2 focus:ring-primary/20 focus:border-primary h-[52px] placeholder:text-slate-300 px-4 text-base font-normal transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]"
                         placeholder="••••••••"
                         type="password"
                         value={confirm}

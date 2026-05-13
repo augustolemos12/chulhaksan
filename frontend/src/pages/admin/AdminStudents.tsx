@@ -444,11 +444,11 @@ export function AdminStudents() {
   };
 
   return (
-    <div className="min-h-screen bg-background-light text-[#1b0d0d]">
-      <header className="sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-gray-200">
+    <div className="min-h-screen bg-background text-text">
+      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="flex items-center p-4 justify-between w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto">
           <Link
-            className="text-[#1b0d0d] flex size-10 shrink-0 items-center justify-center"
+            className="text-text flex size-10 shrink-0 items-center justify-center"
             to="/dashboard"
           >
             <span className="material-symbols-outlined">arrow_back_ios</span>
@@ -468,31 +468,31 @@ export function AdminStudents() {
       </header>
 
       <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between">
+        <div className="bg-surface rounded-2xl border border-border shadow-soft p-4 flex items-center justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">
               Total alumnos
             </p>
-            <p className="text-2xl font-bold text-[#1b0d0d]">{total}</p>
+            <p className="text-2xl font-bold text-text">{total}</p>
           </div>
           <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
             <span className="material-symbols-outlined">group</span>
           </div>
         </div>
         <label className="flex flex-col min-w-40 h-12 w-full">
-          <div className="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm">
-            <div className="text-[#9a4c4c] flex border-none bg-white items-center justify-center pl-4 rounded-l-xl border-r-0">
+          <div className="flex w-full flex-1 items-stretch rounded-xl h-full shadow-soft">
+            <div className="text-[#9a4c4c] flex border-none bg-surface items-center justify-center pl-4 rounded-l-xl border-r-0">
               <span className="material-symbols-outlined">search</span>
             </div>
             <input
-              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-[#1b0d0d] focus:outline-0 focus:ring-0 border-none bg-white focus:border-none h-full placeholder:text-[#9a4c4c] px-4 pl-2 text-base font-normal leading-normal"
+              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-text focus:outline-0 focus:ring-0 border-none bg-surface focus:border-none h-full placeholder:text-[#9a4c4c] px-4 pl-2 text-base font-normal leading-normal"
               placeholder="Buscar por DNI o nombre"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
           </div>
         </label>
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+        <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
               <span className="material-symbols-outlined">folder</span>
@@ -502,7 +502,7 @@ export function AdminStudents() {
                 Gimnasio
               </p>
               <select
-                className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                 value={gymFilter}
                 onChange={(event) => {
                   const next = event.target.value;
@@ -524,7 +524,7 @@ export function AdminStudents() {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+        <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
               <span className="material-symbols-outlined">sell</span>
@@ -534,7 +534,7 @@ export function AdminStudents() {
                 Tipo
               </p>
               <select
-                className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                 value={categoryFilter}
                 onChange={(event) => {
                   const next = event.target.value as 'ADULT' | 'CHILD' | '';
@@ -554,7 +554,7 @@ export function AdminStudents() {
         </div>
 
         {loading && (
-          <div className="bg-white p-4 rounded-xl text-sm text-gray-500 border border-gray-100">
+          <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">
             Cargando alumnos...
           </div>
         )}
@@ -564,7 +564,7 @@ export function AdminStudents() {
           </div>
         )}
         {!loading && !error && students.length === 0 && (
-          <div className="bg-white p-4 rounded-xl text-sm text-gray-500 border border-gray-100">
+          <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">
             No hay alumnos para mostrar.
           </div>
         )}
@@ -573,25 +573,25 @@ export function AdminStudents() {
           {students.map((student) => (
             <div
               key={student.dni}
-              className="flex items-center gap-4 bg-white p-3 rounded-xl justify-between shadow-sm"
+              className="flex items-center gap-4 bg-surface p-3 rounded-xl justify-between shadow-soft"
             >
               <div className="flex items-center gap-3">
                 <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-12 w-12">
                   <span className="material-symbols-outlined">person</span>
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-[#1b0d0d] text-base font-semibold leading-tight">
+                  <p className="text-text text-base font-semibold leading-tight">
                     {student.firstName} {student.lastName}
                   </p>
                   <p className="text-[#9a4c4c] text-xs font-medium mt-1">
                     DNI: {student.dni}
                   </p>
                   {student.gym && (
-                    <p className="text-[11px] text-gray-500 mt-1">
+                    <p className="text-[11px] text-muted mt-1">
                       Gimnasio: {student.gym}
                     </p>
                   )}
-                  <p className="text-[11px] text-gray-500 mt-1">
+                  <p className="text-[11px] text-muted mt-1">
                     Tipo: {categoryLabel(student.category)}
                   </p>
                 </div>
@@ -619,7 +619,7 @@ export function AdminStudents() {
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2 pt-2">
             <button
-              className="h-9 px-3 rounded-full border border-gray-200 text-xs font-semibold text-[#1b0d0d] disabled:opacity-40"
+              className="h-9 px-3 rounded-full border border-border text-xs font-semibold text-text disabled:opacity-40"
               type="button"
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={page === 1}
@@ -636,7 +636,7 @@ export function AdminStudents() {
                   className={`h-9 w-9 rounded-full text-xs font-semibold ${
                     page === number
                       ? 'bg-primary text-white'
-                      : 'border border-gray-200 text-[#1b0d0d]'
+                      : 'border border-border text-text'
                   }`}
                   type="button"
                   onClick={() => setPage(number)}
@@ -646,7 +646,7 @@ export function AdminStudents() {
               ))}
             </div>
             <button
-              className="h-9 px-3 rounded-full border border-gray-200 text-xs font-semibold text-[#1b0d0d] disabled:opacity-40"
+              className="h-9 px-3 rounded-full border border-border text-xs font-semibold text-text disabled:opacity-40"
               type="button"
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={page === totalPages}
@@ -659,7 +659,7 @@ export function AdminStudents() {
 
       {editing && (
         <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
+          <div className="bg-surface w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between mb-4 shrink-0">
               <h2 className="text-lg font-bold">Editar alumno</h2>
               <button
@@ -686,9 +686,9 @@ export function AdminStudents() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Nombre</label>
+                    <label className="text-xs text-muted">Nombre</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: Juan"
                       value={form.firstName}
                       onChange={(event) =>
@@ -698,9 +698,9 @@ export function AdminStudents() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Apellido</label>
+                    <label className="text-xs text-muted">Apellido</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: Pérez"
                       value={form.lastName}
                       onChange={(event) =>
@@ -712,11 +712,11 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">
+                  <label className="text-xs text-muted">
                     Correo electrónico (opcional)
                   </label>
                   <input
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                     placeholder="Ej: alumno@mail.com"
                     type="email"
                     value={form.email}
@@ -728,9 +728,9 @@ export function AdminStudents() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Teléfono</label>
+                    <label className="text-xs text-muted">Teléfono</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: 11 2345-6789"
                       value={form.phone}
                       onChange={(event) =>
@@ -740,9 +740,9 @@ export function AdminStudents() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Teléfono tutor</label>
+                    <label className="text-xs text-muted">Teléfono tutor</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: 11 2345-6789"
                       value={form.guardianPhone}
                       onChange={(event) =>
@@ -754,10 +754,10 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">Fecha de nacimiento</label>
+                  <label className="text-xs text-muted">Fecha de nacimiento</label>
                   <div className="relative">
                     <input
-                      className="peer w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="peer w-full rounded-lg border border-border px-3 py-2 text-sm"
                       type="date"
                       value={form.birthDate}
                       onChange={(event) =>
@@ -765,16 +765,16 @@ export function AdminStudents() {
                       }
                       required
                     />
-                    <div className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] text-gray-500 opacity-0 shadow-sm transition-opacity peer-focus:opacity-100">
+                    <div className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-border bg-surface px-2 py-0.5 text-[10px] text-muted opacity-0 shadow-soft transition-opacity peer-focus:opacity-100">
                       Seleccioná la fecha de nacimiento
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">Dirección (opcional)</label>
+                  <label className="text-xs text-muted">Dirección (opcional)</label>
                   <input
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                     placeholder="Ej: Calle 123"
                     value={form.address}
                     onChange={(event) =>
@@ -785,9 +785,9 @@ export function AdminStudents() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Tipo</label>
+                    <label className="text-xs text-muted">Tipo</label>
                     <select
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                       value={form.category}
                       onChange={(event) =>
                         setForm((prev) => ({
@@ -802,9 +802,9 @@ export function AdminStudents() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Gimnasio</label>
+                    <label className="text-xs text-muted">Gimnasio</label>
                     <select
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                       value={form.gymId}
                       onChange={(event) =>
                         setForm((prev) => ({ ...prev, gymId: event.target.value }))
@@ -823,9 +823,9 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">Profesor asignado (opcional)</label>
+                  <label className="text-xs text-muted">Profesor asignado (opcional)</label>
                   <select
-                    className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                     value={assignedTeacherId}
                     onChange={(event) => setAssignedTeacherId(event.target.value)}
                   >
@@ -837,10 +837,10 @@ export function AdminStudents() {
                     ))}
                   </select>
                 </div>
-              <div className="rounded-lg border border-gray-100 bg-background-light p-3 space-y-2">
-                <p className="text-xs text-gray-500">Contraseña del alumno</p>
+              <div className="rounded-lg border border-border bg-background p-3 space-y-2">
+                <p className="text-xs text-muted">Contraseña del alumno</p>
                 <button
-                  className="w-full rounded-lg border border-gray-200 text-sm font-semibold py-2 disabled:opacity-70"
+                  className="w-full rounded-lg border border-border text-sm font-semibold py-2 disabled:opacity-70"
                   type="button"
                   onClick={handleResetPassword}
                   disabled={resetting}
@@ -879,7 +879,7 @@ export function AdminStudents() {
 
       {createOpen && (
         <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
+          <div className="bg-surface w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between mb-4 shrink-0">
               <h2 className="text-lg font-bold">Nuevo alumno</h2>
               <button
@@ -904,9 +904,9 @@ export function AdminStudents() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Nombre</label>
+                    <label className="text-xs text-muted">Nombre</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: Juan"
                       value={createForm.firstName}
                       onChange={(event) =>
@@ -919,9 +919,9 @@ export function AdminStudents() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Apellido</label>
+                    <label className="text-xs text-muted">Apellido</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: Pérez"
                       value={createForm.lastName}
                       onChange={(event) =>
@@ -936,9 +936,9 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">DNI (solo números)</label>
+                  <label className="text-xs text-muted">DNI (solo números)</label>
                   <input
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                     placeholder="Ej: 40123456"
                     inputMode="numeric"
                     value={createForm.dni}
@@ -953,11 +953,11 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">
+                  <label className="text-xs text-muted">
                     Correo electrónico (opcional)
                   </label>
                   <input
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                     placeholder="Ej: alumno@mail.com"
                     type="email"
                     value={createForm.email}
@@ -969,9 +969,9 @@ export function AdminStudents() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Telefono (opcional)</label>
+                    <label className="text-xs text-muted">Telefono (opcional)</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: 11 2345-6789"
                       value={createForm.phone}
                       onChange={(event) =>
@@ -980,9 +980,9 @@ export function AdminStudents() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Telefono tutor (opcional)</label>
+                    <label className="text-xs text-muted">Telefono tutor (opcional)</label>
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                       placeholder="Ej: 11 2345-6789"
                       value={createForm.guardianPhone}
                       onChange={(event) =>
@@ -996,10 +996,10 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">Fecha de nacimiento (opcional)</label>
+                  <label className="text-xs text-muted">Fecha de nacimiento (opcional)</label>
                   <div className="relative">
                     <input
-                      className="peer w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="peer w-full rounded-lg border border-border px-3 py-2 text-sm"
                       type="date"
                       value={createForm.birthDate}
                       onChange={(event) =>
@@ -1009,16 +1009,16 @@ export function AdminStudents() {
                         }))
                       }
                     />
-                    <div className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-gray-200 bg-white px-2 py-0.5 text-[10px] text-gray-500 opacity-0 shadow-sm transition-opacity peer-focus:opacity-100">
+                    <div className="pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-border bg-surface px-2 py-0.5 text-[10px] text-muted opacity-0 shadow-soft transition-opacity peer-focus:opacity-100">
                       Seleccioná la fecha de nacimiento
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">Dirección (opcional)</label>
+                  <label className="text-xs text-muted">Dirección (opcional)</label>
                   <input
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                     placeholder="Ej: Calle 123"
                     value={createForm.address}
                     onChange={(event) =>
@@ -1032,9 +1032,9 @@ export function AdminStudents() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Tipo (opcional)</label>
+                    <label className="text-xs text-muted">Tipo (opcional)</label>
                     <select
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                       value={createForm.category}
                       onChange={(event) =>
                         setCreateForm((prev) => ({
@@ -1048,9 +1048,9 @@ export function AdminStudents() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-500">Gimnasio (opcional)</label>
+                    <label className="text-xs text-muted">Gimnasio (opcional)</label>
                     <select
-                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                       value={createForm.gymId}
                       onChange={(event) =>
                         setCreateForm((prev) => ({ ...prev, gymId: event.target.value }))
@@ -1069,10 +1069,10 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">Contraseña</label>
+                  <label className="text-xs text-muted">Contraseña</label>
                   <div className="relative">
                     <input
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm pr-10"
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm pr-10"
                       placeholder="M?nimo 6 caracteres"
                       type={showPassword ? 'text' : 'password'}
                       value={createForm.password}
@@ -1098,9 +1098,9 @@ export function AdminStudents() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-500">Profesor asignado (opcional)</label>
+                  <label className="text-xs text-muted">Profesor asignado (opcional)</label>
                   <select
-                    className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
                     value={createAssignedTeacherId}
                     onChange={(event) => setCreateAssignedTeacherId(event.target.value)}
                   >

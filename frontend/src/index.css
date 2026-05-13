@@ -3,6 +3,27 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-background: #F8FAFC;
+    --color-surface: #FFFFFF;
+    --color-text: #0F172A;
+    --color-muted: #64748B;
+    --color-border: #E2E8F0;
+  }
+
+  .dark {
+    --color-background: #09090b;
+    /* Zinc 950 */
+    --color-surface: #18181b;
+    /* Zinc 900 */
+    --color-text: #fafafa;
+    /* Zinc 50 */
+    --color-muted: #a1a1aa;
+    /* Zinc 400 */
+    --color-border: #27272a;
+    /* Zinc 800 */
+  }
+
   body {
     @apply bg-background text-text antialiased;
     min-height: 100dvh;
@@ -80,9 +101,6 @@
 
 /* Fix temporal para asegurar que se aplique bien en toda la app */
 body {
-  font-family: "Outfit", sans-serif;
-  min-height: 100vh;
-  background: #F8FAFC;
-  color: #0F172A;
+  font-family: "Inter", sans-serif;
   margin: 0;
 }

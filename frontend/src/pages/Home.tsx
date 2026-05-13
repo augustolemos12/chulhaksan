@@ -1,6 +1,16 @@
 import { Link } from 'react-router-dom';
+import logoColor from '../assets/logo-color.png';
+import filosofiaImg from '../assets/filosofia.png';
+
+import { useTheme } from '../contexts/ThemeContext';
 
 export function Home() {
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   const socialLinks = [
     {
       name: 'WhatsApp',
@@ -20,19 +30,29 @@ export function Home() {
   ];
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden pb-10 bg-background-light text-[#1b0d0d] antialiased">
-      <header className="sticky top-0 z-50 flex items-center bg-background-light/95 backdrop-blur-md px-4 py-3 justify-between border-b border-gray-200">
+    <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden pb-10 bg-background text-text antialiased transition-colors duration-300">
+      <header className="sticky top-0 z-50 flex items-center bg-surface/95 backdrop-blur-md px-4 py-3 justify-between border-b border-border">
         <div className="flex items-center gap-3">
           <img
             alt="Chul Hak San"
-            className="h-9 w-9 rounded-full bg-white p-0.5 shadow-sm"
-            src="/assets/logo-color.png"
+            className="h-9 w-9 rounded-full bg-surface p-0.5 shadow-soft"
+            src={logoColor}
           />
           <span className="text-[10px] font-bold text-primary tracking-[0.4em] uppercase">
             CHS
           </span>
         </div>
-        <div className="size-10" />
+        <div>
+          <button
+            onClick={toggleTheme}
+            className="text-muted hover:text-text transition-colors active:scale-95 flex items-center justify-center p-2 rounded-full hover:bg-black/5 dark:hover:bg-surface/10"
+            title="Alternar tema"
+          >
+            <span className="material-symbols-outlined">
+              {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
+        </div>
       </header>
 
       <div className="@container">
@@ -45,8 +65,8 @@ export function Home() {
               <div className="mb-6 rounded-full p-1 shadow-[0_0_20px_rgba(236,19,19,0.2)]">
                 <img
                   alt="Chul Hak San Logo"
-                  className="w-32 h-32 object-contain rounded-full bg-white p-1"
-                  src="/assets/logo-color.png"
+                  className="w-32 h-32 object-contain rounded-full bg-surface p-1"
+                  src={logoColor}
                 />
               </div>
               <h1 className="text-white text-3xl font-extrabold leading-tight tracking-tight text-shadow-hero mb-2 uppercase">
@@ -75,26 +95,26 @@ export function Home() {
 
       <section className="px-4 py-8 space-y-6">
         <div className="grid grid-cols-1 gap-4">
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <div className="bg-surface p-6 rounded-2xl border border-border shadow-soft">
             <div className="flex items-center gap-3 mb-3">
               <span className="material-symbols-outlined text-primary">
                 visibility
               </span>
               <h2 className="text-lg font-bold">Nuestra Visión</h2>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed font-medium">
+            <p className="text-sm text-muted leading-relaxed font-medium">
               • Ser la organizacion N°1 del mundo en la enseñanza de Taekwon-do a todas las personas, sin distinción de sexo, raza, credo, religión y cultura.
               Mejorando la calidad de vida y elevando el potencial humano, en un espacio cordial, ético y confiable.
             </p>
           </div>
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <div className="bg-surface p-6 rounded-2xl border border-border shadow-soft">
             <div className="flex items-center gap-3 mb-3">
               <span className="material-symbols-outlined text-primary">
                 groups
               </span>
               <h2 className="text-lg font-bold">Nuestra Misión</h2>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed font-medium">
+            <p className="text-sm text-muted leading-relaxed font-medium">
               • Facultar lideres capaces de trascender y hacer trascender a su gente.
               <br />
               • Forjar un equipo de trabajo sólido y edicaz basado en la confiabilidad.
@@ -103,72 +123,72 @@ export function Home() {
         </div>
       </section>
 
-      <section className="relative py-12 px-4 bg-white overflow-hidden">
+      <section className="relative py-12 px-4 bg-background overflow-hidden">
         <div className="text-center mb-10 relative z-10">
           <h2 className="text-2xl font-extrabold mb-2 tracking-tight">
             Principios del Taekwon-Do
           </h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto relative z-10">
-          <div className="bg-white p-5 rounded-2xl border border-primary/40 shadow-soft-red transition-all duration-300 flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center mb-3">
+          <div className="bg-surface p-5 rounded-2xl border border-border shadow-soft transition-all duration-300 flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-primary text-2xl">
                 front_hand
               </span>
             </div>
-            <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wide">
+            <h4 className="font-bold text-sm text-text uppercase tracking-wide">
               Cortesía
             </h4>
             <p className="text-[10px] text-primary font-semibold italic mt-0.5 tracking-wider">
               Ye Ui
             </p>
           </div>
-          <div className="bg-white p-5 rounded-2xl border border-primary/40 shadow-soft-red transition-all duration-300 flex flex-col items-center text-center">
+          <div className="bg-surface p-5 rounded-2xl border border-primary/40 shadow-soft transition-all duration-300 flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-primary text-2xl">
                 verified_user
               </span>
             </div>
-            <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wide">
+            <h4 className="font-bold text-sm text-text uppercase tracking-wide">
               Integridad
             </h4>
             <p className="text-[10px] text-primary font-semibold italic mt-0.5 tracking-wider">
               Yom Chi
             </p>
           </div>
-          <div className="bg-white p-5 rounded-2xl border border-primary/40 shadow-soft-red transition-all duration-300 flex flex-col items-center text-center">
+          <div className="bg-surface p-5 rounded-2xl border border-primary/40 shadow-soft transition-all duration-300 flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-primary text-2xl">
                 speed
               </span>
             </div>
-            <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wide">
+            <h4 className="font-bold text-sm text-text uppercase tracking-wide">
               Perseverancia
             </h4>
             <p className="text-[10px] text-primary font-semibold italic mt-0.5 tracking-wider">
               In Nae
             </p>
           </div>
-          <div className="bg-white p-5 rounded-2xl border border-primary/40 shadow-soft-red transition-all duration-300 flex flex-col items-center text-center">
+          <div className="bg-surface p-5 rounded-2xl border border-primary/40 shadow-soft transition-all duration-300 flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-primary text-2xl">
                 psychology
               </span>
             </div>
-            <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wide">
+            <h4 className="font-bold text-sm text-text uppercase tracking-wide">
               Autocontrol
             </h4>
             <p className="text-[10px] text-primary font-semibold italic mt-0.5 tracking-wider">
               Guk Gi
             </p>
           </div>
-          <div className="col-span-2 bg-white p-5 rounded-2xl border border-primary/40 shadow-soft-red transition-all duration-300 flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center mb-3">
+          <div className="col-span-2 bg-surface p-5 rounded-2xl border border-border shadow-soft transition-all duration-300 flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-primary text-2xl">
                 bolt
               </span>
             </div>
-            <h4 className="font-bold text-sm text-gray-900 uppercase tracking-wide">
+            <h4 className="font-bold text-sm text-text uppercase tracking-wide">
               Espíritu Indomable
             </h4>
             <p className="text-[10px] text-primary font-semibold italic mt-0.5 tracking-wider">
@@ -176,7 +196,7 @@ export function Home() {
             </p>
           </div>
         </div>
-        <div className="mt-12 rounded-3xl border border-gray-100 bg-gradient-to-br from-white to-[#fdf4f4] p-6 shadow-soft-red">
+        <div className="mt-12 rounded-3xl border border-border bg-surface p-6 shadow-soft">
           <div className="flex flex-col items-center gap-6 text-center">
             <div>
               <p className="text-sm font-extrabold uppercase tracking-[0.25em] text-primary">
@@ -184,9 +204,9 @@ export function Home() {
               </p>
               <h3 className="mt-2 text-xl font-extrabold">Valores Fundamentales</h3>
             </div>
-            <div className="w-full rounded-2xl bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
+            <div className="w-full rounded-2xl bg-surface p-4 shadow-soft">
               <img
-                src="/assets/filosofia.png"
+                src={filosofiaImg}
                 alt="Filosofía Chul Hak San"
                 className="mx-auto w-full max-w-[320px]"
               />
@@ -195,7 +215,7 @@ export function Home() {
         </div>
       </section>
 
-      <footer className="mt-auto border-t border-gray-200 bg-[#140909] px-4 py-8 text-white">
+      <footer className="mt-auto border-t border-border bg-[#140909] px-4 py-8 text-white">
         <div className="mx-auto w-full max-w-md sm:max-w-lg md:max-w-2xl">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -215,7 +235,7 @@ export function Home() {
                   rel="noreferrer"
                   aria-label={social.name}
                   title={social.name}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-white"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-surface/5 text-white transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-white"
                 >
                   <span className="material-symbols-outlined text-[20px]">
                     {social.icon}

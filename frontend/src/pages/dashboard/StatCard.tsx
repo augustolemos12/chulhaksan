@@ -10,9 +10,9 @@ export function StatCard({
     icon,
 }: StatCardProps) {
     return (
-        <div className="rounded-2xl bg-background-light border border-gray-100 p-4">
+        <div className="rounded-2xl bg-background border border-border p-4">
             <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted">
                     {label}
                 </span>
 
@@ -21,7 +21,7 @@ export function StatCard({
                 </span>
             </div>
 
-            <p className="mt-3 text-3xl font-black text-[#1b0d0d]">
+            <p className="mt-3 text-3xl font-black text-text">
                 {value}
             </p>
         </div>

@@ -12,17 +12,17 @@ export function SectionTitle({
     return (
         <div className="mb-4">
             {eyebrow && (
-                <p className="text-[11px] uppercase tracking-[0.25em] text-primary font-bold mb-1">
+                <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">
                     {eyebrow}
                 </p>
             )}
 
-            <h2 className="text-xl font-bold text-[#1b0d0d]">
+            <h2 className="font-display text-xl md:text-2xl font-bold text-text">
                 {title}
             </h2>
 
             {subtitle && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted mt-1 font-medium">
                     {subtitle}
                 </p>
             )}

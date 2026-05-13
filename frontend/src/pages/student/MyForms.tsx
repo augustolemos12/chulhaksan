@@ -49,11 +49,11 @@ export function MyForms() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-background-light text-[#1b0d0d]">
-            <header className="sticky top-0 z-20 border-b border-gray-200 bg-background-light/80 backdrop-blur-md">
+        <div className="min-h-screen bg-background text-text">
+            <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur-md">
                 <div className="flex items-center justify-between w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4">
                     <button
-                        className="flex size-10 items-center justify-center rounded-full hover:bg-white transition-colors"
+                        className="flex size-10 items-center justify-center rounded-full hover:bg-surface transition-colors"
                         type="button"
                         onClick={() => navigate(-1)}
                         aria-label="Volver"
@@ -75,7 +75,7 @@ export function MyForms() {
             </header>
 
             <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-5">
-                <section className="bg-white border border-gray-100 rounded-3xl p-5 shadow-sm">
+                <section className="bg-surface border border-border rounded-3xl p-5 shadow-soft">
                     <div className="flex items-start justify-between gap-4">
                         <div>
                             <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">
@@ -86,7 +86,7 @@ export function MyForms() {
                                 Tus formas disponibles
                             </h2>
 
-                            <p className="mt-1 text-sm text-gray-500">
+                            <p className="mt-1 text-sm text-muted">
                                 Accedé rapidamente al contenido compartido por tu profesor.
                             </p>
                         </div>
@@ -112,14 +112,14 @@ export function MyForms() {
                 </section>
 
                 {loading && (
-                    <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                    <div className="bg-surface border border-border rounded-2xl p-5 shadow-soft">
                         <div className="flex items-center gap-3">
                             <div className="h-10 w-10 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
                             <div>
                                 <p className="text-sm font-semibold">
                                     Cargando formas...
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-muted">
                                     Esperá un momento.
                                 </p>
                             </div>
@@ -134,7 +134,7 @@ export function MyForms() {
                 )}
 
                 {!loading && !error && forms.length === 0 && (
-                    <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm text-center">
+                    <div className="bg-surface border border-border rounded-3xl p-8 shadow-soft text-center">
                         <div className="mx-auto h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
                             <span className="material-symbols-outlined text-3xl">
                                 lock
@@ -145,7 +145,7 @@ export function MyForms() {
                             Todavía no tenés formas
                         </h3>
 
-                        <p className="mt-2 text-sm text-gray-500">
+                        <p className="mt-2 text-sm text-muted">
                             Cuando tu profesor desbloquee contenido, aparecerá acá.
                         </p>
                     </div>
@@ -159,7 +159,7 @@ export function MyForms() {
                                 href={form.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="group flex items-center justify-between gap-4 rounded-3xl border border-gray-100 bg-white p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                                className="group flex items-center justify-between gap-4 rounded-3xl border border-border bg-surface p-4 shadow-soft hover:shadow-md hover:-translate-y-0.5 transition-all"
                             >
                                 <div className="flex items-center gap-4 min-w-0">
                                     <div className="h-14 w-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -179,7 +179,7 @@ export function MyForms() {
                                             {form.title}
                                         </h3>
 
-                                        <p className="mt-1 text-xs text-gray-500 truncate">
+                                        <p className="mt-1 text-xs text-muted truncate">
                                             {form.url}
                                         </p>
                                     </div>

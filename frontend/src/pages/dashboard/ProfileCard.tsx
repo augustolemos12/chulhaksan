@@ -6,15 +6,19 @@ type ProfileCardProps = {
 };
 
 export function ProfileCard({ profile, displayName }: ProfileCardProps) {
+  const roleName = profile?.role === 'STUDENT' ? 'Alumno' : profile?.role === 'TEACHER' ? 'Profesor' : 'Administrador';
+
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex items-center gap-4">
-      <div className="bg-primary/10 text-primary h-14 w-14 rounded-full flex items-center justify-center">
-        <span className="material-symbols-outlined text-3xl">person</span>
-      </div>
-      <div>
-        <p className="text-lg font-bold text-[#1b0d0d]">{displayName || 'Usuario'}</p>
-        <p className="text-sm text-gray-500 capitalize">{profile?.role === 'STUDENT' ? 'Alumno' : profile?.role === 'TEACHER' ? 'Profesor' : 'Administrador'}</p>
-      </div>
+    <div className="mb-8 mt-2">
+      <h2 className="font-display text-2xl md:text-3xl text-text">
+        ¡Hola, <span className="text-primary font-bold">{displayName || roleName}</span>!
+      </h2>
+      <p className="text-muted mt-1 font-medium">
+        {profile?.role === 'STUDENT'
+          ? 'Tu próximo cinturón te espera. ¡Sigue entrenando!'
+          : `Panel de control del ${roleName.toLowerCase()}`
+        }
+      </p>
     </div>
   );
 }
