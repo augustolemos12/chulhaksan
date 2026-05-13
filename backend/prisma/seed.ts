@@ -1,34 +1,150 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role, StudentCategory, Belt } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
 
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL as string }),
-});
+dotenv.config();
+
+const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const adminDni = '44404990'; // o el DNI que corresponda
-  const existingAdmin = await prisma.user.findUnique({ where: { dni: adminDni } });
+  console.log('🌱 Starting database seed...');
 
-  if (!existingAdmin) {
-    const hashedPassword = await bcrypt.hash('30082019', 10);
-    const user = await prisma.user.create({
+  // 1. Clean existing data
+  console.log('🧹 Cleaning existing data...');
+  await prisma.attendance.deleteMany();
+  await prisma.transaction.deleteMany();
+  await prisma.fee.deleteMany();
+  await prisma.studentFormAccess.deleteMany();
+  await prisma.studentBelt.deleteMany();
+  await prisma.student.deleteMany();
+  await prisma.classPlan.deleteMany();
+  await prisma.gym.deleteMany();
+  await prisma.teacher.deleteMany();
+  await prisma.user.deleteMany();
+
+  const defaultPassword = await bcrypt.hash('123456', 10);
+
+  // 2. Create Admin
+  console.log('👑 Creating Admin...');
+  await prisma.user.create({
+    data: {
+      dni: 'admin123',
+      password: defaultPassword,
+      role: Role.ADMIN,
+      mustChangePassword: false,
+    },
+  });
+
+  // 3. Create Teachers
+  console.log('👨‍🏫 Creating Teachers...');
+  const teacherUser1 = await prisma.user.create({
+    data: {
+      dni: 'teacher1',
+      password: defaultPassword,
+      role: Role.TEACHER,
+      mustChangePassword: false,
+      teacher: {
+        create: {
+          firstName: 'Juan',
+          lastName: 'Pérez',
+          email: 'juan@chulhaksan.com',
+          phone: '1234567890',
+        },
+      },
+    },
+    include: { teacher: true },
+  });
+
+  const teacherUser2 = await prisma.user.create({
+    data: {
+      dni: 'teacher2',
+      password: defaultPassword,
+      role: Role.TEACHER,
+      mustChangePassword: false,
+      teacher: {
+        create: {
+          firstName: 'María',
+          lastName: 'Gómez',
+          email: 'maria@chulhaksan.com',
+          phone: '0987654321',
+        },
+      },
+    },
+    include: { teacher: true },
+  });
+
+  const teacher1 = teacherUser1.teacher!;
+  const teacher2 = teacherUser2.teacher!;
+
+  // 4. Create Gyms
+  console.log('🏢 Creating Gyms...');
+  const gym1 = await prisma.gym.create({
+    data: {
+      name: 'Sede Central',
+      teacherId: teacher1.id,
+      isActive: true,
+    },
+  });
+
+  const gym2 = await prisma.gym.create({
+    data: {
+      name: 'Sede Norte',
+      teacherId: teacher2.id,
+      isActive: true,
+    },
+  });
+
+  // 5. Create Students
+  console.log('🥋 Creating Students...');
+  const studentData = [
+    { dni: 'student1', firstName: 'Carlos', lastName: 'López', category: StudentCategory.ADULT, gymId: gym1.id, teacherId: teacher1.id },
+    { dni: 'student2', firstName: 'Ana', lastName: 'Martínez', category: StudentCategory.CHILD, gymId: gym1.id, teacherId: teacher1.id },
+    { dni: 'student3', firstName: 'Luis', lastName: 'Rodríguez', category: StudentCategory.ADULT, gymId: gym2.id, teacherId: teacher2.id },
+    { dni: 'student4', firstName: 'Sofía', lastName: 'Fernández', category: StudentCategory.CHILD, gymId: gym2.id, teacherId: teacher2.id },
+  ];
+
+  for (const data of studentData) {
+    await prisma.user.create({
       data: {
-        dni: adminDni,
-        password: hashedPassword,
-        role: Role.ADMIN,
+        dni: data.dni,
+        password: defaultPassword,
+        role: Role.STUDENT,
         mustChangePassword: true,
+        student: {
+          create: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            category: data.category,
+            gymId: data.gymId,
+            teacherId: data.teacherId,
+            currentBelt: Belt.WHITE,
+            belts: {
+              create: {
+                belt: Belt.WHITE,
+              },
+            },
+          },
+        },
       },
     });
-    console.log(`✅ Admin creado con DNI: ${user.dni}`);
-  } else {
-    console.log('⚠️ El usuario admin ya existe.');
   }
+
+  console.log('✅ Seed finished successfully!');
+  console.log('--------------------------------------------------');
+  console.log('Admin DNI: admin123 | Pass: 123456');
+  console.log('Teacher DNIs: teacher1, teacher2 | Pass: 123456');
+  console.log('Student DNIs: student1, student2, student3, student4 | Pass: 123456');
+  console.log('--------------------------------------------------');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Error during seed:', e);
     process.exit(1);
   })
   .finally(async () => {

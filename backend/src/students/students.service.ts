@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 export class StudentsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  //Métodos para incluir datos comunes en las consultas
   private readonly commonInclude = {
     gym: {
       select: {
@@ -30,6 +31,7 @@ export class StudentsService {
     },
   };
 
+  //Método que permite mapear la respuesta del alumno a la estructura deseada
   private mapStudentResponse(student: any) {
     if (!student) return null;
     const { user, ...studentData } = student;
@@ -40,7 +42,7 @@ export class StudentsService {
     };
   }
 
-  //
+  //Metodo que permite crear un alumno, ya sea para admin o para un profesor 
   async create(actorUserId: number, isAdmin: boolean, createStudentDto: CreateStudentDto) {
     const { dni, password, firstName, lastName, gymId, category, currentBelt, phone, email, address, teacherId: dtoTeacherId } = createStudentDto;
     const normalizedFirstName = firstName.trim().toUpperCase();
@@ -51,11 +53,13 @@ export class StudentsService {
       if (!dtoTeacherId) {
         throw new ForbiddenException('Un administrador debe especificar el teacherId al crear un alumno');
       }
+      //Busca el profesor por ID
       teacher = await this.prisma.teacher.findUnique({
         where: { id: dtoTeacherId },
         include: { gyms: true },
       });
     } else {
+      //Si no es admin, busca el profesor por ID del usuario logueado
       teacher = await this.prisma.teacher.findUnique({
         where: { userId: actorUserId },
         include: { gyms: true },
@@ -65,19 +69,19 @@ export class StudentsService {
     if (!teacher) {
       throw new ForbiddenException('Profesor no encontrado o no asignado');
     }
-
+    //Verifica que el gimnasio pertenece al profesor 
     const gym = teacher.gyms.find(g => g.id === gymId && g.deletedAt === null);
     if (!gym) {
       throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado');
     }
-
+    //Verifica que no existe un usuario con el mismo DNI
     const existingUser = await this.prisma.user.findUnique({ where: { dni } });
     if (existingUser) {
       throw new ConflictException('Ya existe un usuario con este DNI');
     }
-
+    //Encripta la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    //Crea el nuevo usuario y el nuevo alumno
     try {
       const result = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
@@ -125,7 +129,7 @@ export class StudentsService {
       throw error;
     }
   }
-
+  //Método para obtener todos los alumnos, que pueden ser filtrados y paginados
   async findAll(query: StudentQueryDto, internalTeacherId?: number) {
     const { search, gymId, category, belt, includeDeleted, page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
@@ -176,7 +180,7 @@ export class StudentsService {
       },
     };
   }
-
+  //Metodo para obtener los alumnos de un profesor
   async findByTeacher(teacherUserId: number, query: StudentQueryDto) {
     const teacher = await this.prisma.teacher.findUnique({
       where: { userId: teacherUserId },
@@ -188,7 +192,7 @@ export class StudentsService {
 
     return this.findAll(query, teacher.id);
   }
-
+  //Metodo para obtener un alumno por ID
   async findOne(id: number) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
@@ -204,7 +208,7 @@ export class StudentsService {
 
     return this.mapStudentResponse(student);
   }
-
+  //Metodo para actualizar un alumno 
   async update(id: number, teacherUserId: number | null, updateStudentDto: UpdateStudentDto) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
@@ -259,7 +263,7 @@ export class StudentsService {
         },
       };
     }
-
+    //Actualiza el alumno y retorna el alumno actualizado
     const updatedStudent = await this.prisma.student.update({
       where: { id },
       data: dataToUpdate,
@@ -271,7 +275,7 @@ export class StudentsService {
 
     return this.mapStudentResponse(updatedStudent);
   }
-
+  //Metodo para eliminar un alumno
   async remove(id: number, teacherUserId: number | null) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
@@ -307,7 +311,7 @@ export class StudentsService {
 
     return { success: true, message: 'Alumno eliminado correctamente' };
   }
-
+  //Metodo para actualizar el propio perfil de un alumno
   async updateOwnProfile(userId: number, updateOwnProfileDto: UpdateOwnStudentProfileDto) {
     const student = await this.prisma.student.findUnique({
       where: { userId },
@@ -329,8 +333,8 @@ export class StudentsService {
 
     return this.mapStudentResponse(updatedStudent);
   }
-
-  async findOwnProfile(userId: number) {
+  //Metodo para obtener el propio perfil de un alumno
+async findOwnProfile(userId: number) {
     const student = await this.prisma.student.findUnique({
       where: { userId },
       include: {

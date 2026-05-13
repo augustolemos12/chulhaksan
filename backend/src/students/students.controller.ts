@@ -22,30 +22,35 @@ export class StudentsController {
   // ENDPOINTS ADMIN
   // ==========================================
 
+  //ADMIN - Crear un alumno
   @Post('students')
   @Roles(Role.ADMIN)
   createAdmin(@Body() createStudentDto: CreateStudentDto, @CurrentUser() user: any) {
     return this.studentsService.create(user.id, true, createStudentDto);
   }
-
+  
+  //ADMIN - Obtener todos los alumnos
   @Get('students')
   @Roles(Role.ADMIN)
   findAllAdmin(@Query() query: StudentQueryDto) {
     return this.studentsService.findAll(query);
   }
 
+  //ADMIN - Obtener un alumno por ID
   @Get('students/:id')
   @Roles(Role.ADMIN)
   findOneAdmin(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.findOne(id);
   }
 
+  //ADMIN - Actualizar un alumno
   @Patch('students/:id')
   @Roles(Role.ADMIN)
   updateAdmin(@Param('id', ParseIntPipe) id: number, @Body() updateStudentDto: UpdateStudentDto) {
     return this.studentsService.update(id, null, updateStudentDto);
   }
-
+  
+  //ADMIN - Eliminar un alumno
   @Delete('students/:id')
   @Roles(Role.ADMIN)
   removeAdmin(@Param('id', ParseIntPipe) id: number) {
@@ -56,18 +61,21 @@ export class StudentsController {
   // ENDPOINTS TEACHER
   // ==========================================
 
+  //TEACHER - Obtener todos los alumnos
   @Get('teacher/students')
   @Roles(Role.TEACHER)
   findTeacherStudents(@Query() query: StudentQueryDto, @CurrentUser() user: any) {
     return this.studentsService.findByTeacher(user.id, query);
   }
 
+  //TEACHER - Crear un alumno
   @Post('teacher/students')
   @Roles(Role.TEACHER)
   createTeacherStudent(@Body() createStudentDto: CreateStudentDto, @CurrentUser() user: any) {
     return this.studentsService.create(user.id, false, createStudentDto);
   }
 
+  //TEACHER - Actualizar un alumno
   @Patch('teacher/students/:id')
   @Roles(Role.TEACHER)
   updateTeacherStudent(
@@ -82,12 +90,14 @@ export class StudentsController {
   // ENDPOINTS STUDENT
   // ==========================================
 
+  //STUDENT - Obtener su propio perfil
   @Get('me/student')
   @Roles(Role.STUDENT)
   findOwnProfile(@CurrentUser() user: any) {
     return this.studentsService.findOwnProfile(user.id);
   }
 
+  //STUDENT - Actualizar su propio perfil
   @Patch('me/student')
   @Roles(Role.STUDENT)
   updateOwnProfile(@Body() updateOwnProfileDto: UpdateOwnStudentProfileDto, @CurrentUser() user: any) {
