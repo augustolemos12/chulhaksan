@@ -11,6 +11,13 @@ datasource db {
   provider = "postgresql"
 }
 
+//Generator para crear el diagrama ERD
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "./erd/ERD.pdf"
+  format   = "pdf"
+}
+
 //
 // ENUMS
 //
@@ -107,24 +114,8 @@ model Teacher {
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
 
-  gyms     TeacherGym[]
+  gyms    Gym[]
   students Student[]
-
-  mpAccount MercadoPagoAccount?
-}
-
-model MercadoPagoAccount {
-  id        Int @id @default(autoincrement())
-  teacherId Int @unique
-
-  accessToken  String
-  refreshToken String
-  expiresAt    DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 }
 
 //
@@ -135,28 +126,25 @@ model Gym {
   id   Int    @id @default(autoincrement())
   name String
 
+  teacherId Int?
+
   isActive Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
 
-  teachers TeacherGym[]
+  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+
   students Student[]
 
   classPlans  ClassPlan[]
   attendances Attendance[]
-}
 
-model TeacherGym {
-  id Int @id @default(autoincrement())
+  @@index([teacherId])
+  @@index([deletedAt])
+  @@index([isActive])
 
-  teacherId Int
-  gymId     Int
-
-  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  gym     Gym     @relation(fields: [gymId], references: [id], onDelete: Cascade)
-
-  @@unique([teacherId, gymId])
 }
 
 //
