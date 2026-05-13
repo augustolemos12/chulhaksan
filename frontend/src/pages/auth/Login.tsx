@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchMe, login } from './auth';
 
+import logoColor from '../../assets/logo-color.png';
+
 export function Login() {
   const navigate = useNavigate();
 
@@ -39,29 +41,29 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-background flex items-center justify-center px-6 transition-colors duration-300">
       <div className="w-full max-w-md">
         <Link
           to="/"
-          className="mb-8 inline-flex items-center text-slate-600 hover:text-slate-900 transition"
+          className="mb-8 inline-flex items-center text-muted hover:text-text transition-colors"
         >
           ← Volver
         </Link>
 
-        <div className="rounded-3xl bg-white p-10 shadow-xl border border-slate-100">
+        <div className="rounded-3xl bg-surface p-10 shadow-soft border border-border">
           <div className="flex justify-center mb-8">
             <img
-              src="/assets/logo-color.png"
+              src={logoColor}
               alt="Logo"
               className="h-28 object-contain"
             />
           </div>
 
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-slate-900">
+            <h1 className="text-3xl font-display font-bold text-text">
               Bienvenida
             </h1>
-            <p className="text-slate-500 mt-2">
+            <p className="text-muted mt-2">
               Iniciá sesión para acceder al sistema
             </p>
           </div>
@@ -73,7 +75,7 @@ export function Login() {
               placeholder="DNI"
               value={dni}
               onChange={(e) => setDni(sanitizeDni(e.target.value))}
-              className="w-full h-14 rounded-2xl border border-slate-200 px-5"
+              className="w-full h-14 rounded-2xl border border-border bg-background text-text px-5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
               required
             />
 
@@ -83,21 +85,23 @@ export function Login() {
                 placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-14 rounded-2xl border border-slate-200 px-5 pr-14"
+                className="w-full h-14 rounded-2xl border border-border bg-background text-text px-5 pr-14 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
                 required
               />
 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-4"
+                className="absolute right-4 top-4 text-muted hover:text-text transition-colors"
               >
-                {showPassword ? '🙈' : '👁️'}
+                <span className="material-symbols-outlined">
+                  {showPassword ? 'visibility_off' : 'visibility'}
+                </span>
               </button>
             </div>
 
             {error && (
-              <div className="rounded-2xl bg-red-50 p-4 text-red-600 text-sm">
+              <div className="rounded-xl bg-danger/10 border border-danger/20 p-4 text-danger text-sm font-medium">
                 {error}
               </div>
             )}
@@ -105,7 +109,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-14 rounded-2xl bg-primary text-white font-semibold"
+              className="w-full h-14 rounded-2xl bg-gradient-to-r from-primary to-accent text-white font-bold hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-60"
             >
               {loading ? 'Ingresando...' : 'Ingresar'}
             </button>

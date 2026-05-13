@@ -201,12 +201,12 @@ export function AdminGyms() {
       </header>
 
       <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between">
+        <div className="bg-surface rounded-2xl border border-border shadow-soft p-4 flex items-center justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">
               Totales
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-muted mt-1">
               {gyms.length} gimnasios activos - {totalStudents} alumnos
             </p>
           </div>
@@ -217,11 +217,11 @@ export function AdminGyms() {
         </div>
 
         <form
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-2"
+          className="bg-surface rounded-2xl border border-border shadow-soft p-4 flex gap-2"
           onSubmit={handleCreate}
         >
           <input
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-border px-3 py-2 text-sm"
             placeholder="Nuevo gimnasio (ej: Riodorado)"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -237,7 +237,7 @@ export function AdminGyms() {
           </button>
         </form>
 
-        <label className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 flex items-center gap-2">
+        <label className="bg-surface rounded-2xl border border-border shadow-soft p-3 flex items-center gap-2">
           <span className="material-symbols-outlined text-gray-400">
             search
           </span>
@@ -251,7 +251,7 @@ export function AdminGyms() {
         </label>
 
         {loading && (
-          <div className="bg-white p-4 rounded-xl text-sm text-gray-500 border border-gray-100">
+          <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">
             Cargando gimnasios...
           </div>
         )}
@@ -263,13 +263,13 @@ export function AdminGyms() {
         )}
 
         {!loading && !error && gyms.length === 0 && (
-          <div className="bg-white p-4 rounded-xl text-sm text-gray-500 border border-gray-100">
+          <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">
             No hay gimnasios para mostrar.
           </div>
         )}
 
         {!loading && !error && gyms.length > 0 && filteredGyms.length === 0 && (
-          <div className="bg-white p-4 rounded-xl text-sm text-gray-500 border border-gray-100">
+          <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">
             No hay resultados para "{query.trim()}".
           </div>
         )}
@@ -278,7 +278,7 @@ export function AdminGyms() {
           {filteredGyms.map((gym) => (
             <div
               key={gym.id}
-              className="flex items-center gap-3 bg-white p-3 rounded-xl justify-between shadow-sm border border-gray-100"
+              className="flex items-center gap-3 bg-surface p-3 rounded-xl justify-between shadow-soft border border-border"
             >
               <Link
                 className="flex items-center gap-3 flex-1 min-w-0"
@@ -289,11 +289,11 @@ export function AdminGyms() {
                 </div>
 
                 <div className="flex flex-col justify-center min-w-0">
-                  <p className="text-[#1b0d0d] text-base font-semibold leading-tight truncate">
+                  <p className="text-text text-base font-semibold leading-tight truncate">
                     {gym.name}
                   </p>
 
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted mt-1">
                     {gym.studentsCount} alumno
                     {gym.studentsCount === 1 ? '' : 's'}
                   </p>
@@ -302,7 +302,7 @@ export function AdminGyms() {
 
               <div className="flex items-center gap-2 shrink-0">
                 <Link
-                  className="rounded-lg border border-gray-200 text-xs font-semibold px-3 py-2"
+                  className="rounded-lg border border-border text-xs font-semibold px-3 py-2"
                   to={`/admin/gimnasios/${encodeURIComponent(
                     gym.id,
                   )}/asistencia`}
@@ -311,7 +311,7 @@ export function AdminGyms() {
                 </Link>
 
                 <button
-                  className="rounded-lg border border-gray-200 text-xs font-semibold px-3 py-2"
+                  className="rounded-lg border border-border text-xs font-semibold px-3 py-2"
                   type="button"
                   onClick={() => handleRename(gym)}
                 >
@@ -333,21 +333,21 @@ export function AdminGyms() {
 
       {gymToDelete && (
         <div className="fixed inset-0 z-30 bg-black/40 flex items-end sm:items-center justify-center p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white border border-gray-100 shadow-xl p-5">
-            <h2 className="text-base font-bold text-[#1b0d0d]">
+          <div className="w-full max-w-md rounded-2xl bg-surface border border-border shadow-xl p-5">
+            <h2 className="text-base font-bold text-text">
               Eliminar gimnasio
             </h2>
 
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-sm text-muted mt-2">
               Podés mover alumnos a otro gimnasio o dejarlos sin asignación.
             </p>
 
-            <label className="block mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            <label className="block mt-4 text-xs font-semibold text-muted uppercase tracking-wide">
               Mover alumnos a (opcional)
             </label>
 
             <select
-              className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm"
+              className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
               value={targetGymId}
               onChange={(event) => setTargetGymId(event.target.value)}
               disabled={deleting}
@@ -369,7 +369,7 @@ export function AdminGyms() {
 
             <div className="mt-5 grid grid-cols-2 gap-2">
               <button
-                className="rounded-lg border border-gray-200 text-sm font-semibold px-3 py-2"
+                className="rounded-lg border border-border text-sm font-semibold px-3 py-2"
                 type="button"
                 onClick={closeDeleteModal}
                 disabled={deleting}

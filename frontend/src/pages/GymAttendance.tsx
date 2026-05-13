@@ -80,8 +80,8 @@ export function GymAttendance() {
       const res = await apiFetch(
         `/attendance/gym/${gymId}?date=${encodeURIComponent(apiDate)}`,
         {
-        method: 'GET',
-        cache: 'no-store',
+          method: 'GET',
+          cache: 'no-store',
         },
       );
       if (!res.ok) {
@@ -155,9 +155,9 @@ export function GymAttendance() {
       const res = await apiFetch(
         `/attendance/gym/${gymId}?date=${encodeURIComponent(apiDate)}`,
         {
-        method: 'PUT',
-        json: true,
-        body: JSON.stringify({ items }),
+          method: 'PUT',
+          json: true,
+          body: JSON.stringify({ items }),
         },
       );
       if (!res.ok) {
@@ -211,15 +211,15 @@ export function GymAttendance() {
       setData((current) =>
         current
           ? {
-              ...current,
-              monthlyPlan: {
-                year: json.year,
-                month: json.month,
-                classesPlanned: json.classesPlanned,
-                recordedClasses: json.recordedClasses,
-                remainingClasses: json.remainingClasses,
-              },
-            }
+            ...current,
+            monthlyPlan: {
+              year: json.year,
+              month: json.month,
+              classesPlanned: json.classesPlanned,
+              recordedClasses: json.recordedClasses,
+              remainingClasses: json.remainingClasses,
+            },
+          }
           : current,
       );
       setSuccess('Plan mensual actualizado.');
@@ -302,33 +302,30 @@ export function GymAttendance() {
             <span className="text-xs font-semibold text-gray-600">Filtro:</span>
             <button
               type="button"
-              className={`rounded-full border px-3 py-1 text-xs font-semibold ${
-                categoryFilter === 'ALL'
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-gray-200 bg-white text-gray-600'
-              }`}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold ${categoryFilter === 'ALL'
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-gray-200 bg-white text-gray-600'
+                }`}
               onClick={() => setCategoryFilter('ALL')}
             >
               Todos
             </button>
             <button
               type="button"
-              className={`rounded-full border px-3 py-1 text-xs font-semibold ${
-                categoryFilter === 'ADULT'
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-gray-200 bg-white text-gray-600'
-              }`}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold ${categoryFilter === 'ADULT'
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-gray-200 bg-white text-gray-600'
+                }`}
               onClick={() => setCategoryFilter('ADULT')}
             >
               Adultos
             </button>
             <button
               type="button"
-              className={`rounded-full border px-3 py-1 text-xs font-semibold ${
-                categoryFilter === 'CHILD'
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-gray-200 bg-white text-gray-600'
-              }`}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold ${categoryFilter === 'CHILD'
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-gray-200 bg-white text-gray-600'
+                }`}
               onClick={() => setCategoryFilter('CHILD')}
             >
               Infantiles
@@ -407,11 +404,10 @@ export function GymAttendance() {
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className={`h-11 w-11 rounded-full flex items-center justify-center border ${
-                      isPresent
-                        ? 'bg-green-50 border-green-200 text-green-700'
-                        : 'bg-red-50 border-red-200 text-red-700'
-                    }`}
+                    className={`h-11 w-11 rounded-full flex items-center justify-center border ${isPresent
+                      ? 'bg-green-50 border-green-200 text-green-700'
+                      : 'bg-red-50 border-red-200 text-red-700'
+                      }`}
                   >
                     <span className="material-symbols-outlined">
                       {isPresent ? 'done' : 'close'}
@@ -426,11 +422,10 @@ export function GymAttendance() {
                 </div>
                 <div className="shrink-0">
                   <span
-                    className={`text-xs font-bold rounded-full px-2 py-1 border ${
-                      isPresent
-                        ? 'bg-green-50 text-green-700 border-green-200'
-                        : 'bg-red-50 text-red-700 border-red-200'
-                    }`}
+                    className={`text-xs font-bold rounded-full px-2 py-1 border ${isPresent
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : 'bg-red-50 text-red-700 border-red-200'
+                      }`}
                   >
                     {isPresent ? 'PRESENTE' : 'AUSENTE'}
                   </span>

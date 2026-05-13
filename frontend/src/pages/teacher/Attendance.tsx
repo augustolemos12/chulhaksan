@@ -14,7 +14,7 @@ const students: StudentAttendance[] = [
     id: 1,
     name: 'Mateo García',
     belt: 'Cinturón Blanco',
-    beltColor: 'bg-white border border-gray-300',
+    beltColor: 'bg-surface border border-gray-300',
     avatar:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDWty76--705yT24M48_A_ZBjH-8h70y_Qm_zVlqpOVu9U5kGmSkphSFaODPCWWpdlP67kcxR7UxDHBGsLOBAIAJFZYAtY4qi1r7RKfx_HT25-t1Mq5XtLg_iHu0o4EMWuUeYTwMo5_JIqy4NKcZoPUYxGX9MRRveahm5ml55J6SVjE-A5sT4Dg7QaHmIqbUqRy3URbikhL4VenB1tMFhXerkXCSmWxuJ3xqehbERvmiTZ5RvSvxYpzd3-6leuIt9CyBaQN_8zZd6FP',
     present: true,
@@ -43,14 +43,14 @@ const weekDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 
 function StudentCard({ student }: { student: StudentAttendance }) {
   return (
-    <div className="flex items-center justify-between bg-white px-4 py-3 rounded-xl shadow-sm border border-[#e7cfcf]">
+    <div className="flex items-center justify-between bg-surface px-4 py-3 rounded-xl shadow-soft border border-[#e7cfcf]">
       <div className="flex items-center gap-4">
         <div
-          className="h-12 w-12 rounded-full bg-cover bg-center border-2 border-gray-200"
+          className="h-12 w-12 rounded-full bg-cover bg-center border-2 border-border"
           style={{ backgroundImage: `url("${student.avatar}")` }}
         />
         <div>
-          <p className="font-semibold text-[#1b0d0d]">{student.name}</p>
+          <p className="font-semibold text-text">{student.name}</p>
           <div className="flex items-center gap-2 mt-1">
             <div className={`w-3 h-3 rounded-full ${student.beltColor}`} />
             <span className="text-xs text-[#9a4c4c]">{student.belt}</span>
@@ -72,8 +72,8 @@ export function Attendance() {
   const presentCount = students.filter((student) => student.present).length;
 
   return (
-    <div className="min-h-screen bg-background-light flex flex-col">
-      <header className="sticky top-0 z-20 bg-background-light/90 backdrop-blur-md border-b border-[#e7cfcf]">
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-md border-b border-[#e7cfcf]">
         <div className="flex items-center justify-between p-4 max-w-2xl mx-auto">
           <Link
             to="/profesor/alumnos"
@@ -91,7 +91,7 @@ export function Attendance() {
       </header>
 
       <main className="flex-1 max-w-2xl mx-auto w-full pb-32 space-y-5 p-4">
-        <section className="bg-white rounded-xl border border-[#e7cfcf] p-4">
+        <section className="bg-surface rounded-xl border border-[#e7cfcf] p-4">
           <div className="flex justify-between items-center mb-4">
             <button>
               <span className="material-symbols-outlined">chevron_left</span>
@@ -117,7 +117,7 @@ export function Attendance() {
                 className={`h-10 rounded-full ${
                   index === 4
                     ? 'bg-primary text-white'
-                    : 'text-[#1b0d0d] hover:bg-gray-100'
+                    : 'text-text hover:bg-gray-100'
                 }`}
               >
                 {index + 1}
@@ -145,7 +145,7 @@ export function Attendance() {
         </section>
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 bg-background-light/95 backdrop-blur-md p-4">
+      <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md p-4">
         <div className="max-w-2xl mx-auto">
           <p className="text-center text-sm mb-3">
             {presentCount} estudiantes presentes

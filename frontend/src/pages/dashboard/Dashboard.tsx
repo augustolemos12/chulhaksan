@@ -24,6 +24,8 @@ type TeacherSummary = {
   assignedAt?: string;
 };
 
+import { BottomNavBar } from '../../components/ui/BottomNavBar';
+
 export function Dashboard() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -229,69 +231,80 @@ export function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background-light">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       <DashboardHeader
         title={title}
         onLogout={handleLogout}
       />
 
-      <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-5">
+      <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-28 md:pb-8 space-y-6">
         <ProfileCard
           profile={profile}
           displayName={displayName}
         />
 
         {role === 'STUDENT' && (
-          <>
-            <DashboardCard>
-              <SectionTitle
-                eyebrow="Profesor"
-                title={
-                  teacherSummary
-                    ? `Prof. ${teacherSummary.firstName} ${teacherSummary.lastName}`
-                    : 'Sin profesor asignado'
-                }
-                subtitle="Profesor actual"
-              />
-            </DashboardCard>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
 
-            <DashboardCard>
-              <SectionTitle
-                title="Acceso rápido"
-                subtitle="Herramientas principales"
-              />
+            <div className="md:col-span-8">
+              <DashboardCard className="h-full bg-gradient-to-br from-primary to-[#a81c00] text-white border-none relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-surface/10 rounded-full -translate-y-1/2 translate-x-1/3 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="relative z-10 flex flex-col justify-between h-full min-h-[200px]">
+                  <div>
+                    <span className="inline-block px-3 py-1 bg-surface/20 rounded-full text-xs font-bold mb-4 backdrop-blur-sm uppercase tracking-wider">
+                      Tu Profesor
+                    </span>
+                    <h3 className="font-display text-2xl md:text-3xl font-bold mb-2">
+                      {teacherSummary
+                        ? `Prof. ${teacherSummary.firstName} ${teacherSummary.lastName}`
+                        : 'Sin profesor asignado'}
+                    </h3>
+                    <p className="text-white/80 mb-6 flex items-center gap-2 font-medium">
+                      <span className="material-symbols-outlined text-sm">info</span>
+                      Contacta a tu instructor para tu próxima clase
+                    </p>
+                  </div>
+                  <div>
+                    <button className="bg-surface text-primary px-6 py-2.5 rounded-full font-bold hover:bg-surface transition-colors shadow-md active:scale-95">
+                      Ver Detalles
+                    </button>
+                  </div>
+                </div>
+              </DashboardCard>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <ActionCard
-                  to="/pagos"
-                  icon="payments"
-                  title="Pagos"
-                  subtitle="Cuotas y estado"
+            <div className="md:col-span-4">
+              <DashboardCard className="h-full p-4 flex flex-col justify-center">
+                <SectionTitle
+                  title="Acceso Rápido"
+                  subtitle="Herramientas principales"
                 />
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <ActionCard
+                    to="/pagos"
+                    icon="payments"
+                    title="Pagos"
+                  />
+                  <ActionCard
+                    to="/asistencia"
+                    icon="checklist"
+                    title="Asist."
+                  />
+                  <ActionCard
+                    to="/formas"
+                    icon="link"
+                    title="Formas"
+                  />
+                  <ActionCard
+                    to="/perfil"
+                    icon="person"
+                    title="Perfil"
+                  />
+                </div>
+              </DashboardCard>
+            </div>
 
-                <ActionCard
-                  to="/asistencia"
-                  icon="checklist"
-                  title="Asistencia"
-                  subtitle="Historial"
-                />
-
-                <ActionCard
-                  to="/formas"
-                  icon="link"
-                  title="Formas"
-                  subtitle="Material"
-                />
-
-                <ActionCard
-                  to="/perfil"
-                  icon="person"
-                  title="Perfil"
-                  subtitle="Datos personales"
-                />
-              </div>
-            </DashboardCard>
-          </>
+          </div>
         )}
 
         {role === 'TEACHER' && (
@@ -330,7 +343,7 @@ export function Dashboard() {
               >
                 <button
                   className={`mt-4 w-full rounded-xl text-white text-sm font-semibold py-2 ${mpConnected
-                    ? 'bg-green-600'
+                    ? 'bg-success'
                     : 'bg-primary'
                     }`}
                   type="button"
@@ -346,7 +359,7 @@ export function Dashboard() {
                 </button>
 
                 {mpMessage && (
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-muted mt-2">
                     {mpMessage}
                   </p>
                 )}
@@ -418,6 +431,7 @@ export function Dashboard() {
           </>
         )}
       </main>
+      <BottomNavBar />
     </div>
   );
 }

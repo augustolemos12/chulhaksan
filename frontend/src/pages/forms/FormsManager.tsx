@@ -156,7 +156,7 @@ export function FormsManager() {
 
       <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-4">
         <form
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3"
+          className="bg-surface rounded-2xl border border-border shadow-soft p-4 space-y-3"
           onSubmit={handleCreate}
         >
           <p className="text-sm font-bold">Nueva forma</p>
@@ -165,7 +165,7 @@ export function FormsManager() {
               Título
             </span>
             <input
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-border px-3 py-2 text-sm"
               placeholder="Ej: Forma 1 - Taegeuk Il Jang"
               value={createEdit.title}
               onChange={(e) =>
@@ -180,7 +180,7 @@ export function FormsManager() {
               URL
             </span>
             <input
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-border px-3 py-2 text-sm"
               placeholder="YouTube / Drive / etc"
               value={createEdit.url}
               onChange={(e) => setCreateEdit((p) => ({ ...p, url: e.target.value }))}
@@ -197,7 +197,7 @@ export function FormsManager() {
           </button>
         </form>
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div className="rounded-2xl border border-border bg-surface p-4 shadow-soft">
           <button
             type="button"
             className="flex w-full items-center justify-between gap-3"
@@ -205,12 +205,12 @@ export function FormsManager() {
           >
             <div className="text-left">
               <p className="text-sm font-bold">Listado de formas</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted">
                 {forms.length} forma{forms.length === 1 ? '' : 's'}
               </p>
             </div>
             <span
-              className={`material-symbols-outlined text-gray-500 transition-transform ${
+              className={`material-symbols-outlined text-muted transition-transform ${
                 showFormsMenu ? 'rotate-180' : ''
               }`}
             >
@@ -221,7 +221,7 @@ export function FormsManager() {
           {showFormsMenu && (
             <div className="mt-3 space-y-3">
               {loading && (
-                <div className="bg-white p-4 rounded-xl text-sm text-gray-500 border border-gray-100">
+                <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">
                   Cargando formas...
                 </div>
               )}
@@ -231,7 +231,7 @@ export function FormsManager() {
                 </div>
               )}
               {!loading && !error && forms.length === 0 && (
-                <div className="bg-white p-4 rounded-xl text-sm text-gray-500 border border-gray-100">
+                <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">
                   Todavia no hay formas cargadas.
                 </div>
               )}
@@ -240,7 +240,7 @@ export function FormsManager() {
                 {forms.map((form) => (
                   <div
                     key={form.id}
-                    className="flex items-center gap-3 bg-white p-3 rounded-xl justify-between shadow-sm border border-gray-100"
+                    className="flex items-center gap-3 bg-surface p-3 rounded-xl justify-between shadow-soft border border-border"
                   >
                     <a
                       className="flex items-center gap-3 flex-1 min-w-0"
@@ -252,10 +252,10 @@ export function FormsManager() {
                         <span className="material-symbols-outlined">link</span>
                       </div>
                       <div className="flex flex-col justify-center min-w-0">
-                        <p className="text-[#1b0d0d] text-base font-semibold leading-tight truncate">
+                        <p className="text-text text-base font-semibold leading-tight truncate">
                           {form.title}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1 truncate">{form.url}</p>
+                        <p className="text-xs text-muted mt-1 truncate">{form.url}</p>
                       </div>
                     </a>
                     <div className="flex items-center gap-2 shrink-0">
@@ -284,7 +284,7 @@ export function FormsManager() {
 
       {editing && (
         <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
+          <div className="bg-surface w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Editar forma</h2>
               <button
@@ -305,7 +305,7 @@ export function FormsManager() {
                   Título
                 </span>
                 <input
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                   placeholder="Ej: Forma 1 - Taegeuk Il Jang"
                   value={edit.title}
                   onChange={(e) =>
@@ -321,7 +321,7 @@ export function FormsManager() {
                   URL
                 </span>
                 <input
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                   placeholder="YouTube / Drive / etc"
                   value={edit.url}
                   onChange={(e) => setEdit((p) => ({ ...p, url: e.target.value }))}
