@@ -52,6 +52,9 @@ export class TeachersService {
         },
         include: {
           user: true,
+          classGroups: {
+            where: { isActive: true }
+          }
         },
       });
 
@@ -86,7 +89,12 @@ export class TeachersService {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
-        include: { user: true },
+        include: { 
+          user: true,
+          classGroups: {
+            where: { isActive: true }
+          }
+        },
       }),
       this.prisma.teacher.count({ where }),
     ]);
@@ -105,7 +113,12 @@ export class TeachersService {
   async findOne(id: number) {
     const teacher = await this.prisma.teacher.findFirst({
       where: { id, deletedAt: null },
-      include: { user: true },
+      include: { 
+        user: true,
+        classGroups: {
+          where: { isActive: true }
+        }
+      },
     });
 
     if (!teacher) {
@@ -121,7 +134,12 @@ export class TeachersService {
     const updatedTeacher = await this.prisma.teacher.update({
       where: { id },
       data: updateTeacherDto,
-      include: { user: true },
+      include: { 
+        user: true,
+        classGroups: {
+          where: { isActive: true }
+        }
+      },
     });
 
     return this.mapTeacherResponse(updatedTeacher);

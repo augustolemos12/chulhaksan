@@ -32,6 +32,13 @@ export class StudentQueryDto {
   @IsPositive()
   gymId?: number;
 
+  @ApiPropertyOptional({ description: 'Filtrar por comisión', example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  classGroupId?: number;
+
   @ApiPropertyOptional({ description: 'Filtrar por categoría', enum: StudentCategory })
   @IsOptional()
   @IsEnum(StudentCategory)

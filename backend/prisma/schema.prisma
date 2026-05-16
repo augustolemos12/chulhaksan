@@ -87,8 +87,8 @@ model User {
 
   mustChangePassword Boolean @default(true)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   teacher Teacher?
@@ -110,12 +110,13 @@ model Teacher {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  gyms    Gym[]
-  students Student[]
+  gyms        Gym[]
+  students    Student[]
+  classGroups ClassGroup[]
 }
 
 //
@@ -130,21 +131,18 @@ model Gym {
 
   isActive Boolean @default(true)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: Restrict)
 
-  students Student[]
-
-  classPlans  ClassPlan[]
-  attendances Attendance[]
+  students    Student[]
+  classGroups ClassGroup[]
 
   @@index([teacherId])
   @@index([deletedAt])
   @@index([isActive])
-
 }
 
 //
@@ -164,18 +162,20 @@ model Student {
   email   String?
   address String?
 
-  gymId     Int
-  teacherId Int
+  gymId        Int
+  teacherId    Int
+  classGroupId Int
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   currentBelt Belt @default(WHITE)
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  gym     Gym     @relation(fields: [gymId], references: [id])
-  teacher Teacher @relation(fields: [teacherId], references: [id])
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gym        Gym        @relation(fields: [gymId], references: [id])
+  teacher    Teacher    @relation(fields: [teacherId], references: [id])
+  classGroup ClassGroup @relation(fields: [classGroupId], references: [id], onDelete: Restrict)
 
   belts       StudentBelt[]
   attendances Attendance[]
@@ -228,8 +228,8 @@ model Fee {
 
   lateFeeApplied Boolean @default(false)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   student  Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -275,23 +275,61 @@ model Transaction {
 }
 
 //
+// CLASS GROUPS
+//
+
+model ClassGroup {
+  id Int @id @default(autoincrement())
+
+  teacherId Int
+  gymId     Int
+
+  name String?
+
+  category StudentCategory
+
+  daysOfWeek Json
+
+  startTime String
+  endTime   String
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  gym     Gym     @relation(fields: [gymId], references: [id], onDelete: Cascade)
+
+  students    Student[]
+  attendances Attendance[]
+  classPlans  ClassPlan[]
+
+  @@index([teacherId])
+  @@index([gymId])
+}
+
+//
 // ATTENDANCE
 //
 
 model Attendance {
   id Int @id @default(autoincrement())
 
-  studentId Int
-  gymId     Int
+  studentId    Int
+  classGroupId Int
 
   date    DateTime
   present Boolean
 
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  gym     Gym     @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classGroup ClassGroup @relation(fields: [classGroupId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, date])
-  @@index([gymId])
+  @@index([classGroupId])
   @@index([date])
 }
 
@@ -302,16 +340,19 @@ model Attendance {
 model ClassPlan {
   id Int @id @default(autoincrement())
 
-  gymId Int
+  classGroupId Int
 
   month Int
   year  Int
 
   totalClasses Int
 
-  gym Gym @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@unique([gymId, month, year])
+  classGroup ClassGroup @relation(fields: [classGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([classGroupId, month, year])
 }
 
 //

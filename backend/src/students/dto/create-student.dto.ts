@@ -33,6 +33,11 @@ export class CreateStudentDto {
   @IsPositive()
   gymId: number;
 
+  @ApiProperty({ description: 'ID de la comisión/clase', example: 1 })
+  @IsInt()
+  @IsPositive()
+  classGroupId: number;
+
   @ApiPropertyOptional({ description: 'ID del Profesor (Requerido solo si el creador es Admin)', example: 1 })
   @IsOptional()
   @IsInt()

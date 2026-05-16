@@ -23,6 +23,7 @@ async function main() {
   await prisma.studentBelt.deleteMany();
   await prisma.student.deleteMany();
   await prisma.classPlan.deleteMany();
+  await prisma.classGroup.deleteMany();
   await prisma.gym.deleteMany();
   await prisma.teacher.deleteMany();
   await prisma.user.deleteMany();
@@ -99,13 +100,67 @@ async function main() {
     },
   });
 
-  // 5. Create Students
+  // 5. Create ClassGroups
+  console.log('👥 Creating ClassGroups...');
+  const classGroup1 = await prisma.classGroup.create({
+    data: {
+      teacherId: teacher1.id,
+      gymId: gym1.id,
+      name: 'Adultos Martes/Jueves',
+      category: StudentCategory.ADULT,
+      daysOfWeek: ['MARTES', 'JUEVES'],
+      startTime: '19:00',
+      endTime: '20:30',
+      isActive: true,
+    }
+  });
+
+  const classGroup2 = await prisma.classGroup.create({
+    data: {
+      teacherId: teacher1.id,
+      gymId: gym1.id,
+      name: 'Infantiles Martes/Jueves',
+      category: StudentCategory.CHILD,
+      daysOfWeek: ['MARTES', 'JUEVES'],
+      startTime: '17:00',
+      endTime: '18:30',
+      isActive: true,
+    }
+  });
+
+  const classGroup3 = await prisma.classGroup.create({
+    data: {
+      teacherId: teacher2.id,
+      gymId: gym2.id,
+      name: 'Adultos Lunes/Miercoles',
+      category: StudentCategory.ADULT,
+      daysOfWeek: ['LUNES', 'MIERCOLES'],
+      startTime: '20:00',
+      endTime: '21:30',
+      isActive: true,
+    }
+  });
+
+  const classGroup4 = await prisma.classGroup.create({
+    data: {
+      teacherId: teacher2.id,
+      gymId: gym2.id,
+      name: 'Infantiles Lunes/Miercoles',
+      category: StudentCategory.CHILD,
+      daysOfWeek: ['LUNES', 'MIERCOLES'],
+      startTime: '18:00',
+      endTime: '19:30',
+      isActive: true,
+    }
+  });
+
+  // 6. Create Students
   console.log('🥋 Creating Students...');
   const studentData = [
-    { dni: 'student1', firstName: 'Carlos', lastName: 'López', category: StudentCategory.ADULT, gymId: gym1.id, teacherId: teacher1.id },
-    { dni: 'student2', firstName: 'Ana', lastName: 'Martínez', category: StudentCategory.CHILD, gymId: gym1.id, teacherId: teacher1.id },
-    { dni: 'student3', firstName: 'Luis', lastName: 'Rodríguez', category: StudentCategory.ADULT, gymId: gym2.id, teacherId: teacher2.id },
-    { dni: 'student4', firstName: 'Sofía', lastName: 'Fernández', category: StudentCategory.CHILD, gymId: gym2.id, teacherId: teacher2.id },
+    { dni: 'student1', firstName: 'Carlos', lastName: 'López', category: StudentCategory.ADULT, gymId: gym1.id, teacherId: teacher1.id, classGroupId: classGroup1.id },
+    { dni: 'student2', firstName: 'Ana', lastName: 'Martínez', category: StudentCategory.CHILD, gymId: gym1.id, teacherId: teacher1.id, classGroupId: classGroup2.id },
+    { dni: 'student3', firstName: 'Luis', lastName: 'Rodríguez', category: StudentCategory.ADULT, gymId: gym2.id, teacherId: teacher2.id, classGroupId: classGroup3.id },
+    { dni: 'student4', firstName: 'Sofía', lastName: 'Fernández', category: StudentCategory.CHILD, gymId: gym2.id, teacherId: teacher2.id, classGroupId: classGroup4.id },
   ];
 
   for (const data of studentData) {
@@ -121,6 +176,7 @@ async function main() {
             lastName: data.lastName,
             category: data.category,
             gymId: data.gymId,
+            classGroupId: data.classGroupId,
             teacherId: data.teacherId,
             currentBelt: Belt.WHITE,
             belts: {

@@ -19,6 +19,15 @@ export class StudentsService {
         name: true,
       },
     },
+    classGroup: {
+      select: {
+        id: true,
+        name: true,
+        startTime: true,
+        endTime: true,
+        daysOfWeek: true,
+      },
+    },
     teacher: {
       select: {
         id: true,
@@ -44,7 +53,7 @@ export class StudentsService {
 
   //Metodo que permite crear un alumno, ya sea para admin o para un profesor 
   async create(actorUserId: number, isAdmin: boolean, createStudentDto: CreateStudentDto) {
-    const { dni, password, firstName, lastName, gymId, category, currentBelt, phone, email, address, teacherId: dtoTeacherId } = createStudentDto;
+    const { dni, password, firstName, lastName, gymId, classGroupId, category, currentBelt, phone, email, address, teacherId: dtoTeacherId } = createStudentDto;
     const normalizedFirstName = firstName.trim().toUpperCase();
     const normalizedLastName = lastName.trim().toUpperCase();
 
@@ -56,13 +65,13 @@ export class StudentsService {
       //Busca el profesor por ID
       teacher = await this.prisma.teacher.findUnique({
         where: { id: dtoTeacherId },
-        include: { gyms: true },
+        include: { gyms: true, classGroups: true },
       });
     } else {
       //Si no es admin, busca el profesor por ID del usuario logueado
       teacher = await this.prisma.teacher.findUnique({
         where: { userId: actorUserId },
-        include: { gyms: true },
+        include: { gyms: true, classGroups: true },
       });
     }
 
@@ -73,6 +82,11 @@ export class StudentsService {
     const gym = teacher.gyms.find(g => g.id === gymId && g.deletedAt === null);
     if (!gym) {
       throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado');
+    }
+    //Verifica que la comisión pertenece al profesor y al gimnasio
+    const classGroup = teacher.classGroups.find(c => c.id === classGroupId && c.gymId === gymId && c.isActive);
+    if (!classGroup) {
+      throw new ForbiddenException('La comisión no existe, no está activa o no pertenece al profesor/gimnasio seleccionado');
     }
     //Verifica que no existe un usuario con el mismo DNI
     const existingUser = await this.prisma.user.findUnique({ where: { dni } });
@@ -104,6 +118,7 @@ export class StudentsService {
             email,
             address,
             gymId,
+            classGroupId,
             teacherId: teacher.id,
             currentBelt,
             belts: {
@@ -131,7 +146,7 @@ export class StudentsService {
   }
   //Método para obtener todos los alumnos, que pueden ser filtrados y paginados
   async findAll(query: StudentQueryDto, internalTeacherId?: number) {
-    const { search, gymId, category, belt, includeDeleted, page = 1, limit = 10 } = query;
+    const { search, gymId, classGroupId, category, belt, includeDeleted, page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.StudentWhereInput = {};
@@ -145,6 +160,7 @@ export class StudentsService {
     }
 
     if (gymId) where.gymId = gymId;
+    if (classGroupId) where.classGroupId = classGroupId;
     if (category) where.category = category;
     if (belt) where.currentBelt = belt;
 
@@ -222,7 +238,7 @@ export class StudentsService {
     if (teacherUserId) {
       const teacher = await this.prisma.teacher.findUnique({
         where: { userId: teacherUserId },
-        include: { gyms: true },
+        include: { gyms: true, classGroups: true },
       });
 
       if (!teacher || student.teacherId !== teacher.id) {
@@ -235,12 +251,28 @@ export class StudentsService {
           throw new ForbiddenException('El gimnasio no existe o no te pertenece');
         }
       }
-    } else if (updateStudentDto.gymId) {
-      const gym = await this.prisma.gym.findFirst({
-        where: { id: updateStudentDto.gymId, teacherId: student.teacherId, deletedAt: null },
-      });
-      if (!gym) {
-        throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado a este alumno');
+      if (updateStudentDto.classGroupId) {
+        const classGroup = teacher.classGroups.find(c => c.id === updateStudentDto.classGroupId && c.isActive);
+        if (!classGroup) {
+          throw new ForbiddenException('La comisión no existe, no está activa o no te pertenece');
+        }
+      }
+    } else {
+      if (updateStudentDto.gymId) {
+        const gym = await this.prisma.gym.findFirst({
+          where: { id: updateStudentDto.gymId, teacherId: student.teacherId, deletedAt: null },
+        });
+        if (!gym) {
+          throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado a este alumno');
+        }
+      }
+      if (updateStudentDto.classGroupId) {
+        const classGroup = await this.prisma.classGroup.findFirst({
+          where: { id: updateStudentDto.classGroupId, teacherId: student.teacherId, isActive: true },
+        });
+        if (!classGroup) {
+          throw new ForbiddenException('La comisión no existe, no está activa o no pertenece al profesor asignado a este alumno');
+        }
       }
     }
 

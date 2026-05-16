@@ -17,6 +17,17 @@ export class GymService {
         lastName: true,
       },
     },
+    classGroups: {
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        category: true,
+        daysOfWeek: true,
+        startTime: true,
+        endTime: true,
+      },
+    },
   };
 
   private mapGymResponse(gym: any) {
