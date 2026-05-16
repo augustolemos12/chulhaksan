@@ -73,6 +73,17 @@ enum FeeStatus {
   OVERDUE
 }
 
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+
 //
 // USERS
 //
@@ -114,7 +125,6 @@ model Teacher {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  gyms        Gym[]
   students    Student[]
   classGroups ClassGroup[]
 }
@@ -127,20 +137,15 @@ model Gym {
   id   Int    @id @default(autoincrement())
   name String
 
-  teacherId Int?
-
   isActive Boolean @default(true)
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  teacher Teacher? @relation(fields: [teacherId], references: [id], onDelete: Restrict)
-
   students    Student[]
   classGroups ClassGroup[]
 
-  @@index([teacherId])
   @@index([deletedAt])
   @@index([isActive])
 }
@@ -288,7 +293,7 @@ model ClassGroup {
 
   category StudentCategory
 
-  daysOfWeek Json
+  daysOfWeek DayOfWeek[]
 
   startTime String
   endTime   String

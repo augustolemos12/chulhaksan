@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClassGroupDto } from './dto/create-class-group.dto';
 import { UpdateClassGroupDto } from './dto/update-class-group.dto';
@@ -25,39 +25,93 @@ export class ClassGroupsService {
     },
   };
 
-  async create(actorUserId: number, isAdmin: boolean, createClassGroupDto: CreateClassGroupDto) {
-    const { teacherId: dtoTeacherId, gymId, daysOfWeek, ...rest } = createClassGroupDto;
+  private validateTimeRange(startTime: string, endTime: string) {
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(startTime) || !timeRegex.test(endTime)) {
+      throw new BadRequestException('El formato de hora debe ser HH:mm');
+    }
+    if (startTime >= endTime) {
+      throw new BadRequestException('La hora de inicio debe ser menor a la hora de fin');
+    }
+  }
 
-    let teacher;
+  private async checkForConflicts(
+    teacherId: number,
+    gymId: number,
+    daysOfWeek: any[],
+    startTime: string,
+    endTime: string,
+    category: any,
+    excludeId?: number,
+  ) {
+    const whereClause: any = {
+      teacherId,
+      gymId,
+      category,
+      startTime,
+      endTime,
+      isActive: true,
+    };
+    
+    if (excludeId) {
+      whereClause.id = { not: excludeId };
+    }
+
+    const existingGroups = await this.prisma.classGroup.findMany({
+      where: whereClause,
+    });
+
+    for (const group of existingGroups) {
+      // Verificar si hay intersección de días
+      const hasOverlappingDays = group.daysOfWeek.some((day: any) => daysOfWeek.includes(day));
+      if (hasOverlappingDays) {
+        throw new ConflictException('Ya existe una comisión activa con estas características en el mismo horario y días');
+      }
+    }
+  }
+
+  async create(actorUserId: number, isAdmin: boolean, createClassGroupDto: CreateClassGroupDto) {
+    const { teacherId: dtoTeacherId, gymId, daysOfWeek, startTime, endTime, category, ...rest } = createClassGroupDto;
+
+    this.validateTimeRange(startTime, endTime);
+
+    let teacherIdToUse: number;
+
     if (isAdmin) {
       if (!dtoTeacherId) {
         throw new ForbiddenException('Un administrador debe especificar el teacherId al crear una comisión');
       }
-      teacher = await this.prisma.teacher.findUnique({
-        where: { id: dtoTeacherId },
-        include: { gyms: true },
-      });
+      const teacher = await this.prisma.teacher.findUnique({ where: { id: dtoTeacherId } });
+      if (!teacher) {
+        throw new NotFoundException('El profesor asignado no existe');
+      }
+      teacherIdToUse = teacher.id;
     } else {
-      teacher = await this.prisma.teacher.findUnique({
-        where: { userId: actorUserId },
-        include: { gyms: true },
-      });
+      const teacher = await this.prisma.teacher.findUnique({ where: { userId: actorUserId } });
+      if (!teacher) {
+        throw new ForbiddenException('Perfil de profesor no encontrado');
+      }
+      teacherIdToUse = teacher.id;
     }
 
-    if (!teacher) {
-      throw new ForbiddenException('Profesor no encontrado o no asignado');
-    }
-
-    const gym = teacher.gyms.find((g) => g.id === gymId && g.deletedAt === null);
+    // Solo validar que el gym existe y no está eliminado (independiente del teacher)
+    const gym = await this.prisma.gym.findFirst({
+      where: { id: gymId, deletedAt: null },
+    });
     if (!gym) {
-      throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado');
+      throw new NotFoundException('El gimnasio no existe o está eliminado');
     }
+
+    await this.checkForConflicts(teacherIdToUse, gymId, daysOfWeek, startTime, endTime, category);
 
     const newClassGroup = await this.prisma.classGroup.create({
       data: {
         ...rest,
-        daysOfWeek: daysOfWeek as any,
-        teacherId: teacher.id,
+        category,
+        daysOfWeek,
+        startTime,
+        endTime,
+        teacherId: teacherIdToUse,
         gymId,
       },
       include: this.commonInclude,
@@ -132,38 +186,60 @@ export class ClassGroupsService {
       throw new NotFoundException(`Comisión con ID ${id} no encontrada`);
     }
 
+    // Ownership check for updates
     if (teacherUserId) {
       const teacher = await this.prisma.teacher.findUnique({
         where: { userId: teacherUserId },
-        include: { gyms: true },
       });
-
       if (!teacher || classGroup.teacherId !== teacher.id) {
         throw new ForbiddenException('No tienes permiso para modificar esta comisión');
       }
+    }
 
-      if (updateClassGroupDto.gymId) {
-        const gym = teacher.gyms.find((g) => g.id === updateClassGroupDto.gymId && g.deletedAt === null);
-        if (!gym) {
-          throw new ForbiddenException('El gimnasio no existe o no te pertenece');
-        }
-      }
-    } else if (updateClassGroupDto.gymId) {
-       const gym = await this.prisma.gym.findFirst({
-        where: { id: updateClassGroupDto.gymId, teacherId: classGroup.teacherId, deletedAt: null },
+    const { daysOfWeek, startTime, endTime, category, gymId, ...rest } = updateClassGroupDto;
+
+    const newStartTime = startTime ?? classGroup.startTime;
+    const newEndTime = endTime ?? classGroup.endTime;
+    
+    if (startTime || endTime) {
+      this.validateTimeRange(newStartTime, newEndTime);
+    }
+
+    if (gymId) {
+      const gym = await this.prisma.gym.findFirst({
+        where: { id: gymId, deletedAt: null },
       });
       if (!gym) {
-        throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado a esta comisión');
+        throw new NotFoundException('El gimnasio no existe o está eliminado');
       }
     }
 
-    const { daysOfWeek, ...rest } = updateClassGroupDto;
-    
+    const finalGymId = gymId ?? classGroup.gymId;
+    const finalDaysOfWeek = daysOfWeek ?? classGroup.daysOfWeek;
+    const finalCategory = category ?? classGroup.category;
+
+    // Si se está reactivando o modificando atributos clave, chequear conflictos
+    if (updateClassGroupDto.isActive !== false) {
+      await this.checkForConflicts(
+        classGroup.teacherId,
+        finalGymId,
+        finalDaysOfWeek as any[],
+        newStartTime,
+        newEndTime,
+        finalCategory,
+        id
+      );
+    }
+
     const updatedClassGroup = await this.prisma.classGroup.update({
       where: { id },
       data: {
         ...rest,
-        ...(daysOfWeek && { daysOfWeek: daysOfWeek as any }),
+        category: finalCategory,
+        ...(daysOfWeek && { daysOfWeek }),
+        startTime: newStartTime,
+        endTime: newEndTime,
+        gymId: finalGymId,
       },
       include: this.commonInclude,
     });
@@ -189,17 +265,16 @@ export class ClassGroupsService {
       }
     }
 
-    try {
-      await this.prisma.classGroup.delete({
-        where: { id },
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
-         throw new ConflictException('No se puede eliminar la comisión porque tiene alumnos o registros asociados.');
-      }
-      throw error;
+    if (!classGroup.isActive) {
+      throw new BadRequestException('La comisión ya se encuentra inactiva');
     }
 
-    return { success: true, message: 'Comisión eliminada correctamente' };
+    // Soft delete actualizando isActive a false
+    await this.prisma.classGroup.update({
+      where: { id },
+      data: { isActive: false },
+    });
+
+    return { success: true, message: 'Comisión desactivada correctamente' };
   }
 }

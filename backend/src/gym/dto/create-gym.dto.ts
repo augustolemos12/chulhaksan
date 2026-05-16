@@ -13,13 +13,5 @@ export class CreateGymDto {
   @MaxLength(100)
   @Transform(({ value }) => value?.trim())
   name: string;
-
-  @ApiPropertyOptional({
-    example: 1,
-    description: 'ID del profesor propietario (opcional al crear)',
-  })
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  teacherId?: number;
-}
+}
+

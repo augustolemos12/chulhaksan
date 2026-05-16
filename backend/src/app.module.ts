@@ -8,6 +8,8 @@ import { GymModule } from './gym/gym.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { StudentsModule } from './students/students.module';
 import { ClassGroupsModule } from './class-groups/class-groups.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { ClassPlansModule } from './class-plans/class-plans.module';
 
 
 @Module({
@@ -19,6 +21,8 @@ import { ClassGroupsModule } from './class-groups/class-groups.module';
     TeachersModule,
     StudentsModule,
     ClassGroupsModule,
+    AttendanceModule,
+    ClassPlansModule,
   ],
   controllers: [AppController],
   providers: [AppService],

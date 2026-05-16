@@ -42,10 +42,10 @@ export class GymController {
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: any,
   ) {
-    return this.gymService.findOne(id, user);
+    return this.gymService.findOne(id);
   }
+
 
   @Patch(':id')
   @Roles(Role.ADMIN)

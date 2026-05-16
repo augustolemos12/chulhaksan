@@ -11,7 +11,6 @@ import * as bcrypt from 'bcrypt';
 export class StudentsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  //Métodos para incluir datos comunes en las consultas
   private readonly commonInclude = {
     gym: {
       select: {
@@ -40,7 +39,6 @@ export class StudentsService {
     },
   };
 
-  //Método que permite mapear la respuesta del alumno a la estructura deseada
   private mapStudentResponse(student: any) {
     if (!student) return null;
     const { user, ...studentData } = student;
@@ -51,51 +49,39 @@ export class StudentsService {
     };
   }
 
-  //Metodo que permite crear un alumno, ya sea para admin o para un profesor 
   async create(actorUserId: number, isAdmin: boolean, createStudentDto: CreateStudentDto) {
-    const { dni, password, firstName, lastName, gymId, classGroupId, category, currentBelt, phone, email, address, teacherId: dtoTeacherId } = createStudentDto;
+    const { dni, password, firstName, lastName, classGroupId, category, currentBelt, phone, email, address } = createStudentDto;
     const normalizedFirstName = firstName.trim().toUpperCase();
     const normalizedLastName = lastName.trim().toUpperCase();
 
-    let teacher;
-    if (isAdmin) {
-      if (!dtoTeacherId) {
-        throw new ForbiddenException('Un administrador debe especificar el teacherId al crear un alumno');
-      }
-      //Busca el profesor por ID
-      teacher = await this.prisma.teacher.findUnique({
-        where: { id: dtoTeacherId },
-        include: { gyms: true, classGroups: true },
-      });
-    } else {
-      //Si no es admin, busca el profesor por ID del usuario logueado
-      teacher = await this.prisma.teacher.findUnique({
-        where: { userId: actorUserId },
-        include: { gyms: true, classGroups: true },
-      });
+    // 1. Validar la Comisión (ClassGroup)
+    const classGroup = await this.prisma.classGroup.findUnique({
+      where: { id: classGroupId }
+    });
+
+    if (!classGroup || !classGroup.isActive) {
+      throw new NotFoundException('La comisión seleccionada no existe o está inactiva');
     }
 
-    if (!teacher) {
-      throw new ForbiddenException('Profesor no encontrado o no asignado');
+    // 2. Validar permisos
+    if (!isAdmin) {
+      const teacher = await this.prisma.teacher.findUnique({
+        where: { userId: actorUserId }
+      });
+
+      if (!teacher || classGroup.teacherId !== teacher.id) {
+        throw new ForbiddenException('No tienes permiso para asignar alumnos a esta comisión');
+      }
     }
-    //Verifica que el gimnasio pertenece al profesor 
-    const gym = teacher.gyms.find(g => g.id === gymId && g.deletedAt === null);
-    if (!gym) {
-      throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado');
-    }
-    //Verifica que la comisión pertenece al profesor y al gimnasio
-    const classGroup = teacher.classGroups.find(c => c.id === classGroupId && c.gymId === gymId && c.isActive);
-    if (!classGroup) {
-      throw new ForbiddenException('La comisión no existe, no está activa o no pertenece al profesor/gimnasio seleccionado');
-    }
-    //Verifica que no existe un usuario con el mismo DNI
+
+    // 3. Verificar duplicados de DNI
     const existingUser = await this.prisma.user.findUnique({ where: { dni } });
     if (existingUser) {
       throw new ConflictException('Ya existe un usuario con este DNI');
     }
-    //Encripta la contraseña
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    //Crea el nuevo usuario y el nuevo alumno
+
     try {
       const result = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
@@ -117,9 +103,9 @@ export class StudentsService {
             phone,
             email,
             address,
-            gymId,
-            classGroupId,
-            teacherId: teacher.id,
+            classGroupId: classGroup.id,
+            gymId: classGroup.gymId,     // Sincronizado
+            teacherId: classGroup.teacherId, // Sincronizado
             currentBelt,
             belts: {
               create: {
@@ -144,7 +130,7 @@ export class StudentsService {
       throw error;
     }
   }
-  //Método para obtener todos los alumnos, que pueden ser filtrados y paginados
+
   async findAll(query: StudentQueryDto, internalTeacherId?: number) {
     const { search, gymId, classGroupId, category, belt, includeDeleted, page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
@@ -196,7 +182,7 @@ export class StudentsService {
       },
     };
   }
-  //Metodo para obtener los alumnos de un profesor
+
   async findByTeacher(teacherUserId: number, query: StudentQueryDto) {
     const teacher = await this.prisma.teacher.findUnique({
       where: { userId: teacherUserId },
@@ -208,7 +194,7 @@ export class StudentsService {
 
     return this.findAll(query, teacher.id);
   }
-  //Metodo para obtener un alumno por ID
+
   async findOne(id: number) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
@@ -224,7 +210,7 @@ export class StudentsService {
 
     return this.mapStudentResponse(student);
   }
-  //Metodo para actualizar un alumno 
+
   async update(id: number, teacherUserId: number | null, updateStudentDto: UpdateStudentDto) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
@@ -235,67 +221,54 @@ export class StudentsService {
       throw new NotFoundException(`Alumno con ID ${id} no encontrado`);
     }
 
+    // 1. Validar Ownership (si es profesor)
     if (teacherUserId) {
       const teacher = await this.prisma.teacher.findUnique({
-        where: { userId: teacherUserId },
-        include: { gyms: true, classGroups: true },
+        where: { userId: teacherUserId }
       });
 
       if (!teacher || student.teacherId !== teacher.id) {
         throw new ForbiddenException('No tienes permiso para modificar este alumno');
       }
-
-      if (updateStudentDto.gymId) {
-        const gym = teacher.gyms.find(g => g.id === updateStudentDto.gymId && g.deletedAt === null);
-        if (!gym) {
-          throw new ForbiddenException('El gimnasio no existe o no te pertenece');
-        }
-      }
-      if (updateStudentDto.classGroupId) {
-        const classGroup = teacher.classGroups.find(c => c.id === updateStudentDto.classGroupId && c.isActive);
-        if (!classGroup) {
-          throw new ForbiddenException('La comisión no existe, no está activa o no te pertenece');
-        }
-      }
-    } else {
-      if (updateStudentDto.gymId) {
-        const gym = await this.prisma.gym.findFirst({
-          where: { id: updateStudentDto.gymId, teacherId: student.teacherId, deletedAt: null },
-        });
-        if (!gym) {
-          throw new ForbiddenException('El gimnasio no existe o no pertenece al profesor asignado a este alumno');
-        }
-      }
-      if (updateStudentDto.classGroupId) {
-        const classGroup = await this.prisma.classGroup.findFirst({
-          where: { id: updateStudentDto.classGroupId, teacherId: student.teacherId, isActive: true },
-        });
-        if (!classGroup) {
-          throw new ForbiddenException('La comisión no existe, no está activa o no pertenece al profesor asignado a este alumno');
-        }
-      }
     }
 
-    const { currentBelt, firstName, lastName, ...rest } = updateStudentDto;
-    
+    const { currentBelt, firstName, lastName, classGroupId, gymId, teacherId, ...rest } = updateStudentDto;
     const dataToUpdate: Prisma.StudentUpdateInput = { ...rest };
 
-    if (firstName) {
-      dataToUpdate.firstName = firstName.trim().toUpperCase();
+    // 2. Manejar cambio de Comisión y forzar consistencia
+    const effectiveClassGroupId = classGroupId || student.classGroupId;
+    
+    const currentClassGroup = await this.prisma.classGroup.findUnique({
+      where: { id: effectiveClassGroupId }
+    });
+
+    if (!currentClassGroup || !currentClassGroup.isActive) {
+      throw new NotFoundException('La comisión asignada no existe o está inactiva');
     }
-    if (lastName) {
-      dataToUpdate.lastName = lastName.trim().toUpperCase();
+
+    // Si se cambia la comisión, validar que la nueva también sea del profesor
+    if (classGroupId && classGroupId !== student.classGroupId && teacherUserId) {
+      const teacher = await this.prisma.teacher.findUnique({ where: { userId: teacherUserId } });
+      if (currentClassGroup.teacherId !== teacher?.id) {
+        throw new ForbiddenException('No puedes mover al alumno a una comisión que no te pertenece');
+      }
     }
+
+    // Sincronización estricta: ignora gymId/teacherId manuales del DTO
+    dataToUpdate.classGroup = { connect: { id: effectiveClassGroupId } };
+    dataToUpdate.gym = { connect: { id: currentClassGroup.gymId } };
+    dataToUpdate.teacher = { connect: { id: currentClassGroup.teacherId } };
+
+    if (firstName) dataToUpdate.firstName = firstName.trim().toUpperCase();
+    if (lastName) dataToUpdate.lastName = lastName.trim().toUpperCase();
 
     if (currentBelt && currentBelt !== student.currentBelt) {
       dataToUpdate.currentBelt = currentBelt;
       dataToUpdate.belts = {
-        create: {
-          belt: currentBelt,
-        },
+        create: { belt: currentBelt },
       };
     }
-    //Actualiza el alumno y retorna el alumno actualizado
+
     const updatedStudent = await this.prisma.student.update({
       where: { id },
       data: dataToUpdate,
@@ -307,7 +280,7 @@ export class StudentsService {
 
     return this.mapStudentResponse(updatedStudent);
   }
-  //Metodo para eliminar un alumno
+
   async remove(id: number, teacherUserId: number | null) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
@@ -343,7 +316,7 @@ export class StudentsService {
 
     return { success: true, message: 'Alumno eliminado correctamente' };
   }
-  //Metodo para actualizar el propio perfil de un alumno
+
   async updateOwnProfile(userId: number, updateOwnProfileDto: UpdateOwnStudentProfileDto) {
     const student = await this.prisma.student.findUnique({
       where: { userId },
@@ -365,8 +338,8 @@ export class StudentsService {
 
     return this.mapStudentResponse(updatedStudent);
   }
-  //Metodo para obtener el propio perfil de un alumno
-async findOwnProfile(userId: number) {
+
+  async findOwnProfile(userId: number) {
     const student = await this.prisma.student.findUnique({
       where: { userId },
       include: {

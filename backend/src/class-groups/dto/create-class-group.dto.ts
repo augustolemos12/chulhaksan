@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { StudentCategory } from '@prisma/client';
+import { DayOfWeek, StudentCategory } from '@prisma/client';
 import { IsString, IsNotEmpty, IsInt, IsPositive, IsEnum, IsArray, IsOptional, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
 
@@ -25,10 +25,11 @@ export class CreateClassGroupDto {
   @IsEnum(StudentCategory)
   category: StudentCategory;
 
-  @ApiProperty({ description: 'Días de la semana', type: [String], example: ['LUNES', 'MIERCOLES'] })
+  @ApiProperty({ description: 'Días de la semana', enum: DayOfWeek, isArray: true, example: ['MONDAY', 'WEDNESDAY'] })
   @IsArray()
-  @IsString({ each: true })
-  daysOfWeek: string[];
+  @IsEnum(DayOfWeek, { each: true })
+  daysOfWeek: DayOfWeek[];
+
 
   @ApiProperty({ description: 'Hora de inicio (HH:mm)', example: '18:00' })
   @IsString()

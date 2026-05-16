@@ -3,14 +3,8 @@ import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsInt, IsOptional, IsString, Max, Min, IsPositive } from 'class-validator';
 
 export class GymQueryDto {
-  @ApiPropertyOptional({ description: 'Filtrar por profesor', example: 1 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  teacherId?: number;
-
   @ApiPropertyOptional({ description: 'Filtrar por estado activo', example: true })
+
   @IsOptional()
   @Transform(({ value }) => {
     if (value === 'true') return true;

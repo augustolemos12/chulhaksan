@@ -1,4 +1,4 @@
-import { PrismaClient, Role, StudentCategory, Belt } from '@prisma/client';
+import { PrismaClient, Role, StudentCategory, Belt, DayOfWeek } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcrypt';
@@ -87,7 +87,6 @@ async function main() {
   const gym1 = await prisma.gym.create({
     data: {
       name: 'Sede Central',
-      teacherId: teacher1.id,
       isActive: true,
     },
   });
@@ -95,10 +94,10 @@ async function main() {
   const gym2 = await prisma.gym.create({
     data: {
       name: 'Sede Norte',
-      teacherId: teacher2.id,
       isActive: true,
     },
   });
+
 
   // 5. Create ClassGroups
   console.log('👥 Creating ClassGroups...');
@@ -108,7 +107,7 @@ async function main() {
       gymId: gym1.id,
       name: 'Adultos Martes/Jueves',
       category: StudentCategory.ADULT,
-      daysOfWeek: ['MARTES', 'JUEVES'],
+      daysOfWeek: [DayOfWeek.TUESDAY, DayOfWeek.THURSDAY],
       startTime: '19:00',
       endTime: '20:30',
       isActive: true,
@@ -121,7 +120,7 @@ async function main() {
       gymId: gym1.id,
       name: 'Infantiles Martes/Jueves',
       category: StudentCategory.CHILD,
-      daysOfWeek: ['MARTES', 'JUEVES'],
+      daysOfWeek: [DayOfWeek.TUESDAY, DayOfWeek.THURSDAY],
       startTime: '17:00',
       endTime: '18:30',
       isActive: true,
@@ -134,7 +133,7 @@ async function main() {
       gymId: gym2.id,
       name: 'Adultos Lunes/Miercoles',
       category: StudentCategory.ADULT,
-      daysOfWeek: ['LUNES', 'MIERCOLES'],
+      daysOfWeek: [DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY],
       startTime: '20:00',
       endTime: '21:30',
       isActive: true,
@@ -147,12 +146,13 @@ async function main() {
       gymId: gym2.id,
       name: 'Infantiles Lunes/Miercoles',
       category: StudentCategory.CHILD,
-      daysOfWeek: ['LUNES', 'MIERCOLES'],
+      daysOfWeek: [DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY],
       startTime: '18:00',
       endTime: '19:30',
       isActive: true,
     }
   });
+
 
   // 6. Create Students
   console.log('🥋 Creating Students...');
