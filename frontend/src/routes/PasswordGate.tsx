@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { getProfile } from '../pages/auth/auth';
+import { authService } from '../modules/auth/api/authService';
 import React from 'react';
 
 export function PasswordGate({
@@ -7,7 +7,7 @@ export function PasswordGate({
 }: {
   children: React.ReactNode;
 }) {
-  const profile = getProfile();
+  const profile = authService.getCurrentProfile();
   const location = useLocation();
 
   if (

@@ -1,31 +1,68 @@
 import { Routes, Route } from 'react-router-dom';
 
-import { Home } from '../pages/Home';
-import { Login } from '../pages/auth/Login';
-import { ForgotPassword } from '../pages/auth/ForgotPassword';
-import { ForgotPasswordSuccess } from '../pages/auth/ForgotPasswordSuccess';
-import { ChangePassword } from '../pages/auth/ChangePassword';
-import { GymAttendance } from '../pages/GymAttendance';
+// Public Views
+import { LandingPage } from '../modules/public/views/LandingPage';
+import { GymAttendanceView } from '../modules/public/views/GymAttendanceView';
+import { LoginView } from '../modules/auth/views/LoginView';
+import { ForgotPasswordView } from '../modules/auth/views/ForgotPasswordView';
+import { ForgotPasswordSuccessView } from '../modules/auth/views/ForgotPasswordSuccessView';
+import { ChangePasswordView } from '../modules/auth/views/ChangePasswordView';
+
+
+// Dashboard
+import { DashboardView } from '../modules/dashboard/views/DashboardView';
+
+// Admin
+import { AdminStudentsView } from '../modules/admin/views/AdminStudentsView';
+import { AdminTeachersView } from '../modules/admin/views/AdminTeachersView';
+import { AdminGymsView } from '../modules/admin/views/AdminGymsView';
+
+// Teacher
+import { TeacherStudentsView } from '../modules/teacher/views/TeacherStudentsView';
+import { TeacherGymsView } from '../modules/teacher/views/TeacherGymsView';
+import { TeacherAttendanceView } from '../modules/teacher/views/TeacherAttendanceView';
+
+// Student
+import { StudentProfileView } from '../modules/student/views/StudentProfileView';
+import { MyAttendanceView } from '../modules/student/views/MyAttendanceView';
+import { MyFormsView } from '../modules/student/views/MyFormsView';
+import { StudentDetailsView } from '../modules/student/views/StudentDetailsView';
+
+// Shared
+import { FormsManagerView } from '../modules/forms/views/FormsManagerView';
 
 export function AppRoutes() {
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/recuperar" element={<ForgotPassword />} />
-            <Route
-                path="/recuperar/enviado"
-                element={<ForgotPasswordSuccess />}
-            />
-            <Route
-                path="/cambiar-contrasena"
-                element={<ChangePassword />}
-            />
+            {/* Public */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginView />} />
+            <Route path="/recuperar" element={<ForgotPasswordView />} />
+            <Route path="/recuperar/enviado" element={<ForgotPasswordSuccessView />} />
+            <Route path="/cambiar-contrasena" element={<ChangePasswordView />} />
+            <Route path="/attendance/:gymId" element={<GymAttendanceView />} />
 
-            <Route
-                path="/attendance/:gymId"
-                element={<GymAttendance />}
-            />
+            {/* Dashboard */}
+            <Route path="/dashboard" element={<DashboardView />} />
+
+            {/* Admin */}
+            <Route path="/admin/alumnos" element={<AdminStudentsView />} />
+            <Route path="/admin/profesores" element={<AdminTeachersView />} />
+            <Route path="/admin/gimnasios" element={<AdminGymsView />} />
+
+            {/* Teacher */}
+            <Route path="/profesor/alumnos" element={<TeacherStudentsView />} />
+            <Route path="/profesor/gimnasios" element={<TeacherGymsView />} />
+            <Route path="/profesor/gimnasios/:gymId/asistencia" element={<TeacherAttendanceView />} />
+
+            {/* Student */}
+            <Route path="/alumno/perfil" element={<StudentProfileView />} />
+            <Route path="/alumno/asistencia" element={<MyAttendanceView />} />
+            <Route path="/alumno/formas" element={<MyFormsView />} />
+            
+            {/* Shared */}
+            <Route path="/alumno/:dni" element={<StudentDetailsView />} />
+            <Route path="/formas" element={<FormsManagerView />} />
         </Routes>
     );
 }

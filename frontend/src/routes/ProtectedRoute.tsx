@@ -1,16 +1,14 @@
 import { Navigate } from 'react-router-dom';
-import { getProfile } from '../pages/auth/auth';
+import { authService, type RoleType } from '../modules/auth/api/authService';
 import React from 'react';
-
-type Role = 'ADMIN' | 'TEACHER' | 'STUDENT';
 
 interface Props {
   children: React.ReactNode;
-  allowedRoles?: Role[];
+  allowedRoles?: RoleType[];
 }
 
 export function ProtectedRoute({ children, allowedRoles }: Props) {
-  const profile = getProfile();
+  const profile = authService.getCurrentProfile();
 
   if (!profile) {
     return <Navigate to="/login" replace />;

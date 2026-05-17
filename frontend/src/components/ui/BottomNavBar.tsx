@@ -1,9 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useTheme } from '../../contexts/ThemeContext';
 
 export function BottomNavBar() {
   const location = useLocation();
-  const { theme } = useTheme();
 
   const navItems = [
     { name: 'Inicio', path: '/dashboard', icon: 'home' },
