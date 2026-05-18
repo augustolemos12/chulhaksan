@@ -34,7 +34,7 @@ async function main() {
   console.log('👑 Creating Admin...');
   await prisma.user.create({
     data: {
-      dni: 'admin123',
+      dni: '99999999',
       password: defaultPassword,
       role: Role.ADMIN,
       mustChangePassword: false,
@@ -192,7 +192,7 @@ async function main() {
 
   console.log('✅ Seed finished successfully!');
   console.log('--------------------------------------------------');
-  console.log('Admin DNI: admin123 | Pass: 123456');
+  console.log('Admin DNI: 99999999 | Pass: 123456');
   console.log('Teacher DNIs: teacher1, teacher2 | Pass: 123456');
   console.log('Student DNIs: student1, student2, student3, student4 | Pass: 123456');
   console.log('--------------------------------------------------');
