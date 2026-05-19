@@ -145,9 +145,10 @@ export async function login(
   }
 
   const data = await response.json();
+  const tokenVal = data?.token || data?.accessToken;
 
-  if (data?.accessToken) {
-    saveToken(data.accessToken);
+  if (tokenVal) {
+    saveToken(tokenVal);
   }
 
   return data;

@@ -11,6 +11,7 @@ export interface UserProfile {
 
 interface LoginResponse {
   accessToken?: string;
+  token?: string;
   mustChangePassword?: boolean;
 }
 
@@ -65,8 +66,9 @@ class AuthService {
 
   async login(dni: string, password: string): Promise<LoginResponse> {
     const data = await httpClient.post<LoginResponse>('/auth/login', { dni, password });
-    if (data?.accessToken) {
-      this.setAccessToken(data.accessToken);
+    const tokenVal = data?.token || data?.accessToken;
+    if (tokenVal) {
+      this.setAccessToken(tokenVal);
     }
     return data;
   }
