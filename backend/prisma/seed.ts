@@ -45,7 +45,7 @@ async function main() {
   console.log('👨‍🏫 Creating Teachers...');
   const teacherUser1 = await prisma.user.create({
     data: {
-      dni: 'teacher1',
+      dni: '11111111',
       password: defaultPassword,
       role: Role.TEACHER,
       mustChangePassword: false,
@@ -63,7 +63,7 @@ async function main() {
 
   const teacherUser2 = await prisma.user.create({
     data: {
-      dni: 'teacher2',
+      dni: '22222222',
       password: defaultPassword,
       role: Role.TEACHER,
       mustChangePassword: false,
@@ -157,10 +157,10 @@ async function main() {
   // 6. Create Students
   console.log('🥋 Creating Students...');
   const studentData = [
-    { dni: 'student1', firstName: 'Carlos', lastName: 'López', category: StudentCategory.ADULT, gymId: gym1.id, teacherId: teacher1.id, classGroupId: classGroup1.id },
-    { dni: 'student2', firstName: 'Ana', lastName: 'Martínez', category: StudentCategory.CHILD, gymId: gym1.id, teacherId: teacher1.id, classGroupId: classGroup2.id },
-    { dni: 'student3', firstName: 'Luis', lastName: 'Rodríguez', category: StudentCategory.ADULT, gymId: gym2.id, teacherId: teacher2.id, classGroupId: classGroup3.id },
-    { dni: 'student4', firstName: 'Sofía', lastName: 'Fernández', category: StudentCategory.CHILD, gymId: gym2.id, teacherId: teacher2.id, classGroupId: classGroup4.id },
+    { dni: '33333333', firstName: 'Carlos', lastName: 'López', category: StudentCategory.ADULT, gymId: gym1.id, teacherId: teacher1.id, classGroupId: classGroup1.id },
+    { dni: '44444444', firstName: 'Ana', lastName: 'Martínez', category: StudentCategory.CHILD, gymId: gym1.id, teacherId: teacher1.id, classGroupId: classGroup2.id },
+    { dni: '55555555', firstName: 'Luis', lastName: 'Rodríguez', category: StudentCategory.ADULT, gymId: gym2.id, teacherId: teacher2.id, classGroupId: classGroup3.id },
+    { dni: '66666666', firstName: 'Sofía', lastName: 'Fernández', category: StudentCategory.CHILD, gymId: gym2.id, teacherId: teacher2.id, classGroupId: classGroup4.id },
   ];
 
   for (const data of studentData) {
@@ -193,8 +193,8 @@ async function main() {
   console.log('✅ Seed finished successfully!');
   console.log('--------------------------------------------------');
   console.log('Admin DNI: 99999999 | Pass: 123456');
-  console.log('Teacher DNIs: teacher1, teacher2 | Pass: 123456');
-  console.log('Student DNIs: student1, student2, student3, student4 | Pass: 123456');
+  console.log('Teacher DNIs: 11111111, 22222222 | Pass: 123456');
+  console.log('Student DNIs: 33333333, 44444444, 55555555, 66666666 | Pass: 123456');
   console.log('--------------------------------------------------');
 }
 
