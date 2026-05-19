@@ -7,6 +7,11 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: 'http://localhost:5173', // Puerto por defecto de Vite (Frontend)
+    credentials: true, // Importante si usas cookies o sesiones
+  });
+
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
