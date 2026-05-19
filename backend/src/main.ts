@@ -7,13 +7,19 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    'http://localhost:5173',
-  ].filter(Boolean) as string[];
-
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        process.env.FRONTEND_URL,
+        'http://localhost:5173',
+      ].filter(Boolean) as string[];
+
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true, // Importante si usas cookies o sesiones
   });
 
