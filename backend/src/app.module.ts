@@ -10,6 +10,8 @@ import { StudentsModule } from './students/students.module';
 import { ClassGroupsModule } from './class-groups/class-groups.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { ClassPlansModule } from './class-plans/class-plans.module';
+import { EventsModule } from './events/events.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 
 @Module({
@@ -23,6 +25,8 @@ import { ClassPlansModule } from './class-plans/class-plans.module';
     ClassGroupsModule,
     AttendanceModule,
     ClassPlansModule,
+    EventsModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
