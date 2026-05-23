@@ -1,6 +1,26 @@
-import { Controller, Get, Post, Delete, Body, UseGuards, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
-import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Body,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiTags,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -8,6 +28,12 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+
+/** Tamaño máximo permitido: 5 MB */
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+/** Tipos MIME aceptados */
+const ALLOWED_MIME_TYPES = /^image\/(jpeg|png|webp)$/;
 
 @ApiTags('Events (Event of the month)')
 @ApiCookieAuth()
@@ -20,6 +46,8 @@ export class EventsController {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  // ─── GET ────────────────────────────────────────────────────────────────────
+
   @Get()
   @Roles(Role.ADMIN, Role.TEACHER, Role.STUDENT)
   @ApiOperation({ summary: 'Obtener el evento del mes activo' })
@@ -27,43 +55,57 @@ export class EventsController {
     return this.eventsService.getEvent();
   }
 
+  // ─── POST ───────────────────────────────────────────────────────────────────
+
   @Post()
   @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Crear o actualizar (upsert) el evento del mes con imagen' })
+  @ApiOperation({ summary: 'Crear o actualizar el evento del mes (requiere imagen)' })
   @ApiBody({
     schema: {
       type: 'object',
+      required: ['title', 'image'],
       properties: {
-        title: { type: 'string', description: 'Título del evento' },
+        title: {
+          type: 'string',
+          description: 'Título del evento (2–200 caracteres)',
+          example: 'Examen de Cinturones de Mayo',
+        },
         image: {
           type: 'string',
           format: 'binary',
-          description: 'Imagen del evento',
+          description: 'Imagen del evento (jpg, jpeg, png o webp — máx. 5 MB)',
         },
       },
     },
   })
   async upsert(
     @Body() createEventDto: CreateEventDto,
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        // fileIsRequired lanza 400 automáticamente si no se adjunta ningún archivo
+        fileIsRequired: true,
+        validators: [
+          // Rechaza archivos mayores a 5 MB
+          new MaxFileSizeValidator({ maxSize: MAX_FILE_SIZE }),
+          // Permite únicamente jpg/jpeg, png y webp
+          new FileTypeValidator({ fileType: ALLOWED_MIME_TYPES }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ) {
-    if (file) {
-      const uploadResult = await this.cloudinaryService.uploadFile(file);
-      createEventDto.imageUrl = uploadResult.secure_url;
-    } else if (!createEventDto.imageUrl) {
-      // Si no hay archivo y tampoco hay imageUrl proporcionada explícitamente y no hay evento previo, 
-      // upsertEvent podría fallar si se requiere. La base de datos requiere imageUrl, 
-      // así que delegamos en class-validator o Prisma el error si es la primera creación.
-    }
-    
+    const uploadResult = await this.cloudinaryService.uploadFile(file);
+    createEventDto.imageUrl = uploadResult.secure_url;
     return this.eventsService.upsertEvent(createEventDto);
   }
 
+  // ─── DELETE ─────────────────────────────────────────────────────────────────
+
   @Delete()
   @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Eliminar el evento del mes' })
+  @ApiOperation({ summary: 'Eliminar el evento del mes y su imagen en Cloudinary' })
   remove() {
     return this.eventsService.removeEvent();
   }
