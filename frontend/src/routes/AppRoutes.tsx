@@ -27,6 +27,7 @@ import { StudentProfileView } from '../modules/student/views/StudentProfileView'
 import { MyAttendanceView } from '../modules/student/views/MyAttendanceView';
 import { MyFormsView } from '../modules/student/views/MyFormsView';
 import { StudentDetailsView } from '../modules/student/views/StudentDetailsView';
+import { MyPaymentsView } from '../modules/student/views/MyPaymentsView';
 
 // Shared
 import { FormsManagerView } from '../modules/forms/views/FormsManagerView';
@@ -44,6 +45,7 @@ export function AppRoutes() {
 
             {/* Dashboard */}
             <Route path="/dashboard" element={<DashboardView />} />
+            <Route path="/pagos" element={<MyPaymentsView />} />
 
             {/* Admin */}
             <Route path="/admin/alumnos" element={<AdminStudentsView />} />
