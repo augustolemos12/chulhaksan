@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAppTheme } from '../../../core/theme/ThemeProvider';
-import logoColor from '../../../assets/logo-color.png';
+import logoNavbar from '../../../assets/logo-fotor-2026052717752.png';
 import type { UserProfile } from '../../auth/api/authService';
 
 export function DashboardHeader({ title = 'Chul Hak San', onLogout }: { title?: string; onLogout: () => void }) {
@@ -11,7 +11,7 @@ export function DashboardHeader({ title = 'Chul Hak San', onLogout }: { title?: 
     <header className="w-full top-0 sticky bg-surface shadow-soft z-50 transition-colors duration-300">
       <div className="flex justify-between items-center px-6 h-16 w-full max-w-[1200px] mx-auto">
         <div className="flex items-center gap-3">
-          <img src={logoColor} alt="Logo" className="w-10 h-10 rounded-full bg-surface p-0.5 shadow-md border border-border" />
+          <img src={logoNavbar} alt="Logo" className="w-10 h-10 rounded-full bg-surface p-0.5 shadow-md border border-border" />
           <h1 className="font-display text-xl font-bold text-primary tracking-tight">{title}</h1>
         </div>
         <div className="flex items-center gap-2">
@@ -82,8 +82,38 @@ export function MetricCard({ label, value, icon }: { label: string; value: numbe
   );
 }
 
-export function QuickAction({ to, icon, title, subtitle, children }: { to?: string; icon: string; title: string; subtitle?: string; children?: React.ReactNode }) {
-  const content = (
+export function QuickAction({
+  to,
+  icon,
+  title,
+  subtitle,
+  children,
+  variant = 'grid',
+}: {
+  to?: string;
+  icon: string;
+  title: string;
+  subtitle?: string;
+  children?: React.ReactNode;
+  variant?: 'grid' | 'row';
+}) {
+  const content = variant === 'row' ? (
+    <div className="group bg-surface rounded-2xl border border-transparent hover:border-primary/20 shadow-soft hover:shadow-md p-4 px-5 flex items-center justify-between transition-all duration-300 cursor-pointer w-full">
+      <div className="flex items-center gap-4">
+        <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 group-hover:bg-primary group-hover:text-white transition-all duration-300 shrink-0">
+          <span className="material-symbols-outlined text-[22px]">{icon}</span>
+        </div>
+        <div className="text-left">
+          <p className="text-sm font-bold text-text uppercase tracking-wide">{title}</p>
+          {subtitle && <p className="text-xs font-medium text-muted mt-0.5">{subtitle}</p>}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {children}
+        <span className="material-symbols-outlined text-muted group-hover:text-primary group-hover:translate-x-1 transition-all duration-300">chevron_right</span>
+      </div>
+    </div>
+  ) : (
     <div className="group bg-surface rounded-2xl border border-transparent hover:border-primary/20 shadow-soft hover:shadow-md p-6 flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer h-full">
       <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
         <span className="material-symbols-outlined text-[28px]">{icon}</span>
@@ -94,5 +124,5 @@ export function QuickAction({ to, icon, title, subtitle, children }: { to?: stri
     </div>
   );
 
-  return to ? <Link to={to}>{content}</Link> : content;
+  return to ? <Link to={to} className="block w-full">{content}</Link> : content;
 }

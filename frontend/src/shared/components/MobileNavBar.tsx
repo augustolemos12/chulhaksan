@@ -1,14 +1,17 @@
 import { Link, useLocation } from 'react-router-dom';
-
-const NAVIGATION_ITEMS = [
-  { label: 'Inicio', path: '/dashboard', icon: 'home' },
-  { label: 'Pagos', path: '/pagos', icon: 'payments' },
-  { label: 'Formas', path: '/formas', icon: 'link' },
-  { label: 'Perfil', path: '/perfil', icon: 'person' },
-];
+import { authService } from '../../modules/auth/api/authService';
 
 export function MobileNavBar() {
   const { pathname } = useLocation();
+  const profile = authService.getCurrentProfile();
+  const formsPath = profile?.role === 'STUDENT' ? '/alumno/formas' : '/admin/formas';
+
+  const NAVIGATION_ITEMS = [
+    { label: 'Inicio', path: '/dashboard', icon: 'home' },
+    { label: 'Pagos', path: '/pagos', icon: 'payments' },
+    { label: 'Formas', path: formsPath, icon: 'link' },
+    { label: 'Perfil', path: '/perfil', icon: 'person' },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 w-full z-50 md:hidden bg-surface/90 backdrop-blur-md border-t border-border pb-safe transition-colors duration-300">

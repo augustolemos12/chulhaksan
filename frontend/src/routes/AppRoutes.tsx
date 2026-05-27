@@ -62,7 +62,7 @@ export function AppRoutes() {
             
             {/* Shared */}
             <Route path="/alumno/:dni" element={<StudentDetailsView />} />
-            <Route path="/formas" element={<FormsManagerView />} />
+            <Route path="/admin/formas" element={<FormsManagerView />} />
         </Routes>
     );
 }

@@ -64,7 +64,7 @@ export function DashboardView() {
                 <div className="grid grid-cols-2 gap-3 mt-2">
                   <QuickAction to="/pagos" icon="payments" title="Pagos" />
                   <QuickAction to="/asistencia" icon="checklist" title="Asist." />
-                  <QuickAction to="/formas" icon="link" title="Formas" />
+                  <QuickAction to="/alumno/formas" icon="link" title="Formas" />
                   <QuickAction to="/perfil" icon="person" title="Perfil" />
                 </div>
               </ContentCard>
@@ -105,11 +105,11 @@ export function DashboardView() {
 
             <ContentCard>
               <BlockTitle title="Acceso rápido" subtitle="Herramientas administrativas" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <QuickAction to="/admin/alumnos" icon="group" title="Alumnos" subtitle="Gestión total" />
-                <QuickAction to="/admin/profesores" icon="badge" title="Profesores" subtitle="Gestión total" />
-                <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" />
-                <QuickAction to="/admin/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" />
+              <div className="flex flex-col gap-3">
+                <QuickAction to="/admin/alumnos" icon="group" title="Alumnos" subtitle="Gestión total" variant="row" />
+                <QuickAction to="/admin/profesores" icon="badge" title="Profesores" subtitle="Gestión total" variant="row" />
+                <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" variant="row" />
+                <QuickAction to="/admin/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" variant="row" />
               </div>
             </ContentCard>
           </>
