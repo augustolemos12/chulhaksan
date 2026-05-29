@@ -4,8 +4,6 @@ import { Routes, Route } from 'react-router-dom';
 import { LandingPage } from '../modules/public/views/LandingPage';
 import { GymAttendanceView } from '../modules/public/views/GymAttendanceView';
 import { LoginView } from '../modules/auth/views/LoginView';
-import { ForgotPasswordView } from '../modules/auth/views/ForgotPasswordView';
-import { ForgotPasswordSuccessView } from '../modules/auth/views/ForgotPasswordSuccessView';
 import { ChangePasswordView } from '../modules/auth/views/ChangePasswordView';
 
 
@@ -38,8 +36,6 @@ export function AppRoutes() {
             {/* Public */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginView />} />
-            <Route path="/recuperar" element={<ForgotPasswordView />} />
-            <Route path="/recuperar/enviado" element={<ForgotPasswordSuccessView />} />
             <Route path="/cambiar-contrasena" element={<ChangePasswordView />} />
             <Route path="/attendance/:gymId" element={<GymAttendanceView />} />
 

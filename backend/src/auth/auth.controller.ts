@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Res, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import type { Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -40,5 +41,33 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   getProfile(@CurrentUser() user: any) {
     return user;
+  }
+
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(
+    @CurrentUser() user: any,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(user.sub, changePasswordDto);
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtAuthGuard)
+  async refresh(
+    @CurrentUser() user: any,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const { token, expiresIn } = await this.authService.refreshToken(user.sub);
+    
+    response.cookie('Authentication', token, {
+      httpOnly: true,
+      path: '/',
+      maxAge: expiresIn * 1000,
+      sameSite: 'strict',
+      // secure: process.env.NODE_ENV === 'production',
+    });
+
+    return { message: 'Sesión renovada', token };
   }
 }

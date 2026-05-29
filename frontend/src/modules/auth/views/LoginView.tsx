@@ -81,11 +81,7 @@ export function LoginView() {
             </BaseButton>
           </form>
 
-          <div className="mt-8 text-center border-t border-border pt-6">
-            <Link to="/recuperar" className="text-sm font-semibold text-primary hover:text-accent transition-colors">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
+
         </div>
       </div>
     </div>

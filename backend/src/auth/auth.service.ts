@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -44,6 +45,40 @@ export class AuthService {
         role: user.role,
         mustChangePassword: user.mustChangePassword
       }
+    };
+  }
+
+  async changePassword(userId: number, changePasswordDto: ChangePasswordDto) {
+    const { newPassword } = changePasswordDto;
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: false,
+      },
+    });
+
+    return { message: 'Contraseña actualizada correctamente' };
+  }
+
+  async refreshToken(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user || user.status === 'BLOCKED') {
+      throw new UnauthorizedException('Usuario no válido o bloqueado');
+    }
+
+    const payload = { sub: user.id, role: user.role };
+    const token = this.jwtService.sign(payload);
+    const expiresIn = Number(this.configService.get('JWT_EXPIRATION_TIME')) || 86400;
+
+    return {
+      token,
+      expiresIn,
     };
   }
 }
