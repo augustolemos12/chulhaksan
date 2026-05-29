@@ -68,10 +68,8 @@ enum Belt {
 
 enum FeeStatus {
   PENDING
-  PAID
-  FULL_YEAR
-  OVERDUE
   PARTIALLY_PAID
+  PAID
 }
 
 enum DayOfWeek {
