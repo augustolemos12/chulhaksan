@@ -49,7 +49,7 @@ export class AuthController {
     @CurrentUser() user: any,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
-    return this.authService.changePassword(user.sub, changePasswordDto);
+    return this.authService.changePassword(user.id, changePasswordDto);
   }
 
   @Post('refresh')
@@ -58,7 +58,7 @@ export class AuthController {
     @CurrentUser() user: any,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const { token, expiresIn } = await this.authService.refreshToken(user.sub);
+    const { token, expiresIn } = await this.authService.refreshToken(user.id);
     
     response.cookie('Authentication', token, {
       httpOnly: true,
