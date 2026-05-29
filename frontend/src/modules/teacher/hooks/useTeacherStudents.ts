@@ -3,29 +3,28 @@ import { useSearchParams } from 'react-router-dom';
 import { httpClient } from '../../../core/api/httpClient';
 
 export type StudentItem = {
-  dni: string; firstName: string; lastName: string;
-  category?: 'ADULT' | 'CHILD'; gymId?: string; gym?: string | null;
+  id: number; dni: string; firstName: string; lastName: string;
+  category?: 'ADULT' | 'CHILD'; gymId?: string; gym?: { id: number; name: string } | null;
+  classGroup?: { id: number; name: string } | null;
+  email?: string | null; phone?: string | null; address?: string | null;
 };
 
 export type StudentWithStatus = StudentItem & { status: 'OK' | 'DEBT' | 'UNKNOWN'; };
 
-export type CreateStudentForm = {
-  firstName: string; lastName: string; dni: string; email: string;
-  phone: string; guardianPhone: string; gymId: string;
-  category: 'ADULT' | 'CHILD'; birthDate: string; address: string; password: string;
-};
+export type StudentForm = { firstName: string; lastName: string; email: string; phone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; address: string; };
+export type CreateStudentForm = StudentForm & { dni: string; password: string; currentBelt: string; };
 
-export const emptyForm: CreateStudentForm = {
-  firstName: '', lastName: '', dni: '', email: '', phone: '', guardianPhone: '',
-  gymId: '', category: 'ADULT', birthDate: '', address: '', password: '',
-};
+export const emptyForm: StudentForm = { firstName: '', lastName: '', email: '', phone: '', classGroupId: '', category: 'ADULT', address: '' };
+export const emptyCreateForm: CreateStudentForm = { ...emptyForm, dni: '', password: '', currentBelt: 'WHITE' };
 
-export type GymOption = { id: string; name: string; };
+export type GymOption = { id: string; name: string; isArchived?: boolean; };
+export type ClassGroupOption = { id: number; name: string; isActive: boolean; gymId: string; };
 
 export function useTeacherStudents() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [assigned, setAssigned] = useState<StudentWithStatus[]>([]);
   const [gyms, setGyms] = useState<GymOption[]>([]);
+  const [classGroups, setClassGroups] = useState<ClassGroupOption[]>([]);
   
   const [query, setQuery] = useState(searchParams.get('search') ?? '');
   const [gymFilter, setGymFilter] = useState(searchParams.get('gymId') ?? '');
@@ -34,26 +33,35 @@ export function useTeacherStudents() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  const [createOpen, setCreateOpen] = useState(false);
-  const [form, setForm] = useState<CreateStudentForm>(emptyForm);
+  const [editing, setEditing] = useState<StudentWithStatus | null>(null);
+  const [form, setForm] = useState<StudentForm>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [editError, setEditError] = useState('');
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createForm, setCreateForm] = useState<CreateStudentForm>(emptyCreateForm);
+  const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
   
-  const [pageAssigned, setPageAssigned] = useState(Math.max(1, Number(searchParams.get('page') ?? '1')));
+  const [page, setPage] = useState(Math.max(1, Number(searchParams.get('page') ?? '1')));
   const pageSize = 10;
-  const [totalAssigned, setTotalAssigned] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  const loadGyms = async () => {
+  const loadInitialData = async () => {
     try {
-      const res = await httpClient.request('/gyms', { cache: 'no-store' });
-      if (res.ok) setGyms(Array.isArray(await res.json()) ? await res.json() : []);
+      const [gRes, cRes] = await Promise.all([
+        httpClient.request('/gyms', { cache: 'no-store' }),
+        httpClient.request('/class-groups/my-groups', { cache: 'no-store' })
+      ]);
+      if (gRes.ok) setGyms(Array.isArray(await gRes.json()) ? await gRes.json() : []);
+      if (cRes.ok) setClassGroups(Array.isArray(await cRes.json()) ? await cRes.json() : []);
     } catch {}
   };
 
   const loadStudents = async () => {
     setLoading(true); setError('');
     try {
-      const params = new URLSearchParams({ page: String(pageAssigned), limit: String(pageSize) });
+      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
       if (query.trim()) params.set('search', query.trim());
       if (gymFilter) params.set('gymId', gymFilter);
       if (categoryFilter) params.set('category', categoryFilter);
@@ -67,7 +75,7 @@ export function useTeacherStudents() {
 
       const baseAssigned = (data ?? []).map((s: any) => ({ ...s, status: 'UNKNOWN' as const }));
       setAssigned(baseAssigned);
-      setTotalAssigned(total);
+      setTotal(totalCount);
 
       const statusResults = await Promise.all(
         baseAssigned.map(async (student: any) => {
@@ -90,9 +98,9 @@ export function useTeacherStudents() {
     }
   };
 
-  useEffect(() => { loadStudents(); }, [pageAssigned, query, gymFilter, categoryFilter]);
-  useEffect(() => { loadGyms(); }, []);
-  useEffect(() => { setPageAssigned(1); }, [query, gymFilter, categoryFilter]);
+  useEffect(() => { loadStudents(); }, [page, query, gymFilter, categoryFilter]);
+  useEffect(() => { loadInitialData(); }, []);
+  useEffect(() => { setPage(1); }, [query, gymFilter, categoryFilter]);
 
   useEffect(() => {
     const search = searchParams.get('search') ?? '';
@@ -101,8 +109,8 @@ export function useTeacherStudents() {
     if (gymId !== gymFilter) setGymFilter(gymId);
     const category = (searchParams.get('category') as 'ADULT' | 'CHILD' | null) ?? '';
     if (category !== categoryFilter) setCategoryFilter(category);
-    const page = Math.max(1, Number(searchParams.get('page') ?? '1'));
-    if (!Number.isNaN(page) && page !== pageAssigned) setPageAssigned(page);
+    const pageParam = Math.max(1, Number(searchParams.get('page') ?? '1'));
+    if (!Number.isNaN(pageParam) && pageParam !== page) setPage(pageParam);
   }, [searchParams]);
 
   useEffect(() => {
@@ -110,36 +118,70 @@ export function useTeacherStudents() {
     if (query.trim()) nextParams.set('search', query.trim()); else nextParams.delete('search');
     if (gymFilter) nextParams.set('gymId', gymFilter); else nextParams.delete('gymId');
     if (categoryFilter) nextParams.set('category', categoryFilter); else nextParams.delete('category');
-    if (pageAssigned > 1) nextParams.set('page', String(pageAssigned)); else nextParams.delete('page');
+    if (page > 1) nextParams.set('page', String(page)); else nextParams.delete('page');
 
     if (nextParams.toString() !== searchParams.toString()) setSearchParams(nextParams, { replace: true });
-  }, [query, gymFilter, categoryFilter, pageAssigned]);
+  }, [query, gymFilter, categoryFilter, page]);
 
-  const handleCreateStudent = async (event: React.FormEvent) => {
+  const openEdit = (student: StudentWithStatus) => {
+    setEditing(student);
+    setForm({
+      firstName: student.firstName ?? '', lastName: student.lastName ?? '', email: student.email ?? '',
+      phone: student.phone ?? '', classGroupId: student.classGroup ? String(student.classGroup.id) : '',
+      category: student.category ?? 'ADULT', address: student.address ?? '',
+    });
+  };
+
+  const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
-    setSaving(true); setError(''); setCreateError('');
+    if (!editing) return;
+    setSaving(true);
+    setError(''); setEditError('');
     try {
-      const res = await httpClient.request('/teachers/me/students', {
-        method: 'POST', json: true, body: JSON.stringify({
-          dni: form.dni.replace(/\D/g, ''), password: form.password,
-          firstName: form.firstName.trim() || null, lastName: form.lastName.trim() || null,
-          email: form.email.trim() || null, phone: form.phone.trim() || null,
-          guardianPhone: form.guardianPhone.trim() || null, gymId: form.gymId.trim() || null,
-          category: form.category || null, birthDate: form.birthDate.trim() || null, address: form.address.trim() || null,
-        })
-      });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el alumno.');
-      setForm(emptyForm); setCreateOpen(false); await loadStudents();
+      const payload = {
+        firstName: form.firstName.trim() || null, lastName: form.lastName.trim() || null,
+        email: form.email.trim() || null, phone: form.phone.trim() || null,
+        classGroupId: form.classGroupId ? Number(form.classGroupId) : null,
+        category: form.category, address: form.address.trim() || null,
+      };
+      const res = await httpClient.request(`/teacher/students/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar el alumno.');
+      
+      setEditing(null); setForm(emptyForm);
+      await loadStudents();
     } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'No se pudo crear el alumno.');
+      setEditError(err instanceof Error ? err.message : 'No se pudo guardar el alumno.');
     } finally {
       setSaving(false);
     }
   };
 
+  const handleCreate = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setCreating(true); setError(''); setCreateError('');
+    try {
+      const res = await httpClient.request('/teacher/students', {
+        method: 'POST', json: true, body: JSON.stringify({
+          dni: createForm.dni.replace(/\D/g, ''), password: createForm.password,
+          firstName: createForm.firstName.trim() || null, lastName: createForm.lastName.trim() || null,
+          email: createForm.email.trim() || null, phone: createForm.phone.trim() || null,
+          classGroupId: createForm.classGroupId ? Number(createForm.classGroupId) : null,
+          category: createForm.category || null, address: createForm.address.trim() || null,
+          currentBelt: createForm.currentBelt || 'WHITE',
+        })
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el alumno.');
+      setCreateForm(emptyCreateForm); setCreateOpen(false); await loadStudents();
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'No se pudo crear el alumno.');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return {
-    assigned, gyms, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
+    students: assigned, gyms, classGroups, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
     loading, error, createOpen, setCreateOpen, form, setForm, saving, createError,
-    pageAssigned, setPageAssigned, totalAssigned, pageSize, handleCreateStudent, searchParams
+    page, setPage, total, pageSize, handleCreate, handleSave, openEdit, editing, setEditing, editError, searchParams, setSearchParams, createForm, setCreateForm, creating
   };
 }

@@ -23,8 +23,6 @@ export function useDashboardData() {
   const [displayName, setDisplayName] = useState('');
   const [teacherSummary, setTeacherSummary] = useState<TeacherSummary | null>(null);
   const [monthEvent, setMonthEvent] = useState<MonthEvent | null>(null);
-  const [mpMessage, setMpMessage] = useState('');
-  const [mpConnected, setMpConnected] = useState(false);
   const [adminStats, setAdminStats] = useState({ students: 0, teachers: 0 });
 
   const role = profile?.role ?? 'STUDENT';
@@ -48,7 +46,6 @@ export function useDashboardData() {
         .catch(() => {
           setDisplayName('');
           setTeacherSummary(null);
-          setMpConnected(false);
         });
       return;
     }
@@ -79,7 +76,6 @@ export function useDashboardData() {
           if (res.ok) {
             const data = await res.json();
             setDisplayName(`${data.firstName ?? ''} ${data.lastName ?? ''}`.trim());
-            setMpConnected(!!data.mpConnectedAt);
             return;
           }
         }
@@ -120,36 +116,7 @@ export function useDashboardData() {
     fetchAdminStats();
   }, [role]);
 
-  useEffect(() => {
-    if (searchParams.get('mp') === 'connected') {
-      setMpMessage('Mercado Pago conectado.');
-    }
-  }, [searchParams]);
 
-  const connectMercadoPago = async () => {
-    setMpMessage('');
-    try {
-      const res = await httpClient.request('/teachers/me/mercadopago/connect');
-      if (!res.ok) throw new Error('No se pudo iniciar la conexión.');
-      const data = await res.json();
-      if (!data?.url) throw new Error('No se recibió URL.');
-      window.location.href = data.url;
-    } catch (err) {
-      setMpMessage(err instanceof Error ? err.message : 'No se pudo conectar.');
-    }
-  };
-
-  const disconnectMercadoPago = async () => {
-    setMpMessage('');
-    try {
-      const res = await httpClient.request('/teachers/me/mercadopago/disconnect', { method: 'POST' });
-      if (!res.ok) throw new Error('No se pudo desconectar.');
-      setMpConnected(false);
-      setMpMessage('Mercado Pago desconectado.');
-    } catch (err) {
-      setMpMessage(err instanceof Error ? err.message : 'No se pudo desconectar.');
-    }
-  };
 
   return {
     profile,
@@ -158,11 +125,7 @@ export function useDashboardData() {
     displayName,
     teacherSummary,
     adminStats,
-    mpConnected,
-    mpMessage,
     monthEvent,
     executeLogout,
-    connectMercadoPago,
-    disconnectMercadoPago,
   };
 }

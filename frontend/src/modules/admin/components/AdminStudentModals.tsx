@@ -53,21 +53,12 @@ export function EditStudentModal({
               <input type="email" className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: alumno@mail.com" value={form.email} onChange={(e) => setForm((prev: any) => ({ ...prev, email: e.target.value }))} />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs text-muted">Teléfono</label>
-                <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={form.phone} onChange={(e) => setForm((prev: any) => ({ ...prev, phone: e.target.value }))} required />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs text-muted">Teléfono tutor</label>
-                <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={form.guardianPhone} onChange={(e) => setForm((prev: any) => ({ ...prev, guardianPhone: e.target.value }))} required />
-              </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted">Teléfono (opcional)</label>
+              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={form.phone} onChange={(e) => setForm((prev: any) => ({ ...prev, phone: e.target.value }))} />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Fecha de nacimiento</label>
-              <input type="date" className="w-full rounded-lg border border-border px-3 py-2 text-sm" value={form.birthDate} onChange={(e) => setForm((prev: any) => ({ ...prev, birthDate: e.target.value }))} required />
-            </div>
+
 
             <div className="space-y-1">
               <label className="text-xs text-muted">Dirección (opcional)</label>
@@ -165,20 +156,9 @@ export function CreateStudentModal({
               <input type="email" className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: alumno@mail.com" value={createForm.email} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, email: e.target.value }))} />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs text-muted">Telefono (opcional)</label>
-                <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={createForm.phone} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, phone: e.target.value }))} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs text-muted">Telefono tutor (opcional)</label>
-                <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={createForm.guardianPhone} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, guardianPhone: e.target.value }))} />
-              </div>
-            </div>
-
             <div className="space-y-1">
-              <label className="text-xs text-muted">Fecha de nacimiento (opcional)</label>
-              <input type="date" className="w-full rounded-lg border border-border px-3 py-2 text-sm" value={createForm.birthDate} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, birthDate: e.target.value }))} />
+              <label className="text-xs text-muted">Teléfono (opcional)</label>
+              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={createForm.phone} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, phone: e.target.value }))} />
             </div>
 
             <div className="space-y-1">
@@ -188,8 +168,8 @@ export function CreateStudentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs text-muted">Tipo (opcional)</label>
-                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.category} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, category: e.target.value }))}>
+                <label className="text-xs text-muted">Tipo</label>
+                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.category} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, category: e.target.value }))} required>
                   <option value="ADULT">Adulto</option>
                   <option value="CHILD">Infantil</option>
                 </select>
@@ -201,6 +181,23 @@ export function CreateStudentModal({
                   {classGroups.filter((c) => c.isActive).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs text-muted">Cinturón inicial</label>
+              <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.currentBelt} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, currentBelt: e.target.value }))} required>
+                <option value="WHITE">Blanco</option>
+                <option value="WHITE_YELLOW">Blanco Punta Amarilla</option>
+                <option value="YELLOW">Amarillo</option>
+                <option value="GREEN_STRIPE">Amarillo Punta Verde</option>
+                <option value="GREEN">Verde</option>
+                <option value="BLUE_STRIPE">Verde Punta Azul</option>
+                <option value="BLUE">Azul</option>
+                <option value="RED_STRIPE">Azul Punta Roja</option>
+                <option value="RED">Rojo</option>
+                <option value="BLACK_STRIPE">Rojo Punta Negra</option>
+                <option value="DAN">Dan (Negro)</option>
+              </select>
             </div>
 
             <div className="space-y-1">

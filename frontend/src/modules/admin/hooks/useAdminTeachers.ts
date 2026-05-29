@@ -3,14 +3,14 @@ import { httpClient } from '../../../core/api/httpClient';
 
 export type AdminTeacher = {
   id: string; firstName: string; lastName: string;
-  email?: string | null; phone?: string | null; birthDate?: string | null; address?: string | null; gyms?: string[] | null;
+  email?: string | null; phone?: string | null;
   user?: { id: string; dni?: string; status: string; };
 };
 
-export type TeacherForm = { firstName: string; lastName: string; email: string; phone: string; birthDate: string; address: string; gyms: string; };
+export type TeacherForm = { firstName: string; lastName: string; email: string; phone: string; };
 export type CreateTeacherForm = TeacherForm & { dni: string; password: string; };
 
-export const emptyForm: TeacherForm = { firstName: '', lastName: '', email: '', phone: '', birthDate: '', address: '', gyms: '' };
+export const emptyForm: TeacherForm = { firstName: '', lastName: '', email: '', phone: '' };
 export const emptyCreateForm: CreateTeacherForm = { ...emptyForm, dni: '', password: '' };
 
 export function useAdminTeachers() {
@@ -63,8 +63,7 @@ export function useAdminTeachers() {
     setResetInfo('');
     setForm({
       firstName: teacher.firstName ?? '', lastName: teacher.lastName ?? '', email: teacher.email ?? '',
-      phone: teacher.phone ?? '', birthDate: teacher.birthDate ? teacher.birthDate.split('T')[0] : '',
-      address: teacher.address ?? '', gyms: teacher.gyms && teacher.gyms.length > 0 ? teacher.gyms.join(', ') : '',
+      phone: teacher.phone ?? ''
     });
   };
 
@@ -75,8 +74,7 @@ export function useAdminTeachers() {
     try {
       const payload = {
         firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email.trim() || null,
-        phone: form.phone.trim() || null, birthDate: form.birthDate.trim() || null, address: form.address.trim() || null,
-        gyms: form.gyms.trim() ? form.gyms.split(',').map((item) => item.trim()).filter(Boolean) : null,
+        phone: form.phone.trim() || null,
       };
       const res = await httpClient.request(`/teachers/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar el profesor.');
@@ -93,13 +91,10 @@ export function useAdminTeachers() {
     event.preventDefault();
     setCreating(true); setError(''); setCreateError('');
     try {
-      const gymsList = createForm.gyms.split(',').map((item) => item.trim()).filter(Boolean);
       const payload = {
-        role: 'TEACHER', dni: createForm.dni.trim(), password: createForm.password.trim(),
+        role: 'TEACHER', dni: createForm.dni.trim(), password: createForm.password.trim() || undefined,
         firstName: createForm.firstName.trim(), lastName: createForm.lastName.trim(),
-        email: createForm.email.trim() || null, phone: createForm.phone.trim(),
-        birthDate: createForm.birthDate.trim(), address: createForm.address.trim() || null,
-        gyms: gymsList,
+        email: createForm.email.trim() || null, phone: createForm.phone.trim() || null,
       };
       const res = await httpClient.request('/teachers', { method: 'POST', json: true, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el profesor.');

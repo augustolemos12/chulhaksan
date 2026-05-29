@@ -57,20 +57,6 @@ export function EditTeacherModal({
               <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={form.phone} onChange={(e) => setForm((prev: any) => ({ ...prev, phone: e.target.value }))} required />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Fecha de nacimiento</label>
-              <input type="date" className="w-full rounded-lg border border-border px-3 py-2 text-sm" value={form.birthDate} onChange={(e) => setForm((prev: any) => ({ ...prev, birthDate: e.target.value }))} required />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Dirección (opcional)</label>
-              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: Calle 123" value={form.address} onChange={(e) => setForm((prev: any) => ({ ...prev, address: e.target.value }))} />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Gimnasios</label>
-              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Separados por coma (Ej: Club Obras, Colegio X)" value={form.gyms} onChange={(e) => setForm((prev: any) => ({ ...prev, gyms: e.target.value }))} required />
-            </div>
 
             <div className="rounded-lg border border-border bg-background p-3 space-y-2">
               <p className="text-xs text-muted">Contraseña del profesor</p>
@@ -150,25 +136,11 @@ export function CreateTeacherModal({
               <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: 11 2345-6789" value={createForm.phone} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, phone: e.target.value }))} required />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Fecha de nacimiento</label>
-              <input type="date" className="w-full rounded-lg border border-border px-3 py-2 text-sm" value={createForm.birthDate} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, birthDate: e.target.value }))} required />
-            </div>
 
             <div className="space-y-1">
-              <label className="text-xs text-muted">Dirección (opcional)</label>
-              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: Calle 123" value={createForm.address} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, address: e.target.value }))} />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Gimnasios</label>
-              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Separados por coma (Ej: Club Obras, Colegio X)" value={createForm.gyms} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, gyms: e.target.value }))} required />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Contraseña</label>
+              <label className="text-xs text-muted">Contraseña (opcional)</label>
               <div className="relative">
-                <input type={showPassword ? 'text' : 'password'} className="w-full rounded-lg border border-border px-3 py-2 text-sm pr-10" placeholder="Definir contraseña" value={createForm.password} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, password: e.target.value }))} required />
+                <input type={showPassword ? 'text' : 'password'} className="w-full rounded-lg border border-border px-3 py-2 text-sm pr-10" placeholder="Si se omite, se generará una temporal" value={createForm.password} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, password: e.target.value }))} />
                 <button className="absolute inset-y-0 right-3 flex items-center text-gray-400" type="button" onClick={() => setShowPassword(!showPassword)}>
                   <span className="material-symbols-outlined text-lg">{showPassword ? 'visibility_off' : 'visibility'}</span>
                 </button>

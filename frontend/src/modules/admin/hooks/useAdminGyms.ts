@@ -45,14 +45,16 @@ export function useAdminGyms() {
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault();
     const trimmed = name.trim();
-    if (!trimmed) return;
+    if (!trimmed) return false;
     setCreating(true); setError('');
     try {
       const res = await httpClient.request('/gyms', { method: 'POST', json: true, body: JSON.stringify({ name: trimmed }) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el gimnasio.');
       setName(''); await load();
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo crear el gimnasio.');
+      return false;
     } finally {
       setCreating(false);
     }

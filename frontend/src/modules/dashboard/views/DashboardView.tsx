@@ -17,12 +17,8 @@ export function DashboardView() {
     displayName,
     teacherSummary,
     adminStats,
-    mpConnected,
-    mpMessage,
     monthEvent,
     executeLogout,
-    connectMercadoPago,
-    disconnectMercadoPago,
   } = useDashboardData();
 
   return (
@@ -105,16 +101,6 @@ export function DashboardView() {
               <QuickAction to="/profesor/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" />
               <QuickAction to="/alumno/perfil" icon="badge" title="Perfil" subtitle="Datos personales" />
               <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" />
-              <QuickAction icon="payments" title="Mercado Pago" subtitle="Cobros en tu cuenta">
-                <button
-                  className={`mt-4 w-full rounded-xl text-white text-sm font-semibold py-2 ${mpConnected ? 'bg-success' : 'bg-primary'}`}
-                  type="button"
-                  onClick={mpConnected ? disconnectMercadoPago : connectMercadoPago}
-                >
-                  {mpConnected ? 'Desconectar' : 'Conectar'}
-                </button>
-                {mpMessage && <p className="text-xs text-muted mt-2">{mpMessage}</p>}
-              </QuickAction>
             </div>
           </ContentCard>
         )}

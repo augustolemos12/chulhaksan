@@ -24,8 +24,9 @@ export function AdminTeachersView() {
           <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">
             Gestión de profesores
           </h1>
-          <button className="flex size-10 items-center justify-center" type="button" onClick={() => setCreateOpen(true)} aria-label="Crear profesor">
-            <span className="material-symbols-outlined">person_add</span>
+          <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm" type="button" onClick={() => setCreateOpen(true)} aria-label="Crear profesor">
+            <span className="material-symbols-outlined text-[18px]">person_add</span>
+            Crear Profesor
           </button>
         </div>
       </header>

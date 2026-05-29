@@ -4,20 +4,18 @@ import { httpClient } from '../../../core/api/httpClient';
 
 export type AdminStudent = {
   id: number; dni: string; gymId: string | null; firstName: string; lastName: string; category?: 'ADULT' | 'CHILD';
-  email?: string | null; phone?: string | null; guardianPhone?: string | null; gym?: { id: number; name: string; } | null;
-  birthDate?: string | null; address?: string | null; classGroup?: { id: number; name: string; } | null;
+  email?: string | null; phone?: string | null; gym?: { id: number; name: string; } | null;
+  address?: string | null; classGroup?: { id: number; name: string; } | null;
   assignments?: { teacher?: { id: string; firstName: string; lastName: string; } | null; }[];
   user?: { id: string; status: string; };
 };
 
 export type AdminTeacherOption = { id: string; firstName: string; lastName: string; user?: { status: string; }; };
-export type StudentForm = { firstName: string; lastName: string; email: string; phone: string; guardianPhone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; birthDate: string; address: string; };
-export type CreateStudentForm = StudentForm & { dni: string; password: string; };
-export type GymOption = { id: string; name: string; isArchived?: boolean; };
-export type ClassGroupOption = { id: number; name: string; isActive: boolean; gymId: string; };
+export type StudentForm = { firstName: string; lastName: string; email: string; phone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; address: string; };
+export type CreateStudentForm = StudentForm & { dni: string; password: string; currentBelt: string; };
 
-export const emptyForm: StudentForm = { firstName: '', lastName: '', email: '', phone: '', guardianPhone: '', classGroupId: '', category: 'ADULT', birthDate: '', address: '' };
-export const emptyCreateForm: CreateStudentForm = { ...emptyForm, dni: '', password: '' };
+export const emptyForm: StudentForm = { firstName: '', lastName: '', email: '', phone: '', classGroupId: '', category: 'ADULT', address: '' };
+export const emptyCreateForm: CreateStudentForm = { ...emptyForm, dni: '', password: '', currentBelt: 'WHITE' };
 
 export function useAdminStudents() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -112,9 +110,8 @@ export function useAdminStudents() {
     setEditing(student);
     setForm({
       firstName: student.firstName ?? '', lastName: student.lastName ?? '', email: student.email ?? '',
-      phone: student.phone ?? '', guardianPhone: student.guardianPhone ?? '', classGroupId: student.classGroup ? String(student.classGroup.id) : '',
-      category: student.category ?? 'ADULT', birthDate: student.birthDate ? student.birthDate.split('T')[0] : '',
-      address: student.address ?? '',
+      phone: student.phone ?? '', classGroupId: student.classGroup ? String(student.classGroup.id) : '',
+      category: student.category ?? 'ADULT', address: student.address ?? '',
     });
     setResetInfo('');
   };
@@ -128,8 +125,8 @@ export function useAdminStudents() {
       const payload = {
         firstName: form.firstName.trim() || null, lastName: form.lastName.trim() || null,
         email: form.email.trim() || null, phone: form.phone.trim() || null,
-        guardianPhone: form.guardianPhone.trim() || null, classGroupId: form.classGroupId ? Number(form.classGroupId) : null,
-        category: form.category, birthDate: form.birthDate.trim() || null, address: form.address.trim() || null,
+        classGroupId: form.classGroupId ? Number(form.classGroupId) : null,
+        category: form.category, address: form.address.trim() || null,
       };
       const res = await httpClient.request(`/students/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar el alumno.');
@@ -152,9 +149,11 @@ export function useAdminStudents() {
           dni: createForm.dni.trim(), password: createForm.password.trim(),
           firstName: createForm.firstName.trim() || null, lastName: createForm.lastName.trim() || null,
           category: createForm.category || null, email: createForm.email.trim() || null,
-          phone: createForm.phone.trim() || null, guardianPhone: createForm.guardianPhone.trim() || null,
-          classGroupId: createForm.classGroupId ? Number(createForm.classGroupId) : null, birthDate: createForm.birthDate.trim() || null,
+          phone: createForm.phone.trim() || null,
+          classGroupId: createForm.classGroupId ? Number(createForm.classGroupId) : null,
           address: createForm.address.trim() || null,
+          currentBelt: createForm.currentBelt || 'WHITE',
+          gymId: 1, teacherId: 1 // Dummy values para satisfacer DTO (el backend los pisa)
         })
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el alumno.');
