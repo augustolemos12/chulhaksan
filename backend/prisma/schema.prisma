@@ -118,6 +118,9 @@ model Teacher {
   phone     String?
   email     String?
 
+  qrCodeUrl String?
+  walletUrl String?
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime  @default(now())
