@@ -136,6 +136,7 @@ export function DashboardView() {
                 <QuickAction to="/admin/profesores" icon="badge" title="Profesores" subtitle="Gestión total" variant="row" />
                 <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" variant="row" />
                 <QuickAction to="/admin/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" variant="row" />
+                <QuickAction to="/admin/eventos" icon="event" title="Evento del mes" subtitle="Gestión de banners" variant="row" />
               </div>
             </ContentCard>
           </>
