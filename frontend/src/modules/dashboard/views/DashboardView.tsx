@@ -19,6 +19,7 @@ export function DashboardView() {
     adminStats,
     mpConnected,
     mpMessage,
+    monthEvent,
     executeLogout,
     connectMercadoPago,
     disconnectMercadoPago,
@@ -32,42 +33,66 @@ export function DashboardView() {
         <ProfileGreeting profile={profile} displayName={displayName} />
 
         {role === 'STUDENT' && (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <div className="md:col-span-8">
-              <ContentCard className="h-full bg-gradient-to-br from-primary to-[#a81c00] text-white border-none relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-surface/10 rounded-full -translate-y-1/2 translate-x-1/3 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="relative z-10 flex flex-col justify-between h-full min-h-[200px]">
+          <div className="flex flex-col gap-6">
+            {/* Evento del Mes Section */}
+            {monthEvent && (
+              <ContentCard className="overflow-hidden p-0 border-none relative group shadow-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none transition-opacity duration-300 group-hover:from-black/90"></div>
+                <img 
+                  src={monthEvent.imageUrl} 
+                  alt={monthEvent.title} 
+                  className="w-full h-48 md:h-64 object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute bottom-0 left-0 p-5 md:p-6 z-20 w-full flex flex-col justify-end gap-2">
                   <div>
-                    <span className="inline-block px-3 py-1 bg-surface/20 rounded-full text-xs font-bold mb-4 backdrop-blur-sm uppercase tracking-wider">
-                      Tu Profesor
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white rounded-full text-xs font-bold mb-2 uppercase tracking-wider shadow-sm">
+                      Evento del Mes
                     </span>
-                    <h3 className="font-display text-2xl md:text-3xl font-bold mb-2">
-                      {teacherSummary ? `Prof. ${teacherSummary.firstName} ${teacherSummary.lastName}` : 'Sin profesor asignado'}
+                    <h3 className="font-display text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-md">
+                      {monthEvent.title}
                     </h3>
-                    <p className="text-white/80 mb-6 flex items-center gap-2 font-medium">
-                      <span className="material-symbols-outlined text-sm">info</span>
-                      Contacta a tu instructor para tu próxima clase
-                    </p>
-                  </div>
-                  <div>
-                    <button className="bg-surface text-primary px-6 py-2.5 rounded-full font-bold hover:bg-surface transition-colors shadow-md active:scale-95">
-                      Ver Detalles
-                    </button>
                   </div>
                 </div>
               </ContentCard>
-            </div>
+            )}
 
-            <div className="md:col-span-4">
-              <ContentCard className="h-full p-4 flex flex-col justify-center">
-                <BlockTitle title="Acceso Rápido" subtitle="Herramientas principales" />
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  <QuickAction to="/pagos" icon="payments" title="Pagos" />
-                  <QuickAction to="/asistencia" icon="checklist" title="Asist." />
-                  <QuickAction to="/alumno/formas" icon="link" title="Formas" />
-                  <QuickAction to="/perfil" icon="person" title="Perfil" />
-                </div>
-              </ContentCard>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="md:col-span-8">
+                <ContentCard className="h-full bg-gradient-to-br from-primary to-[#a81c00] text-white border-none relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-surface/10 rounded-full -translate-y-1/2 translate-x-1/3 group-hover:scale-110 transition-transform duration-500"></div>
+                  <div className="relative z-10 flex flex-col justify-between h-full min-h-[200px]">
+                    <div>
+                      <span className="inline-block px-3 py-1 bg-surface/20 rounded-full text-xs font-bold mb-4 backdrop-blur-sm uppercase tracking-wider">
+                        Tu Profesor
+                      </span>
+                      <h3 className="font-display text-2xl md:text-3xl font-bold mb-2">
+                        {teacherSummary ? `Prof. ${teacherSummary.firstName} ${teacherSummary.lastName}` : 'Sin profesor asignado'}
+                      </h3>
+                      <p className="text-white/80 mb-6 flex items-center gap-2 font-medium">
+                        <span className="material-symbols-outlined text-sm">info</span>
+                        Contacta a tu instructor para tu próxima clase
+                      </p>
+                    </div>
+                    <div>
+                      <button className="bg-surface text-primary px-6 py-2.5 rounded-full font-bold hover:bg-surface transition-colors shadow-md active:scale-95">
+                        Ver Detalles
+                      </button>
+                    </div>
+                  </div>
+                </ContentCard>
+              </div>
+
+              <div className="md:col-span-4">
+                <ContentCard className="h-full p-4 flex flex-col justify-center">
+                  <BlockTitle title="Acceso Rápido" subtitle="Herramientas principales" />
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <QuickAction to="/pagos" icon="payments" title="Pagos" />
+                    <QuickAction to="/asistencia" icon="checklist" title="Asist." />
+                    <QuickAction to="/alumno/formas" icon="link" title="Formas" />
+                    <QuickAction to="/perfil" icon="person" title="Perfil" />
+                  </div>
+                </ContentCard>
+              </div>
             </div>
           </div>
         )}

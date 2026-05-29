@@ -9,6 +9,12 @@ export interface TeacherSummary {
   assignedAt?: string;
 }
 
+export interface MonthEvent {
+  id: string;
+  title: string;
+  imageUrl: string;
+}
+
 export function useDashboardData() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -16,6 +22,7 @@ export function useDashboardData() {
   const [profile, setProfile] = useState<UserProfile | null>(authService.getCurrentProfile());
   const [displayName, setDisplayName] = useState('');
   const [teacherSummary, setTeacherSummary] = useState<TeacherSummary | null>(null);
+  const [monthEvent, setMonthEvent] = useState<MonthEvent | null>(null);
   const [mpMessage, setMpMessage] = useState('');
   const [mpConnected, setMpConnected] = useState(false);
   const [adminStats, setAdminStats] = useState({ students: 0, teachers: 0 });
@@ -49,6 +56,11 @@ export function useDashboardData() {
     const loadUserData = async () => {
       try {
         if (profile.role === 'STUDENT') {
+          httpClient.request('/events')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => { if (data) setMonthEvent(data); })
+            .catch(() => {});
+
           const res = await httpClient.request('/students/me');
           if (res.ok) {
             const data = await res.json();
@@ -148,6 +160,7 @@ export function useDashboardData() {
     adminStats,
     mpConnected,
     mpMessage,
+    monthEvent,
     executeLogout,
     connectMercadoPago,
     disconnectMercadoPago,
