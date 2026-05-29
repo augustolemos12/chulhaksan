@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateFeeConfigDto } from '../dto/create-fee-config.dto';
 
@@ -7,11 +7,32 @@ export class FeeConfigService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createFeeConfig(data: CreateFeeConfigDto) {
+    if (data.baseAmount === null || data.baseAmount === undefined || data.baseAmount <= 0) {
+      throw new BadRequestException('El monto base de la cuota debe ser mayor a 0.');
+    }
+
+    const newValidFrom = new Date(data.validFrom);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (newValidFrom < today) {
+      throw new BadRequestException('La fecha de vigencia no puede ser anterior a la fecha actual.');
+    }
+
+    const latestConfig = await this.prisma.feeConfig.findFirst({
+      orderBy: { validFrom: 'desc' },
+    });
+
+    if (latestConfig && newValidFrom <= latestConfig.validFrom) {
+      throw new BadRequestException('La fecha de vigencia debe ser posterior a la última configuración existente.');
+    }
+
     return this.prisma.feeConfig.create({
       data: {
         baseAmount: data.baseAmount,
         lateFee: data.lateFee,
-        validFrom: new Date(data.validFrom),
+        validFrom: newValidFrom,
       },
     });
   }
