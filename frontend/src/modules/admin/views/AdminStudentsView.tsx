@@ -5,9 +5,9 @@ import { EditStudentModal, CreateStudentModal } from '../components/AdminStudent
 export function AdminStudentsView() {
   const {
     students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
-    page, setPage, pageSize, gyms, activeTeachers, searchParams, setSearchParams,
-    editing, setEditing, form, setForm, assignedTeacherId, setAssignedTeacherId, initialTeacherId, saving, editError, handleSave, openEdit,
-    createOpen, setCreateOpen, createForm, setCreateForm, createAssignedTeacherId, setCreateAssignedTeacherId, creating, createError, handleCreate,
+    page, setPage, pageSize, gyms, classGroups, activeTeachers, searchParams, setSearchParams,
+    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit,
+    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
     handleDelete, handleResetPassword, resetInfo, setResetInfo, resetting
   } = useAdminStudents();
 
@@ -108,7 +108,7 @@ export function AdminStudentsView() {
                 <div className="flex flex-col justify-center">
                   <p className="text-text text-base font-semibold leading-tight">{student.firstName} {student.lastName}</p>
                   <p className="text-[#9a4c4c] text-xs font-medium mt-1">DNI: {student.dni}</p>
-                  {student.gym && <p className="text-[11px] text-muted mt-1">Gimnasio: {student.gym}</p>}
+                  {student.gym?.name && <p className="text-[11px] text-muted mt-1">Gimnasio: {student.gym.name}</p>}
                   <p className="text-[11px] text-muted mt-1">Tipo: {categoryLabel(student.category)}</p>
                 </div>
               </div>
@@ -134,18 +134,16 @@ export function AdminStudentsView() {
       </main>
 
       {editing && (
-        <EditStudentModal
+      <EditStudentModal
           editing={editing} setEditing={setEditing} form={form} setForm={setForm}
-          assignedTeacherId={assignedTeacherId} setAssignedTeacherId={setAssignedTeacherId} initialTeacherId={initialTeacherId}
-          gyms={gyms} activeTeachers={activeTeachers} handleSave={handleSave} saving={saving} editError={editError}
+          gyms={gyms} classGroups={classGroups} activeTeachers={activeTeachers} handleSave={handleSave} saving={saving} editError={editError}
           handleResetPassword={handleResetPassword} resetInfo={resetInfo} setResetInfo={setResetInfo} resetting={resetting}
         />
       )}
 
       <CreateStudentModal
         createOpen={createOpen} setCreateOpen={setCreateOpen} createForm={createForm} setCreateForm={setCreateForm}
-        createAssignedTeacherId={createAssignedTeacherId} setCreateAssignedTeacherId={setCreateAssignedTeacherId}
-        gyms={gyms} activeTeachers={activeTeachers} handleCreate={handleCreate} creating={creating} createError={createError}
+        gyms={gyms} classGroups={classGroups} activeTeachers={activeTeachers} handleCreate={handleCreate} creating={creating} createError={createError}
       />
     </div>
   );

@@ -100,8 +100,8 @@ export function useDashboardData() {
     const fetchAdminStats = async () => {
       try {
         const [studentsRes, teachersRes] = await Promise.all([
-          httpClient.request('/admin/students?page=1&limit=1'),
-          httpClient.request('/admin/teachers?page=1&limit=1'),
+          httpClient.request('/students?page=1&limit=1'),
+          httpClient.request('/teachers?page=1&limit=1'),
         ]);
 
         if (studentsRes.ok) {

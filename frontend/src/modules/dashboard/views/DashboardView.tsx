@@ -36,7 +36,7 @@ export function DashboardView() {
           <div className="flex flex-col gap-6">
             {/* Evento del Mes Section */}
             {monthEvent && (
-              <ContentCard className="overflow-hidden p-0 border-none relative group shadow-md">
+              <div className="overflow-hidden rounded-3xl relative group shadow-md w-full">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none transition-opacity duration-300 group-hover:from-black/90"></div>
                 <img 
                   src={monthEvent.imageUrl} 
@@ -53,7 +53,7 @@ export function DashboardView() {
                     </h3>
                   </div>
                 </div>
-              </ContentCard>
+              </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">

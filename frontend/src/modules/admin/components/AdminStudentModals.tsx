@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import type { AdminStudent, StudentForm, CreateStudentForm, GymOption, AdminTeacherOption } from '../hooks/useAdminStudents';
+import type { AdminStudent, StudentForm, CreateStudentForm, GymOption, AdminTeacherOption, ClassGroupOption } from '../hooks/useAdminStudents';
 import { emptyForm, emptyCreateForm } from '../hooks/useAdminStudents';
 
 type EditModalProps = {
   editing?: AdminStudent; setEditing: (v: null) => void;
   form: StudentForm; setForm: (f: any) => void;
-  assignedTeacherId: string; setAssignedTeacherId: (id: string) => void;
-  initialTeacherId?: string;
-  gyms: GymOption[]; activeTeachers: AdminTeacherOption[];
+  gyms: GymOption[]; classGroups: ClassGroupOption[]; activeTeachers: AdminTeacherOption[];
   handleSave: (e: React.FormEvent) => void; saving: boolean; editError: string;
   handleResetPassword: () => void; resetInfo: string; setResetInfo: (i: string) => void; resetting: boolean;
 };
 
 export function EditStudentModal({
-  setEditing, form, setForm, assignedTeacherId, setAssignedTeacherId,
-  gyms, activeTeachers, handleSave, saving, editError, handleResetPassword, resetInfo, setResetInfo, resetting
+  setEditing, form, setForm,
+  gyms, classGroups, activeTeachers, handleSave, saving, editError, handleResetPassword, resetInfo, setResetInfo, resetting
 }: EditModalProps) {
   const [copiedReset, setCopiedReset] = useState(false);
   const handleCopyReset = async () => {
@@ -31,7 +29,7 @@ export function EditStudentModal({
       <div className="bg-surface w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mb-4 shrink-0">
           <h2 className="text-lg font-bold">Editar alumno</h2>
-          <button className="text-gray-400" type="button" onClick={() => { setEditing(null); setForm(emptyForm); setAssignedTeacherId(''); setResetInfo(''); }}>
+          <button className="text-gray-400" type="button" onClick={() => { setEditing(null); setForm(emptyForm); setResetInfo(''); }}>
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -85,20 +83,12 @@ export function EditStudentModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Gimnasio</label>
-                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.gymId} onChange={(e) => setForm((prev: any) => ({ ...prev, gymId: e.target.value }))}>
-                  <option value="">Sin asignacion</option>
-                  {gyms.filter((g) => !g.isArchived).map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+                <label className="text-xs text-muted">Comisión</label>
+                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.classGroupId} onChange={(e) => setForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
+                  <option value="">Selecciona una comisión</option>
+                  {classGroups.filter((c) => c.isActive).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Profesor asignado (opcional)</label>
-              <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={assignedTeacherId} onChange={(e) => setAssignedTeacherId(e.target.value)}>
-                <option value="">Sin profesor</option>
-                {activeTeachers.map((t) => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
-              </select>
             </div>
 
             <div className="rounded-lg border border-border bg-background p-3 space-y-2">
@@ -129,14 +119,13 @@ export function EditStudentModal({
 type CreateModalProps = {
   createOpen: boolean; setCreateOpen: (v: boolean) => void;
   createForm: CreateStudentForm; setCreateForm: (f: any) => void;
-  createAssignedTeacherId: string; setCreateAssignedTeacherId: (id: string) => void;
-  gyms: GymOption[]; activeTeachers: AdminTeacherOption[];
+  gyms: GymOption[]; classGroups: ClassGroupOption[]; activeTeachers: AdminTeacherOption[];
   handleCreate: (e: React.FormEvent) => void; creating: boolean; createError: string;
 };
 
 export function CreateStudentModal({
-  createOpen, setCreateOpen, createForm, setCreateForm, createAssignedTeacherId, setCreateAssignedTeacherId,
-  gyms, activeTeachers, handleCreate, creating, createError
+  createOpen, setCreateOpen, createForm, setCreateForm,
+  gyms, classGroups, activeTeachers, handleCreate, creating, createError
 }: CreateModalProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -147,7 +136,7 @@ export function CreateStudentModal({
       <div className="bg-surface w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mb-4 shrink-0">
           <h2 className="text-lg font-bold">Nuevo alumno</h2>
-          <button className="text-gray-400" type="button" onClick={() => { setCreateOpen(false); setCreateForm(emptyCreateForm); setCreateAssignedTeacherId(''); }}>
+          <button className="text-gray-400" type="button" onClick={() => { setCreateOpen(false); setCreateForm(emptyCreateForm); }}>
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -206,10 +195,10 @@ export function CreateStudentModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Gimnasio (opcional)</label>
-                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.gymId} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, gymId: e.target.value }))}>
-                  <option value="">Sin asignacion</option>
-                  {gyms.filter((g) => !g.isArchived).map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+                <label className="text-xs text-muted">Comisión</label>
+                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.classGroupId} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
+                  <option value="">Selecciona una comisión</option>
+                  {classGroups.filter((c) => c.isActive).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>
@@ -222,14 +211,6 @@ export function CreateStudentModal({
                   <span className="material-symbols-outlined text-lg">{showPassword ? 'visibility_off' : 'visibility'}</span>
                 </button>
               </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-muted">Profesor asignado (opcional)</label>
-              <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createAssignedTeacherId} onChange={(e) => setCreateAssignedTeacherId(e.target.value)}>
-                <option value="">Sin profesor</option>
-                {activeTeachers.map((t) => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
-              </select>
             </div>
 
             <button className="w-full rounded-lg bg-primary text-white text-sm font-semibold py-3 disabled:opacity-70" type="submit" disabled={creating}>

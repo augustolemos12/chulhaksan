@@ -41,13 +41,13 @@ export function useAdminTeachers() {
       const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
       if (query.trim()) params.set('search', query.trim());
       
-      const response = await httpClient.request(`/admin/teachers?${params.toString()}`, { cache: 'no-store' });
+      const response = await httpClient.request(`/teachers?${params.toString()}`, { cache: 'no-store' });
       if (!response.ok) throw new Error((await response.json().catch(() => ({}))).message ?? 'No se pudo cargar el listado.');
       
       const payload = await response.json();
-      const list = Array.isArray(payload) ? payload : payload?.data ?? [];
+      const list = Array.isArray(payload) ? payload : payload?.items ?? payload?.data ?? [];
       setTeachers(list);
-      setTotal(Array.isArray(payload) ? list.length : (payload?.total ?? list.length));
+      setTotal(Array.isArray(payload) ? list.length : (payload?.meta?.total ?? payload?.total ?? list.length));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo cargar el listado.');
     } finally {
@@ -78,7 +78,7 @@ export function useAdminTeachers() {
         phone: form.phone.trim() || null, birthDate: form.birthDate.trim() || null, address: form.address.trim() || null,
         gyms: form.gyms.trim() ? form.gyms.split(',').map((item) => item.trim()).filter(Boolean) : null,
       };
-      const res = await httpClient.request(`/admin/teachers/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
+      const res = await httpClient.request(`/teachers/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar el profesor.');
       setEditing(null); setForm(emptyForm); setResetInfo('');
       await loadTeachers();
@@ -101,7 +101,7 @@ export function useAdminTeachers() {
         birthDate: createForm.birthDate.trim(), address: createForm.address.trim() || null,
         gyms: gymsList,
       };
-      const res = await httpClient.request('/admin/users', { method: 'POST', json: true, body: JSON.stringify(payload) });
+      const res = await httpClient.request('/teachers', { method: 'POST', json: true, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el profesor.');
       setCreateOpen(false); setCreateForm(emptyCreateForm);
       await loadTeachers();
@@ -116,7 +116,7 @@ export function useAdminTeachers() {
     if (!confirm(`Eliminar profesor ${teacher.firstName} ${teacher.lastName}?`)) return;
     setError('');
     try {
-      const res = await httpClient.request(`/admin/teachers/${teacher.id}`, { method: 'DELETE' });
+      const res = await httpClient.request(`/teachers/${teacher.id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo eliminar el profesor.');
       await loadTeachers();
     } catch (err) {
@@ -129,7 +129,7 @@ export function useAdminTeachers() {
     if (!confirm('¿Querés resetear la contraseña de este profesor?')) return;
     setResetting(true); setEditError('');
     try {
-      const res = await httpClient.request(`/admin/users/${editing.user.id}/reset-password`, { method: 'POST' });
+      const res = await httpClient.request(`/auth/admin/users/${editing.user.id}/reset-password`, { method: 'POST' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo resetear la contraseña.');
       const data = await res.json() as { temporaryPassword?: string };
       if (!data?.temporaryPassword) throw new Error('No se recibió la contraseña temporal.');

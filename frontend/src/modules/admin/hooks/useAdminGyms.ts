@@ -19,11 +19,12 @@ export function useAdminGyms() {
   const load = async () => {
     setLoading(true); setError('');
     try {
-      const res = await httpClient.request('/admin/gyms', { cache: 'no-store' });
+      const res = await httpClient.request('/gyms', { cache: 'no-store' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo cargar el listado.');
       
-      const data = await res.json() as GymItem[];
-      setGyms(Array.isArray(data) ? data.filter((g) => !g.isArchived) : []);
+      const payload = await res.json();
+      const list = Array.isArray(payload) ? payload : payload?.items ?? payload?.data ?? [];
+      setGyms(list.filter((g: any) => !g.isArchived));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo cargar el listado.');
     } finally {
@@ -47,7 +48,7 @@ export function useAdminGyms() {
     if (!trimmed) return;
     setCreating(true); setError('');
     try {
-      const res = await httpClient.request('/admin/gyms', { method: 'POST', json: true, body: JSON.stringify({ name: trimmed }) });
+      const res = await httpClient.request('/gyms', { method: 'POST', json: true, body: JSON.stringify({ name: trimmed }) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el gimnasio.');
       setName(''); await load();
     } catch (err) {
@@ -62,7 +63,7 @@ export function useAdminGyms() {
     if (!next || next === gym.name) return;
     setError('');
     try {
-      const res = await httpClient.request(`/admin/gyms/${gym.id}`, { method: 'PATCH', json: true, body: JSON.stringify({ name: next }) });
+      const res = await httpClient.request(`/gyms/${gym.id}`, { method: 'PATCH', json: true, body: JSON.stringify({ name: next }) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo renombrar el gimnasio.');
       await load();
     } catch (err) {
@@ -83,7 +84,7 @@ export function useAdminGyms() {
     if (!gymToDelete || deleting) return;
     setDeleting(true); setError('');
     try {
-      const res = await httpClient.request(`/admin/gyms/${gymToDelete.id}`, {
+      const res = await httpClient.request(`/gyms/${gymToDelete.id}`, {
         method: 'DELETE', json: true, body: JSON.stringify(targetGymId ? { targetGymId } : {})
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo eliminar el gimnasio.');

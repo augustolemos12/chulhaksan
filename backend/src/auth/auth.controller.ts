@@ -1,11 +1,13 @@
-import { Controller, Post, Body, Res, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, UseGuards, Param, ParseIntPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import type { Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from '@prisma/client';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -69,5 +71,12 @@ export class AuthController {
     });
 
     return { message: 'Sesión renovada', token };
+  }
+
+  @Post('admin/users/:id/reset-password')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async resetAdminPassword(@Param('id', ParseIntPipe) id: number) {
+    return this.authService.resetAdminPassword(id);
   }
 }
