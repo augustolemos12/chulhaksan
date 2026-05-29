@@ -3,12 +3,17 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { TeacherQueryDto } from './dto/teacher-query.dto';
+import { UpdateTeacherPaymentDto } from './dto/update-teacher-payment.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Role, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class TeachersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   private mapTeacherResponse(teacher: any) {
     if (!teacher) return null;
@@ -167,6 +172,72 @@ export class TeachersService {
     });
 
     return { success: true, message: 'Profesor eliminado correctamente' };
+  }
+
+  async findOwnProfile(userId: number) {
+    const teacher = await this.prisma.teacher.findUnique({
+      where: { userId },
+      include: {
+        user: true,
+        classGroups: {
+          where: { isActive: true },
+        },
+      },
+    });
+
+    if (!teacher || teacher.deletedAt !== null) {
+      throw new NotFoundException('Perfil de profesor no encontrado');
+    }
+
+    return this.mapTeacherResponse(teacher);
+  }
+
+  async updateOwnPaymentDetails(
+    userId: number,
+    dto: UpdateTeacherPaymentDto,
+    file?: Express.Multer.File,
+  ) {
+    const teacher = await this.prisma.teacher.findUnique({
+      where: { userId },
+    });
+
+    if (!teacher || teacher.deletedAt !== null) {
+      throw new NotFoundException('Perfil de profesor no encontrado');
+    }
+
+    let qrCodeUrl = teacher.qrCodeUrl;
+
+    if (file) {
+      if (teacher.qrCodeUrl) {
+        try {
+          const publicId = this.cloudinaryService.extractPublicId(teacher.qrCodeUrl);
+          if (publicId) {
+            await this.cloudinaryService.deleteFile(publicId);
+          }
+        } catch (err) {
+          console.error('Error deleting previous QR from Cloudinary:', err);
+        }
+      }
+
+      const uploadResult = await this.cloudinaryService.uploadQrCode(file);
+      qrCodeUrl = uploadResult.secure_url;
+    }
+
+    const updatedTeacher = await this.prisma.teacher.update({
+      where: { id: teacher.id },
+      data: {
+        walletUrl: dto.walletUrl || null,
+        qrCodeUrl,
+      },
+      include: {
+        user: true,
+        classGroups: {
+          where: { isActive: true },
+        },
+      },
+    });
+
+    return this.mapTeacherResponse(updatedTeacher);
   }
 }
 

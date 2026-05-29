@@ -19,6 +19,7 @@ import { AdminGymsView } from '../modules/admin/views/AdminGymsView';
 import { TeacherStudentsView } from '../modules/teacher/views/TeacherStudentsView';
 import { TeacherGymsView } from '../modules/teacher/views/TeacherGymsView';
 import { TeacherAttendanceView } from '../modules/teacher/views/TeacherAttendanceView';
+import { TeacherPaymentView } from '../modules/teacher/views/TeacherPaymentView';
 
 // Student
 import { StudentProfileView } from '../modules/student/views/StudentProfileView';
@@ -52,6 +53,7 @@ export function AppRoutes() {
             <Route path="/profesor/alumnos" element={<TeacherStudentsView />} />
             <Route path="/profesor/gimnasios" element={<TeacherGymsView />} />
             <Route path="/profesor/gimnasios/:gymId/asistencia" element={<TeacherAttendanceView />} />
+            <Route path="/profesor/datos-de-pago" element={<TeacherPaymentView />} />
 
             {/* Student */}
             <Route path="/alumno/perfil" element={<StudentProfileView />} />

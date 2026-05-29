@@ -354,4 +354,30 @@ export class StudentsService {
 
     return this.mapStudentResponse(student);
   }
+
+  async findOwnTeacher(userId: number) {
+    const student = await this.prisma.student.findUnique({
+      where: { userId },
+      include: {
+        teacher: true,
+      },
+    });
+
+    if (!student || student.deletedAt !== null) {
+      throw new NotFoundException('Perfil de alumno no encontrado');
+    }
+
+    if (!student.teacher || student.teacher.deletedAt !== null) {
+      throw new NotFoundException('No tenés un profesor asignado o no se encuentra activo');
+    }
+
+    return {
+      firstName: student.teacher.firstName,
+      lastName: student.teacher.lastName,
+      phone: student.teacher.phone,
+      email: student.teacher.email,
+      qrCodeUrl: student.teacher.qrCodeUrl,
+      walletUrl: student.teacher.walletUrl,
+    };
+  }
 }

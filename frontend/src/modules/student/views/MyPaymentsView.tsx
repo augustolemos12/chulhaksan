@@ -7,6 +7,8 @@ interface TeacherInfo {
   lastName: string;
   phone?: string;
   email?: string;
+  qrCodeUrl?: string;
+  walletUrl?: string;
 }
 
 export function MyPaymentsView() {
@@ -101,7 +103,7 @@ export function MyPaymentsView() {
   };
 
   const teacherName = teacher ? `Prof. ${teacher.firstName} ${teacher.lastName}` : 'tu Instructor';
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Pago-CHS-Profesor-${teacher?.lastName || 'Taekwondo'}`;
+  const qrUrl = teacher?.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Pago-CHS-Profesor-${teacher?.lastName || 'Taekwondo'}`;
 
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-300">
@@ -217,10 +219,30 @@ export function MyPaymentsView() {
                   </div>
                 )}
                 <div className="mt-4 text-center max-w-xs">
-                  <p className="text-xs font-semibold text-text">Paga mediante Mercado Pago o Transferencia</p>
-                  <p className="text-[10px] text-muted mt-1">Escaneá desde la app de tu banco o billetera virtual para realizar la transacción.</p>
+                  <p className="text-xs font-semibold text-text">
+                    {teacher?.qrCodeUrl ? 'Paga escaneando el QR oficial de tu profesor' : 'Paga mediante Mercado Pago o Transferencia'}
+                  </p>
+                  <p className="text-[10px] text-muted mt-1">
+                    {teacher?.qrCodeUrl 
+                      ? 'Escaneá desde la app de tu billetera virtual para realizar la transacción.' 
+                      : 'Escaneá desde la app de tu banco o billetera virtual para realizar la transacción.'}
+                  </p>
                 </div>
               </div>
+
+              {teacher?.walletUrl && (
+                <div className="pt-2 animate-fadeIn">
+                  <a
+                    href={teacher.walletUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 hover:scale-[1.01]"
+                  >
+                    <span className="material-symbols-outlined text-lg">open_in_new</span>
+                    <span>Pagar con Billetera Virtual (Redirección)</span>
+                  </a>
+                </div>
+              )}
             </section>
 
             {/* Upload Receipt Section */}

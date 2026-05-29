@@ -78,7 +78,8 @@ export function DashboardView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <QuickAction to="/profesor/alumnos" icon="group" title="Alumnos" subtitle="Listado y estado" />
               <QuickAction to="/profesor/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" />
-              <QuickAction to="/perfil" icon="badge" title="Perfil" subtitle="Datos personales" />
+              <QuickAction to="/alumno/perfil" icon="badge" title="Perfil" subtitle="Datos personales" />
+              <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" />
               <QuickAction icon="payments" title="Mercado Pago" subtitle="Cobros en tu cuenta">
                 <button
                   className={`mt-4 w-full rounded-xl text-white text-sm font-semibold py-2 ${mpConnected ? 'bg-success' : 'bg-primary'}`}

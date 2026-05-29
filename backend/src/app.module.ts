@@ -12,7 +12,8 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { ClassPlansModule } from './class-plans/class-plans.module';
 import { EventsModule } from './events/events.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-
+import { FeesModule } from './fees/fees.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -27,6 +28,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ClassPlansModule,
     EventsModule,
     CloudinaryModule,
+    FeesModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -51,6 +51,38 @@ export class CloudinaryService {
   }
 
   /**
+   * Sube un código QR a Cloudinary manteniendo su formato cuadrado e impidiendo recortes agresivos.
+   */
+  uploadQrCode(
+    file: Express.Multer.File,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'chulhaksan_qrs',
+          transformation: [
+            {
+              width: 600,
+              height: 600,
+              crop: 'limit',     // Límite de tamaño para no deformar o recortar el código
+              quality: 'auto',
+              fetch_format: 'auto',
+            },
+          ],
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('Cloudinary no devolvió resultado'));
+          resolve(result);
+        },
+      );
+
+      // Crea un readable stream a partir del buffer en memoria y lo pipe-a a Cloudinary
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+  }
+
+  /**
    * Elimina una imagen de Cloudinary a partir de su public_id.
    * El public_id se extrae de la URL guardada en la base de datos.
    * Ejemplo de URL:
