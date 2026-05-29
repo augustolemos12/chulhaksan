@@ -39,8 +39,8 @@ enum StudentCategory {
 }
 
 enum PaymentMethod {
-  ONLINE
   CASH
+  TRANSFER
 }
 
 enum PaymentStatus {
@@ -71,6 +71,7 @@ enum FeeStatus {
   PAID
   FULL_YEAR
   OVERDUE
+  PARTIALLY_PAID
 }
 
 enum DayOfWeek {
@@ -222,14 +223,15 @@ model Fee {
 
   status FeeStatus @default(PENDING)
 
-  baseAmount  Int
-  finalAmount Int
+  baseAmount Int
+
+  surchargeAmount Int @default(0)
+
+  totalAmount Int
+
+  paidAmount Int @default(0)
 
   dueDate DateTime
-
-  paidAt DateTime?
-
-  paymentMethod PaymentMethod?
 
   lateFeeApplied Boolean @default(false)
 
@@ -237,7 +239,8 @@ model Fee {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  student  Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
   payments Transaction[]
 
   @@unique([studentId, month, year])
@@ -265,18 +268,23 @@ model Transaction {
 
   feeId Int
 
-  externalId   String? // MP id
-  preferenceId String?
+  amount Int
 
-  status PaymentStatus
+  method PaymentMethod
 
-  rawData Json?
+  status PaymentStatus @default(PENDING)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  paidAt    DateTime?
+  proofImageUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviewedAt DateTime?
 
   fee Fee @relation(fields: [feeId], references: [id], onDelete: Cascade)
+
+  @@index([feeId])
+  @@index([status])
 }
 
 //
