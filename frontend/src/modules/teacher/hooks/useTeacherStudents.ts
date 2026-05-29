@@ -53,8 +53,14 @@ export function useTeacherStudents() {
         httpClient.request('/gyms', { cache: 'no-store' }),
         httpClient.request('/class-groups/my-groups', { cache: 'no-store' })
       ]);
-      if (gRes.ok) setGyms(Array.isArray(await gRes.json()) ? await gRes.json() : []);
-      if (cRes.ok) setClassGroups(Array.isArray(await cRes.json()) ? await cRes.json() : []);
+      if (gRes.ok) {
+        const gData = await gRes.json();
+        setGyms(Array.isArray(gData) ? gData : gData?.items ?? gData?.data ?? []);
+      }
+      if (cRes.ok) {
+        const cData = await cRes.json();
+        setClassGroups(Array.isArray(cData) ? cData : cData?.items ?? cData?.data ?? []);
+      }
     } catch {}
   };
 
@@ -75,7 +81,7 @@ export function useTeacherStudents() {
 
       const baseAssigned = (data ?? []).map((s: any) => ({ ...s, status: 'UNKNOWN' as const }));
       setAssigned(baseAssigned);
-      setTotal(totalCount);
+      setTotal(total);
 
       const statusResults = await Promise.all(
         baseAssigned.map(async (student: any) => {

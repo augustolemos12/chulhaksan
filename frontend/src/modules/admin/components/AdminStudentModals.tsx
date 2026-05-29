@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import type { AdminStudent, StudentForm, CreateStudentForm, GymOption, AdminTeacherOption, ClassGroupOption } from '../hooks/useAdminStudents';
+import type { AdminStudent, StudentForm, CreateStudentForm, ClassGroupOption } from '../hooks/useAdminStudents';
 import { emptyForm, emptyCreateForm } from '../hooks/useAdminStudents';
 
 type EditModalProps = {
   editing?: AdminStudent; setEditing: (v: null) => void;
   form: StudentForm; setForm: (f: any) => void;
-  gyms: GymOption[]; classGroups: ClassGroupOption[]; activeTeachers: AdminTeacherOption[];
+  classGroups: ClassGroupOption[];
   handleSave: (e: React.FormEvent) => void; saving: boolean; editError: string;
   handleResetPassword: () => void; resetInfo: string; setResetInfo: (i: string) => void; resetting: boolean;
 };
 
 export function EditStudentModal({
   setEditing, form, setForm,
-  gyms, classGroups, activeTeachers, handleSave, saving, editError, handleResetPassword, resetInfo, setResetInfo, resetting
+  classGroups, handleSave, saving, editError, handleResetPassword, resetInfo, setResetInfo, resetting
 }: EditModalProps) {
   const [copiedReset, setCopiedReset] = useState(false);
   const handleCopyReset = async () => {
@@ -107,16 +107,23 @@ export function EditStudentModal({
   );
 }
 
-type CreateModalProps = {
-  createOpen: boolean; setCreateOpen: (v: boolean) => void;
-  createForm: CreateStudentForm; setCreateForm: (f: any) => void;
-  gyms: GymOption[]; classGroups: ClassGroupOption[]; activeTeachers: AdminTeacherOption[];
-  handleCreate: (e: React.FormEvent) => void; creating: boolean; createError: string;
+type CommonProps = {
+  classGroups: any[];
+};
+
+type CreateModalProps = CommonProps & {
+  createOpen: boolean;
+  setCreateOpen: (v: boolean) => void;
+  createForm: CreateStudentForm;
+  setCreateForm: (f: any) => void;
+  handleCreate: (e: React.FormEvent) => void;
+  creating: boolean;
+  createError: string;
 };
 
 export function CreateStudentModal({
   createOpen, setCreateOpen, createForm, setCreateForm,
-  gyms, classGroups, activeTeachers, handleCreate, creating, createError
+  classGroups, handleCreate, creating, createError
 }: CreateModalProps) {
   const [showPassword, setShowPassword] = useState(false);
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { authService, type UserProfile } from '../../auth/api/authService';
 import { httpClient } from '../../../core/api/httpClient';
 
@@ -17,7 +17,6 @@ export interface MonthEvent {
 
 export function useDashboardData() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const [profile, setProfile] = useState<UserProfile | null>(authService.getCurrentProfile());
   const [displayName, setDisplayName] = useState('');

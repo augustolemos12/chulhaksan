@@ -120,6 +120,8 @@ export function DashboardView() {
               <div className="flex flex-col gap-3">
                 <QuickAction to="/admin/alumnos" icon="group" title="Alumnos" subtitle="Gestión total" variant="row" />
                 <QuickAction to="/admin/profesores" icon="badge" title="Profesores" subtitle="Gestión total" variant="row" />
+                <QuickAction to="/admin/comisiones" icon="class" title="Comisiones" subtitle="Horarios y profesores" variant="row" />
+                <QuickAction to="/admin/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas" variant="row" />
                 <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" variant="row" />
                 <QuickAction to="/admin/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" variant="row" />
                 <QuickAction to="/admin/eventos" icon="event" title="Evento del mes" subtitle="Gestión de banners" variant="row" />

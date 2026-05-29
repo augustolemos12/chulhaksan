@@ -11,6 +11,8 @@ export type AdminStudent = {
 };
 
 export type AdminTeacherOption = { id: string; firstName: string; lastName: string; user?: { status: string; }; };
+export type GymOption = { id: string; name: string; isArchived?: boolean; };
+export type ClassGroupOption = { id: number; name: string; isActive: boolean; gymId: string; };
 export type StudentForm = { firstName: string; lastName: string; email: string; phone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; address: string; };
 export type CreateStudentForm = StudentForm & { dni: string; password: string; currentBelt: string; };
 

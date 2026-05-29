@@ -16,6 +16,8 @@ import { AdminTeachersView } from '../modules/admin/views/AdminTeachersView';
 import { AdminGymsView } from '../modules/admin/views/AdminGymsView';
 import { AdminEventView } from '../modules/admin/views/AdminEventView';
 import { AdminFeeConfigView } from '../modules/admin/views/AdminFeeConfigView';
+import { AdminClassGroupsView } from '../modules/admin/views/AdminClassGroupsView';
+import { AdminClassPlansView } from '../modules/admin/views/AdminClassPlansView';
 
 // Teacher
 import { TeacherStudentsView } from '../modules/teacher/views/TeacherStudentsView';
@@ -52,6 +54,8 @@ export function AppRoutes() {
             <Route path="/admin/gimnasios" element={<AdminGymsView />} />
             <Route path="/admin/eventos" element={<AdminEventView />} />
             <Route path="/admin/cuota-global" element={<AdminFeeConfigView />} />
+            <Route path="/admin/comisiones" element={<AdminClassGroupsView />} />
+            <Route path="/admin/planes" element={<AdminClassPlansView />} />
 
             {/* Teacher */}
             <Route path="/profesor/alumnos" element={<TeacherStudentsView />} />

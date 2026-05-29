@@ -5,7 +5,7 @@ import { EditStudentModal, CreateStudentModal } from '../components/AdminStudent
 export function AdminStudentsView() {
   const {
     students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
-    page, setPage, pageSize, gyms, classGroups, activeTeachers, searchParams, setSearchParams,
+    page, setPage, pageSize, gyms, classGroups, searchParams, setSearchParams,
     editing, setEditing, form, setForm, saving, editError, handleSave, openEdit,
     createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
     handleDelete, handleResetPassword, resetInfo, setResetInfo, resetting
@@ -135,16 +135,16 @@ export function AdminStudentsView() {
       </main>
 
       {editing && (
-      <EditStudentModal
+        <EditStudentModal
           editing={editing} setEditing={setEditing} form={form} setForm={setForm}
-          gyms={gyms} classGroups={classGroups} activeTeachers={activeTeachers} handleSave={handleSave} saving={saving} editError={editError}
+          classGroups={classGroups} handleSave={handleSave} saving={saving} editError={editError}
           handleResetPassword={handleResetPassword} resetInfo={resetInfo} setResetInfo={setResetInfo} resetting={resetting}
         />
       )}
 
       <CreateStudentModal
         createOpen={createOpen} setCreateOpen={setCreateOpen} createForm={createForm} setCreateForm={setCreateForm}
-        gyms={gyms} classGroups={classGroups} activeTeachers={activeTeachers} handleCreate={handleCreate} creating={creating} createError={createError}
+        classGroups={classGroups} handleCreate={handleCreate} creating={creating} createError={createError}
       />
     </div>
   );

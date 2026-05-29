@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import type { StudentWithStatus, StudentForm, CreateStudentForm, GymOption, ClassGroupOption } from '../hooks/useTeacherStudents';
+import type { StudentWithStatus, StudentForm, CreateStudentForm, ClassGroupOption } from '../hooks/useTeacherStudents';
 import { emptyForm, emptyCreateForm } from '../hooks/useTeacherStudents';
 
 type EditModalProps = {
   editing?: StudentWithStatus; setEditing: (v: null) => void;
   form: StudentForm; setForm: (f: any) => void;
-  gyms: GymOption[]; classGroups: ClassGroupOption[];
+  classGroups: ClassGroupOption[];
   handleSave: (e: React.FormEvent) => void; saving: boolean; editError: string;
 };
 
 export function EditTeacherStudentModal({
   setEditing, form, setForm,
-  gyms, classGroups, handleSave, saving, editError
+  classGroups, handleSave, saving, editError
 }: EditModalProps) {
   return (
     <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
@@ -82,13 +82,13 @@ export function EditTeacherStudentModal({
 type CreateModalProps = {
   createOpen: boolean; setCreateOpen: (v: boolean) => void;
   createForm: CreateStudentForm; setCreateForm: (f: any) => void;
-  gyms: GymOption[]; classGroups: ClassGroupOption[];
+  classGroups: ClassGroupOption[];
   handleCreate: (e: React.FormEvent) => void; creating: boolean; createError: string;
 };
 
 export function CreateTeacherStudentModal({
   createOpen, setCreateOpen, createForm, setCreateForm,
-  gyms, classGroups, handleCreate, creating, createError
+  classGroups, handleCreate, creating, createError
 }: CreateModalProps) {
   const [showPassword, setShowPassword] = useState(false);
 

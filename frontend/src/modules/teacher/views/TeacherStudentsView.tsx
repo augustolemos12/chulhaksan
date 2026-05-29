@@ -137,14 +137,14 @@ export function TeacherStudentsView() {
 
       {editing && (
         <EditTeacherStudentModal
-          editing={editing} setEditing={setEditing} form={form} setForm={setForm}
-          gyms={gyms} classGroups={classGroups} handleSave={handleSave} saving={saving} editError={editError}
+          editing={editing!} setEditing={setEditing} form={form} setForm={setForm}
+          classGroups={classGroups} handleSave={handleSave} saving={saving} editError={editError}
         />
       )}
 
       <CreateTeacherStudentModal
         createOpen={createOpen} setCreateOpen={setCreateOpen} createForm={createForm} setCreateForm={setCreateForm}
-        gyms={gyms} classGroups={classGroups} handleCreate={handleCreate} creating={creating} createError={createError}
+        classGroups={classGroups} handleCreate={handleCreate} creating={creating} createError={createError}
       />
     </div>
   );
