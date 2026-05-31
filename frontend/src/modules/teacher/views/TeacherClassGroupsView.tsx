@@ -12,7 +12,7 @@ export function TeacherClassGroupsView() {
     classGroups, total, loading, error, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
     page, setPage, pageSize, gyms,
     createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
-    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit, handleDelete
+    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit
   } = useTeacherClassGroups();
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));

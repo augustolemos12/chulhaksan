@@ -54,7 +54,7 @@ export function ProfileGreeting({ profile, displayName }: { profile: UserProfile
 
 export function ContentCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white/90 backdrop-blur-sm rounded-3xl border border-white/40 shadow-soft p-5 ${className}`}>
+    <div className={`bg-surface/90 dark:bg-surface backdrop-blur-sm rounded-3xl border border-border shadow-soft p-5 ${className}`}>
       {children}
     </div>
   );

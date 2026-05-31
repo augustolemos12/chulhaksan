@@ -93,7 +93,7 @@ export function DashboardView() {
         {role === 'TEACHER' && (
           <ContentCard>
             <BlockTitle title="Acceso rápido" subtitle="Gestión del profesor" />
-            <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <QuickAction to="/profesor/alumnos" icon="group" title="Alumnos" subtitle="Listado y estado" variant="row" />
               <QuickAction to="/profesor/comisiones" icon="class" title="Comisiones" subtitle="Horarios y alumnos" variant="row" />
               <QuickAction to="/profesor/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas por mes" variant="row" />
@@ -115,7 +115,7 @@ export function DashboardView() {
 
             <ContentCard>
               <BlockTitle title="Acceso rápido" subtitle="Herramientas administrativas" />
-              <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <QuickAction to="/admin/alumnos" icon="group" title="Alumnos" subtitle="Gestión total" variant="row" />
                 <QuickAction to="/admin/profesores" icon="badge" title="Profesores" subtitle="Gestión total" variant="row" />
                 <QuickAction to="/admin/comisiones" icon="class" title="Comisiones" subtitle="Horarios y profesores" variant="row" />
