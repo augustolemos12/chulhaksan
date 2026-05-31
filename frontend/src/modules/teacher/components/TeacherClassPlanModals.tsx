@@ -1,11 +1,10 @@
 import React from 'react';
-import type { ClassPlanItem, ClassPlanForm } from '../hooks/useAdminClassPlans';
-import { emptyForm } from '../hooks/useAdminClassPlans';
+import type { ClassPlanItem, ClassPlanForm } from '../hooks/useTeacherClassPlans';
+import { emptyForm } from '../hooks/useTeacherClassPlans';
 
 type CommonProps = {
   classGroups: any[];
   gyms: any[];
-  teachers: any[];
 };
 
 type CreateModalProps = CommonProps & {
@@ -20,13 +19,12 @@ type CreateModalProps = CommonProps & {
 
 export function CreateClassPlanModal({
   createOpen, setCreateOpen, createForm, setCreateForm,
-  classGroups, gyms, teachers, handleCreate, creating, createError
+  classGroups, gyms, handleCreate, creating, createError
 }: CreateModalProps) {
   if (!createOpen) return null;
 
   const filteredCommissions = classGroups.filter(cg => {
     if (createForm.gymId && String(cg.gymId) !== createForm.gymId) return false;
-    if (createForm.teacherId && String(cg.teacherId) !== createForm.teacherId) return false;
     return true;
   });
 
@@ -43,7 +41,7 @@ export function CreateClassPlanModal({
           <form className="space-y-4" onSubmit={handleCreate}>
             {createError && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">{createError}</div>}
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-xs text-muted">Gimnasio</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.gymId} onChange={(e) => {
@@ -54,16 +52,7 @@ export function CreateClassPlanModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Profesor</label>
-                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.teacherId} onChange={(e) => {
-                  setCreateForm((prev: any) => ({ ...prev, teacherId: e.target.value, classGroupId: '' }));
-                }}>
-                  <option value="">Todos</option>
-                  {teachers.map((t) => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs text-muted">Comisión</label>
+                <label className="text-xs text-muted">Mis Comisiones</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.classGroupId} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
                   <option value="">Seleccionar...</option>
                   {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Comisión ${cg.id}`}</option>)}
@@ -109,13 +98,12 @@ type EditModalProps = CommonProps & {
 
 export function EditClassPlanModal({
   editing, setEditing, form, setForm,
-  classGroups, gyms, teachers, handleSave, saving, editError
+  classGroups, gyms, handleSave, saving, editError
 }: EditModalProps) {
   if (!editing) return null;
 
   const filteredCommissions = classGroups.filter(cg => {
     if (form.gymId && String(cg.gymId) !== form.gymId) return false;
-    if (form.teacherId && String(cg.teacherId) !== form.teacherId) return false;
     return true;
   });
 
@@ -132,7 +120,7 @@ export function EditClassPlanModal({
           <form className="space-y-4" onSubmit={handleSave}>
             {editError && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">{editError}</div>}
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-xs text-muted">Gimnasio</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.gymId} onChange={(e) => {
@@ -143,16 +131,7 @@ export function EditClassPlanModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Profesor</label>
-                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.teacherId} onChange={(e) => {
-                  setForm((prev: any) => ({ ...prev, teacherId: e.target.value, classGroupId: '' }));
-                }}>
-                  <option value="">Todos</option>
-                  {teachers.map((t) => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs text-muted">Comisión</label>
+                <label className="text-xs text-muted">Mis Comisiones</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.classGroupId} onChange={(e) => setForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
                   <option value="">Seleccionar...</option>
                   {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Comisión ${cg.id}`}</option>)}

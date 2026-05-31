@@ -19,16 +19,18 @@ export function useDashboardData() {
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState<UserProfile | null>(authService.getCurrentProfile());
+  const [isLoadingProfile, setIsLoadingProfile] = useState(!profile);
   const [displayName, setDisplayName] = useState('');
   const [teacherSummary, setTeacherSummary] = useState<TeacherSummary | null>(null);
   const [monthEvent, setMonthEvent] = useState<MonthEvent | null>(null);
   const [adminStats, setAdminStats] = useState({ students: 0, teachers: 0 });
 
-  const role = profile?.role ?? 'STUDENT';
+  const role = profile?.role;
   const pageTitle = useMemo(() => {
     if (role === 'TEACHER') return 'Panel del Profesor';
     if (role === 'ADMIN') return 'Panel de Administración';
-    return 'Panel del Alumno';
+    if (role === 'STUDENT') return 'Panel del Alumno';
+    return 'Cargando...';
   }, [role]);
 
   const executeLogout = async () => {
@@ -40,11 +42,14 @@ export function useDashboardData() {
 
   useEffect(() => {
     if (!profile) {
+      setIsLoadingProfile(true);
       authService.fetchUserProfile()
-        .then((data) => setProfile(data))
+        .then((data) => {
+          setProfile(data);
+          setIsLoadingProfile(false);
+        })
         .catch(() => {
-          setDisplayName('');
-          setTeacherSummary(null);
+          navigate('/login', { replace: true });
         });
       return;
     }
@@ -119,6 +124,7 @@ export function useDashboardData() {
 
   return {
     profile,
+    isLoadingProfile,
     role,
     pageTitle,
     displayName,

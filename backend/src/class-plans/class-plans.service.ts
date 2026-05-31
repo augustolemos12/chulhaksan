@@ -76,7 +76,7 @@ export class ClassPlansService {
   }
 
   async findAll(query: ClassPlanQueryDto, actor: { id: number; role: Role }) {
-    const { classGroupId, month, year, page = 1, limit = 10 } = query;
+    const { classGroupId, gymId, teacherId, month, year, page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ClassPlanWhereInput = {};
@@ -87,6 +87,11 @@ export class ClassPlansService {
     // Filtro por comisión específica
     if (classGroupId) {
         where.classGroupId = classGroupId;
+    } else if (gymId || teacherId) {
+        where.classGroup = {
+            ...(gymId ? { gymId } : {}),
+            ...(teacherId ? { teacherId } : {}),
+        };
     }
 
     // Restricción de Ownership para TEACHER
@@ -103,6 +108,7 @@ export class ClassPlansService {
       // pero debemos asegurar que sea SUYA.
       // Si no pidió ninguna, mostramos todas las SUYAS.
       where.classGroup = {
+        ...((where.classGroup as Prisma.ClassGroupWhereInput) || {}),
         teacherId: teacher.id,
       };
     }

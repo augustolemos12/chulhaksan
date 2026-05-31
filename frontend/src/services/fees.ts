@@ -110,3 +110,16 @@ export async function registerDirectPayment(feeId: number, amount: number, metho
   }
   return response.json();
 }
+
+export async function generateFees(month: number, year: number, dueDate: string): Promise<{ success: boolean; createdCount: number; message: string }> {
+  const response = await apiFetch('/fees/generate', {
+    method: 'POST',
+    json: true,
+    body: JSON.stringify({ month, year, dueDate }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Error al generar cuotas masivas');
+  }
+  return response.json();
+}

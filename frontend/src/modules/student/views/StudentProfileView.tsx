@@ -66,7 +66,7 @@ export function StudentProfileView() {
                   <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">DNI</span><span className="text-sm font-semibold">{profile?.dni ?? '-'}</span></div>
                   <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">Teléfono</span><span className="text-sm font-semibold">{profile?.phone ?? '-'}</span></div>
                   <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">Teléfono tutor</span><span className="text-sm font-semibold">{profile?.guardianPhone ?? '-'}</span></div>
-                  <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">Gimnasio</span><span className="text-sm font-semibold">{profile?.gym ?? '-'}</span></div>
+                  <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">Gimnasio</span><span className="text-sm font-semibold">{profile?.gym?.name ?? '-'}</span></div>
                   <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">Correo electrónico</span><span className="text-sm font-semibold">{profile?.email ?? '-'}</span></div>
                   <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">Dirección</span><span className="text-sm font-semibold">{profile?.address ?? '-'}</span></div>
                   <div className="px-4 py-3 flex items-center justify-between"><span className="text-sm text-gray-500">Nacimiento</span><span className="text-sm font-semibold">{birthDateLabel}</span></div>

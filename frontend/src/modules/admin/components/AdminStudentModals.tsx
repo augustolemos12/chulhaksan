@@ -6,13 +6,15 @@ type EditModalProps = {
   editing?: AdminStudent; setEditing: (v: null) => void;
   form: StudentForm; setForm: (f: any) => void;
   classGroups: ClassGroupOption[];
+  gyms: any[];
+  teachers: any[];
   handleSave: (e: React.FormEvent) => void; saving: boolean; editError: string;
   handleResetPassword: () => void; resetInfo: string; setResetInfo: (i: string) => void; resetting: boolean;
 };
 
 export function EditStudentModal({
   setEditing, form, setForm,
-  classGroups, handleSave, saving, editError, handleResetPassword, resetInfo, setResetInfo, resetting
+  classGroups, gyms, teachers, handleSave, saving, editError, handleResetPassword, resetInfo, setResetInfo, resetting
 }: EditModalProps) {
   const [copiedReset, setCopiedReset] = useState(false);
   const handleCopyReset = async () => {
@@ -23,6 +25,13 @@ export function EditStudentModal({
       setTimeout(() => setCopiedReset(false), 1500);
     } catch { setCopiedReset(false); }
   };
+
+  const filteredCommissions = classGroups.filter(cg => {
+    if (!cg.isActive) return false;
+    if (form.gymId && String(cg.gymId) !== form.gymId) return false;
+    if (form.teacherId && String(cg.teacherId) !== form.teacherId) return false;
+    return true;
+  });
 
   return (
     <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
@@ -67,6 +76,27 @@ export function EditStudentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
+                <label className="text-xs text-muted">Gimnasio</label>
+                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.gymId} onChange={(e) => {
+                  setForm((prev: any) => ({ ...prev, gymId: e.target.value, classGroupId: '' }));
+                }}>
+                  <option value="">Todos</option>
+                  {gyms.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted">Profesor</label>
+                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.teacherId} onChange={(e) => {
+                  setForm((prev: any) => ({ ...prev, teacherId: e.target.value, classGroupId: '' }));
+                }}>
+                  <option value="">Todos</option>
+                  {teachers.map((t) => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
                 <label className="text-xs text-muted">Tipo</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.category} onChange={(e) => setForm((prev: any) => ({ ...prev, category: e.target.value }))} required>
                   <option value="ADULT">Adulto</option>
@@ -77,7 +107,7 @@ export function EditStudentModal({
                 <label className="text-xs text-muted">Comisión</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.classGroupId} onChange={(e) => setForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
                   <option value="">Selecciona una comisión</option>
-                  {classGroups.filter((c) => c.isActive).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {filteredCommissions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>
@@ -109,6 +139,8 @@ export function EditStudentModal({
 
 type CommonProps = {
   classGroups: any[];
+  gyms: any[];
+  teachers: any[];
 };
 
 type CreateModalProps = CommonProps & {
@@ -123,11 +155,18 @@ type CreateModalProps = CommonProps & {
 
 export function CreateStudentModal({
   createOpen, setCreateOpen, createForm, setCreateForm,
-  classGroups, handleCreate, creating, createError
+  classGroups, gyms, teachers, handleCreate, creating, createError
 }: CreateModalProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   if (!createOpen) return null;
+
+  const filteredCommissions = classGroups.filter(cg => {
+    if (!cg.isActive) return false;
+    if (createForm.gymId && String(cg.gymId) !== createForm.gymId) return false;
+    if (createForm.teacherId && String(cg.teacherId) !== createForm.teacherId) return false;
+    return true;
+  });
 
   return (
     <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
@@ -175,6 +214,27 @@ export function CreateStudentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
+                <label className="text-xs text-muted">Gimnasio</label>
+                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.gymId} onChange={(e) => {
+                  setCreateForm((prev: any) => ({ ...prev, gymId: e.target.value, classGroupId: '' }));
+                }}>
+                  <option value="">Todos</option>
+                  {gyms.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted">Profesor</label>
+                <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.teacherId} onChange={(e) => {
+                  setCreateForm((prev: any) => ({ ...prev, teacherId: e.target.value, classGroupId: '' }));
+                }}>
+                  <option value="">Todos</option>
+                  {teachers.map((t) => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
                 <label className="text-xs text-muted">Tipo</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.category} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, category: e.target.value }))} required>
                   <option value="ADULT">Adulto</option>
@@ -185,7 +245,7 @@ export function CreateStudentModal({
                 <label className="text-xs text-muted">Comisión</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.classGroupId} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
                   <option value="">Selecciona una comisión</option>
-                  {classGroups.filter((c) => c.isActive).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {filteredCommissions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>

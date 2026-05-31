@@ -11,7 +11,7 @@ export function TeacherAttendanceView() {
   const {
     year, setYear, month, setMonth,
     classGroup, students, attendanceMap,
-    classPlanId, totalClasses, setTotalClasses, handleSavePlan,
+    classPlanId, totalClasses,
     classDaysInMonth,
     loading, working, error, success,
     handleToggle, handleToggleColumn, handleSaveAttendance
@@ -52,17 +52,13 @@ export function TeacherAttendanceView() {
               </div>
             </div>
 
-            <div className="flex items-end gap-3 w-full sm:w-auto">
-              <div className="flex-1 sm:w-32">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="flex-1 sm:w-auto">
                 <p className="text-xs text-muted uppercase font-bold mb-1">Clases del Mes</p>
-                <input type="number" placeholder="Ej: 8" className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={totalClasses} onChange={(e) => setTotalClasses(e.target.value)} />
+                <div className="h-[38px] flex items-center px-4 rounded-lg bg-primary/10 text-primary font-bold">
+                  {classPlanId ? totalClasses : 'Sin configurar'}
+                </div>
               </div>
-              <button 
-                className="rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-70 h-[38px]"
-                onClick={handleSavePlan} disabled={working || !totalClasses}
-              >
-                {classPlanId ? 'Actualizar' : 'Guardar'}
-              </button>
             </div>
           </div>
         </section>
@@ -70,6 +66,12 @@ export function TeacherAttendanceView() {
         {loading ? (
           <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border text-center shadow-soft">
             Cargando alumnos y asistencia...
+          </div>
+        ) : !classPlanId ? (
+          <div className="bg-surface p-8 rounded-xl border border-border text-center shadow-soft flex flex-col items-center">
+            <span className="material-symbols-outlined text-4xl text-muted mb-3">calendar_month</span>
+            <h3 className="text-lg font-bold text-text mb-2">No hay plan de clases</h3>
+            <p className="text-sm text-muted max-w-md">Para tomar asistencia, primero debes crear el Plan de Clases para este mes ({MONTHS[month - 1]} {year}) en la sección correspondiente.</p>
           </div>
         ) : (
           <section className="bg-surface rounded-xl border border-border shadow-soft overflow-hidden">

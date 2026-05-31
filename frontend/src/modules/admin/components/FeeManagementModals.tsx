@@ -189,12 +189,12 @@ export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, 
         
         <div className="px-6 py-4 overflow-y-auto">
           {transaction.proofImageUrl ? (
-            <div className="rounded-xl overflow-hidden border border-border">
-              <a href={transaction.proofImageUrl} target="_blank" rel="noopener noreferrer">
+            <div className="rounded-xl overflow-hidden border border-border bg-background/50 flex flex-col justify-center items-center p-2">
+              <a href={transaction.proofImageUrl} target="_blank" rel="noopener noreferrer" className="flex justify-center">
                 <img 
                   src={transaction.proofImageUrl} 
                   alt="Comprobante de pago" 
-                  className="w-full h-auto object-contain max-h-[40vh] cursor-pointer hover:opacity-90 transition-opacity"
+                  className="max-w-full h-auto max-h-[40vh] object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
                 />
               </a>
               <p className="text-xs text-center text-muted p-2 bg-background">
@@ -230,6 +230,111 @@ export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, 
             disabled={processing}
           >
             Aprobar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface GenerateFeesModalProps {
+  onClose: () => void;
+  onConfirm: (month: number, year: number, dueDate: string) => void;
+  processing: boolean;
+}
+
+export function GenerateFeesModal({ onClose, onConfirm, processing }: GenerateFeesModalProps) {
+  const currentDate = new Date();
+  const [month, setMonth] = useState<number>(currentDate.getMonth() + 1);
+  const [year, setYear] = useState<number>(currentDate.getFullYear());
+  
+  // Default due date: 10th of the selected month
+  const [dueDate, setDueDate] = useState<string>(() => {
+    const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), 10);
+    return d.toISOString().split('T')[0];
+  });
+
+  const months = [
+    { value: 1, label: 'Enero' }, { value: 2, label: 'Febrero' }, { value: 3, label: 'Marzo' },
+    { value: 4, label: 'Abril' }, { value: 5, label: 'Mayo' }, { value: 6, label: 'Junio' },
+    { value: 7, label: 'Julio' }, { value: 8, label: 'Agosto' }, { value: 9, label: 'Septiembre' },
+    { value: 10, label: 'Octubre' }, { value: 11, label: 'Noviembre' }, { value: 12, label: 'Diciembre' }
+  ];
+
+  const handleMonthYearChange = (m: number, y: number) => {
+    setMonth(m);
+    setYear(y);
+    const newDueDate = new Date(y, m - 1, 10);
+    setDueDate(newDueDate.toISOString().split('T')[0]);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-md bg-surface rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col">
+        <div className="p-6 pb-4">
+          <h2 className="text-xl font-bold text-text mb-2">Generar Cuotas Masivamente</h2>
+          <p className="text-sm text-muted">
+            Se generarán cuotas para el mes seleccionado para todos los alumnos activos. El monto de la cuota será determinado por la configuración global vigente en la fecha de vencimiento.
+          </p>
+        </div>
+        
+        <div className="px-6 py-4 space-y-4">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1">
+                Mes
+              </label>
+              <select
+                className="w-full form-select bg-background border border-border rounded-xl px-4 py-3 text-text focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                value={month}
+                onChange={(e) => handleMonthYearChange(Number(e.target.value), year)}
+              >
+                {months.map(m => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1">
+                Año
+              </label>
+              <input
+                type="number"
+                className="w-full form-input bg-background border border-border rounded-xl px-4 py-3 text-text focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                value={year}
+                onChange={(e) => handleMonthYearChange(month, Number(e.target.value))}
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1">
+              Fecha de Vencimiento
+            </label>
+            <input
+              type="date"
+              className="w-full form-input bg-background border border-border rounded-xl px-4 py-3 text-text focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+            <p className="text-xs text-muted mt-1">Los recargos por mora se aplicarán después de esta fecha.</p>
+          </div>
+        </div>
+
+        <div className="p-4 bg-background/50 border-t border-border flex justify-end gap-3 shrink-0">
+          <button
+            className="px-4 py-2 text-sm font-semibold text-text hover:bg-surface border border-border rounded-xl transition-colors"
+            onClick={onClose}
+            disabled={processing}
+          >
+            Cancelar
+          </button>
+          <button
+            className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors shadow-sm disabled:opacity-50"
+            onClick={() => onConfirm(month, year, new Date(dueDate).toISOString())}
+            disabled={processing}
+          >
+            {processing ? 'Generando...' : 'Generar Cuotas'}
           </button>
         </div>
       </div>

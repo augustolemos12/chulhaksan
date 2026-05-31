@@ -244,6 +244,15 @@ export class ClassGroupsService {
       include: this.commonInclude,
     });
 
+    // Update students' teacherId and gymId to match the new classGroup settings
+    await this.prisma.student.updateMany({
+      where: { classGroupId: id },
+      data: {
+        teacherId: updatedClassGroup.teacherId,
+        gymId: updatedClassGroup.gymId,
+      },
+    });
+
     return updatedClassGroup;
   }
 

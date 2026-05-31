@@ -23,7 +23,7 @@ export class FeeConfigController {
   }
 
   @Get('latest')
-  @Roles(Role.ADMIN, Role.TEACHER)
+  @Roles(Role.ADMIN, Role.TEACHER, Role.STUDENT)
   @ApiOperation({ summary: 'Obtener la configuración vigente actual' })
   async getLatest() {
     return this.feeConfigService.getLatestFeeConfig();

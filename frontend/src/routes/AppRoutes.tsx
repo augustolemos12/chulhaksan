@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { ProtectedRoute } from './ProtectedRoute';
 
 // Public Views
 import { LandingPage } from '../modules/public/views/LandingPage';
@@ -25,6 +26,7 @@ import { TeacherStudentsView } from '../modules/teacher/views/TeacherStudentsVie
 import { TeacherClassGroupsView } from '../modules/teacher/views/TeacherClassGroupsView';
 import { TeacherAttendanceView } from '../modules/teacher/views/TeacherAttendanceView';
 import { TeacherPaymentView } from '../modules/teacher/views/TeacherPaymentView';
+import { TeacherClassPlansView } from '../modules/teacher/views/TeacherClassPlansView';
 
 // Student
 import { StudentProfileView } from '../modules/student/views/StudentProfileView';
@@ -46,34 +48,35 @@ export function AppRoutes() {
             <Route path="/attendance/:gymId" element={<GymAttendanceView />} />
 
             {/* Dashboard */}
-            <Route path="/dashboard" element={<DashboardView />} />
-            <Route path="/pagos" element={<MyPaymentsView />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardView /></ProtectedRoute>} />
+            <Route path="/pagos" element={<ProtectedRoute allowedRoles={['STUDENT']}><MyPaymentsView /></ProtectedRoute>} />
 
             {/* Admin */}
-            <Route path="/admin/alumnos" element={<AdminStudentsView />} />
-            <Route path="/admin/profesores" element={<AdminTeachersView />} />
-            <Route path="/admin/gimnasios" element={<AdminGymsView />} />
-            <Route path="/admin/eventos" element={<AdminEventView />} />
-            <Route path="/admin/cuota-global" element={<AdminFeeConfigView />} />
-            <Route path="/admin/comisiones" element={<AdminClassGroupsView />} />
-            <Route path="/admin/planes" element={<AdminClassPlansView />} />
-            <Route path="/admin/cuotas" element={<FeesManagementView />} />
+            <Route path="/admin/alumnos" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminStudentsView /></ProtectedRoute>} />
+            <Route path="/admin/profesores" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminTeachersView /></ProtectedRoute>} />
+            <Route path="/admin/gimnasios" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminGymsView /></ProtectedRoute>} />
+            <Route path="/admin/eventos" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminEventView /></ProtectedRoute>} />
+            <Route path="/admin/cuota-global" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminFeeConfigView /></ProtectedRoute>} />
+            <Route path="/admin/comisiones" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminClassGroupsView /></ProtectedRoute>} />
+            <Route path="/admin/planes" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminClassPlansView /></ProtectedRoute>} />
+            <Route path="/admin/cuotas" element={<ProtectedRoute allowedRoles={['ADMIN']}><FeesManagementView /></ProtectedRoute>} />
 
             {/* Teacher */}
-            <Route path="/profesor/comisiones" element={<TeacherClassGroupsView />} />
-            <Route path="/profesor/alumnos" element={<TeacherStudentsView />} />
-            <Route path="/profesor/comisiones/:classGroupId/asistencia" element={<TeacherAttendanceView />} />
-            <Route path="/profesor/datos-de-pago" element={<TeacherPaymentView />} />
-            <Route path="/profesor/cuotas" element={<FeesManagementView />} />
+            <Route path="/profesor/comisiones" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherClassGroupsView /></ProtectedRoute>} />
+            <Route path="/profesor/alumnos" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherStudentsView /></ProtectedRoute>} />
+            <Route path="/profesor/comisiones/:classGroupId/asistencia" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAttendanceView /></ProtectedRoute>} />
+            <Route path="/profesor/datos-de-pago" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherPaymentView /></ProtectedRoute>} />
+            <Route path="/profesor/cuotas" element={<ProtectedRoute allowedRoles={['TEACHER']}><FeesManagementView /></ProtectedRoute>} />
+            <Route path="/profesor/planes" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherClassPlansView /></ProtectedRoute>} />
 
             {/* Student */}
-            <Route path="/alumno/perfil" element={<StudentProfileView />} />
-            <Route path="/alumno/asistencia" element={<MyAttendanceView />} />
-            <Route path="/alumno/formas" element={<MyFormsView />} />
+            <Route path="/perfil" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER', 'ADMIN']}><StudentProfileView /></ProtectedRoute>} />
+            <Route path="/alumno/asistencia" element={<ProtectedRoute allowedRoles={['STUDENT']}><MyAttendanceView /></ProtectedRoute>} />
+            <Route path="/alumno/formas" element={<ProtectedRoute allowedRoles={['STUDENT']}><MyFormsView /></ProtectedRoute>} />
             
             {/* Shared */}
-            <Route path="/alumno/:dni" element={<StudentDetailsView />} />
-            <Route path="/admin/formas" element={<FormsManagerView />} />
+            <Route path="/alumno/:dni" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER', 'ADMIN']}><StudentDetailsView /></ProtectedRoute>} />
+            <Route path="/admin/formas" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER', 'STUDENT']}><FormsManagerView /></ProtectedRoute>} />
         </Routes>
     );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { httpClient } from '../../../core/api/httpClient';
+import { useStudentProfile } from '../hooks/useStudentProfile';
 
 interface TeacherInfo {
   firstName: string;
@@ -13,8 +14,16 @@ interface TeacherInfo {
 
 export function MyPaymentsView() {
   const navigate = useNavigate();
+  const { profile, loading: profileLoading } = useStudentProfile();
+  
   const [teacher, setTeacher] = useState<TeacherInfo | null>(null);
   const [loadingTeacher, setLoadingTeacher] = useState(true);
+  
+  const [latestConfig, setLatestConfig] = useState<any>(null);
+  const [loadingConfig, setLoadingConfig] = useState(true);
+
+  const [currentFee, setCurrentFee] = useState<any>(null);
+  const [loadingFee, setLoadingFee] = useState(true);
   
   // File upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -23,7 +32,7 @@ export function MyPaymentsView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'unpaid' | 'submitting' | 'pending_approval'>('unpaid');
 
-  // Load teacher info
+  // Load info
   useEffect(() => {
     const fetchTeacher = async () => {
       try {
@@ -38,7 +47,23 @@ export function MyPaymentsView() {
         setLoadingTeacher(false);
       }
     };
+    
+    const fetchConfig = async () => {
+      try {
+        const res = await httpClient.request('/fee-config/latest');
+        if (res.ok) {
+          const data = await res.json();
+          setLatestConfig(data);
+        }
+      } catch (err) {
+        console.error('Error fetching fee config:', err);
+      } finally {
+        setLoadingConfig(false);
+      }
+    };
+
     fetchTeacher();
+    fetchConfig();
     
     // Check if there's already a pending payment in sessionStorage for simulation
     const savedStatus = sessionStorage.getItem('chs-payment-simulation-status');
@@ -46,6 +71,39 @@ export function MyPaymentsView() {
       setPaymentStatus('pending_approval');
     }
   }, []);
+
+  useEffect(() => {
+    const fetchFee = async () => {
+      if (profileLoading) return; // Wait until profile loading completes
+      
+      if (!profile?.id) {
+        setLoadingFee(false);
+        return;
+      }
+      
+      try {
+        const res = await httpClient.request(`/fees/student/${profile.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          const pending = data.find((f: any) => f.status === 'PENDING' || f.status === 'PARTIALLY_PAID');
+          setCurrentFee(pending || null);
+          if (pending && pending.payments && pending.payments.some((p: any) => p.status === 'PENDING')) {
+            setPaymentStatus('pending_approval');
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching fees:', err);
+      } finally {
+        setLoadingFee(false);
+      }
+    };
+
+    fetchFee();
+  }, [profile, profileLoading]);
+
+  const formatMoney = (amount: number) => {
+    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(amount);
+  };
 
   const handleFileChange = (file: File) => {
     setSelectedFile(file);
@@ -82,17 +140,47 @@ export function MyPaymentsView() {
     setPreviewUrl(null);
   };
 
-  const handleSubmitReceipt = (e: React.FormEvent) => {
+  const handleSubmitReceipt = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) return;
+    
+    // Si no hay cuota actual, usamos latestConfig para crear el monto
+    const amount = currentFee?.totalAmount || latestConfig?.baseAmount || 12000;
+    
+    // Si currentFee es nulo, deberíamos crear la cuota o enviar el pago globalmente.
+    // Como el endpoint /transactions/report requiere feeId, vamos a reportar que falta.
+    if (!currentFee) {
+      alert("Tu profesor o el administrador aún no ha generado la cuota de este mes. Por favor, solicitá que la generen para poder cargar el comprobante.");
+      return;
+    }
 
     setIsSubmitting(true);
-    // Simulate API request to upload receipt
-    setTimeout(() => {
+    
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      formData.append('feeId', String(currentFee.id));
+      formData.append('amount', String(amount));
+      formData.append('method', 'TRANSFER');
+      
+      const res = await httpClient.request('/transactions/report', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        setPaymentStatus('pending_approval');
+        sessionStorage.setItem('chs-payment-simulation-status', 'pending_approval');
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.message || 'Error al enviar el comprobante');
+      }
+    } catch (error) {
+      console.error('Error enviando comprobante:', error);
+      alert('Hubo un error de conexión al enviar el comprobante');
+    } finally {
       setIsSubmitting(false);
-      setPaymentStatus('pending_approval');
-      sessionStorage.setItem('chs-payment-simulation-status', 'pending_approval');
-    }, 2000);
+    }
   };
 
   const handleResetSimulation = () => {
@@ -136,7 +224,17 @@ export function MyPaymentsView() {
             </div>
             <div className="text-right">
               <span className="text-xs text-muted block">Total a pagar</span>
-              <span className="text-2xl font-black text-text">$12.000</span>
+              <span className="text-2xl font-black text-text">
+                {loadingConfig || loadingFee ? (
+                  <div className="h-6 w-24 bg-surface-hover animate-pulse rounded"></div>
+                ) : currentFee ? (
+                  formatMoney(currentFee.totalAmount)
+                ) : latestConfig ? (
+                  formatMoney(latestConfig.baseAmount)
+                ) : (
+                  'No fijado'
+                )}
+              </span>
             </div>
           </div>
 

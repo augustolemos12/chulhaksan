@@ -58,6 +58,24 @@ export class AttendanceService {
       throw new BadRequestException('No se puede registrar asistencia en una comisión inactiva');
     }
 
+    // Validar que exista un plan de clases para este mes y año
+    const month = attendanceDate.getUTCMonth() + 1;
+    const year = attendanceDate.getUTCFullYear();
+    
+    const classPlan = await this.prisma.classPlan.findUnique({
+      where: {
+        classGroupId_month_year: {
+          classGroupId,
+          month,
+          year,
+        }
+      }
+    });
+
+    if (!classPlan) {
+      throw new BadRequestException('Debe crear un Plan de Clases para este mes antes de tomar asistencia');
+    }
+
     // Verificar permisos explícitos
     if (role === Role.TEACHER) {
       const teacher = await this.prisma.teacher.findUnique({

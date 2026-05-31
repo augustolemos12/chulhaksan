@@ -3,10 +3,10 @@ import { httpClient } from '../../../core/api/httpClient';
 import { authService, type UserProfile, type RoleType } from '../../auth/api/authService';
 
 export type StudentProfileData = {
-  dni: string; firstName: string; lastName: string;
+  id: number; dni: string; firstName: string; lastName: string;
   birthDate?: string | null; phone?: string | null;
   guardianPhone?: string | null; email?: string | null;
-  gym?: string | null; address?: string | null;
+  gym?: { id: number; name: string } | null; address?: string | null;
 };
 
 export type TeacherSummary = { firstName: string; lastName: string; assignedAt?: string; };

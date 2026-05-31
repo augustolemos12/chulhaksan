@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getFees, payFullYear, registerDirectPayment, approveTransaction, rejectTransaction } from '../../../services/fees';
+import { getFees, payFullYear, registerDirectPayment, approveTransaction, rejectTransaction, generateFees } from '../../../services/fees';
 import type { Fee, FeeStatus, GetFeesFilters, Transaction, PaymentMethod } from '../../../services/fees';
 
 export function useFeesManagement() {
@@ -105,6 +105,21 @@ export function useFeesManagement() {
     }
   };
 
+  const handleGenerateFees = async (genMonth: number, genYear: number, dueDate: string) => {
+    setProcessing(true);
+    try {
+      const res = await generateFees(genMonth, genYear, dueDate);
+      alert(`Generación exitosa. ${res.createdCount} cuotas creadas.`);
+      await fetchFees();
+      return true;
+    } catch (err: any) {
+      alert(err.message || 'Error al generar cuotas');
+      return false;
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   // Filter fees locally by search query
   const filteredFees = fees.filter(fee => {
     if (!searchQuery) return true;
@@ -125,6 +140,7 @@ export function useFeesManagement() {
     processing,
     payYearStudent, setPayYearStudent, handlePayFullYear,
     directPaymentFee, setDirectPaymentFee, handleDirectPayment,
-    reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction
+    reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
+    handleGenerateFees
   };
 }

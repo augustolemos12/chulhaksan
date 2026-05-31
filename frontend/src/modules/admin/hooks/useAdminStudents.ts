@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { httpClient } from '../../../core/api/httpClient';
 
 export type AdminStudent = {
-  id: number; dni: string; gymId: string | null; firstName: string; lastName: string; category?: 'ADULT' | 'CHILD';
+  id: number; dni: string; gymId: number | null; teacherId: number | null; firstName: string; lastName: string; category?: 'ADULT' | 'CHILD';
   email?: string | null; phone?: string | null; gym?: { id: number; name: string; } | null;
   address?: string | null; classGroup?: { id: number; name: string; } | null;
   assignments?: { teacher?: { id: string; firstName: string; lastName: string; } | null; }[];
@@ -12,11 +12,11 @@ export type AdminStudent = {
 
 export type AdminTeacherOption = { id: string; firstName: string; lastName: string; user?: { status: string; }; };
 export type GymOption = { id: string; name: string; isArchived?: boolean; };
-export type ClassGroupOption = { id: number; name: string; isActive: boolean; gymId: string; };
-export type StudentForm = { firstName: string; lastName: string; email: string; phone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; address: string; };
+export type ClassGroupOption = { id: number; name: string; isActive: boolean; gymId: number; teacherId: number; };
+export type StudentForm = { gymId: string; teacherId: string; firstName: string; lastName: string; email: string; phone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; address: string; };
 export type CreateStudentForm = StudentForm & { dni: string; password: string; currentBelt: string; };
 
-export const emptyForm: StudentForm = { firstName: '', lastName: '', email: '', phone: '', classGroupId: '', category: 'ADULT', address: '' };
+export const emptyForm: StudentForm = { gymId: '', teacherId: '', firstName: '', lastName: '', email: '', phone: '', classGroupId: '', category: 'ADULT', address: '' };
 export const emptyCreateForm: CreateStudentForm = { ...emptyForm, dni: '', password: '', currentBelt: 'WHITE' };
 
 export function useAdminStudents() {
@@ -111,6 +111,8 @@ export function useAdminStudents() {
   const openEdit = (student: AdminStudent) => {
     setEditing(student);
     setForm({
+      gymId: student.gymId ? String(student.gymId) : '',
+      teacherId: student.teacherId ? String(student.teacherId) : '',
       firstName: student.firstName ?? '', lastName: student.lastName ?? '', email: student.email ?? '',
       phone: student.phone ?? '', classGroupId: student.classGroup ? String(student.classGroup.id) : '',
       category: student.category ?? 'ADULT', address: student.address ?? '',
@@ -155,7 +157,8 @@ export function useAdminStudents() {
           classGroupId: createForm.classGroupId ? Number(createForm.classGroupId) : null,
           address: createForm.address.trim() || null,
           currentBelt: createForm.currentBelt || 'WHITE',
-          gymId: 1, teacherId: 1 // Dummy values para satisfacer DTO (el backend los pisa)
+          gymId: createForm.gymId ? Number(createForm.gymId) : 1,
+          teacherId: createForm.teacherId ? Number(createForm.teacherId) : 1
         })
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear el alumno.');

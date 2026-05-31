@@ -19,7 +19,6 @@ export type ClassPlanItem = {
 
 export type ClassPlanForm = {
   gymId: string;
-  teacherId: string;
   classGroupId: string;
   month: string;
   year: string;
@@ -31,14 +30,13 @@ const currentYear = new Date().getFullYear();
 
 export const emptyForm: ClassPlanForm = {
   gymId: '',
-  teacherId: '',
   classGroupId: '',
   month: String(currentMonth),
   year: String(currentYear),
   totalClasses: '8',
 };
 
-export function useAdminClassPlans() {
+export function useTeacherClassPlans() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [classPlans, setClassPlans] = useState<ClassPlanItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -48,7 +46,6 @@ export function useAdminClassPlans() {
 
   // Filters
   const [gymFilter, setGymFilter] = useState(searchParams.get('gymId') ?? '');
-  const [teacherFilter, setTeacherFilter] = useState(searchParams.get('teacherId') ?? '');
   const [classGroupFilter, setClassGroupFilter] = useState(searchParams.get('classGroupId') ?? '');
   const [monthFilter, setMonthFilter] = useState(searchParams.get('month') ?? '');
   const [yearFilter, setYearFilter] = useState(searchParams.get('year') ?? String(currentYear));
@@ -70,14 +67,12 @@ export function useAdminClassPlans() {
   // Dependencies
   const [classGroups, setClassGroups] = useState<any[]>([]);
   const [gyms, setGyms] = useState<any[]>([]);
-  const [teachers, setTeachers] = useState<any[]>([]);
 
   const loadDependencies = async () => {
     try {
-      const [cgRes, gymsRes, teachersRes] = await Promise.all([
-        httpClient.request('/class-groups?limit=100', { cache: 'no-store' }),
-        httpClient.request('/gyms?limit=100', { cache: 'no-store' }),
-        httpClient.request('/teachers?limit=100', { cache: 'no-store' })
+      const [cgRes, gymsRes] = await Promise.all([
+        httpClient.request('/class-groups/my-groups?limit=100', { cache: 'no-store' }),
+        httpClient.request('/gyms/my?limit=100', { cache: 'no-store' })
       ]);
 
       if (cgRes.ok) {
@@ -87,10 +82,6 @@ export function useAdminClassPlans() {
       if (gymsRes.ok) {
         const gData = await gymsRes.json();
         setGyms(Array.isArray(gData) ? gData : gData?.items ?? gData?.data ?? []);
-      }
-      if (teachersRes.ok) {
-        const tData = await teachersRes.json();
-        setTeachers(Array.isArray(tData) ? tData : tData?.items ?? tData?.data ?? []);
       }
     } catch (e) {
       console.error(e);
@@ -102,7 +93,6 @@ export function useAdminClassPlans() {
     try {
       const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
       if (gymFilter) params.set('gymId', gymFilter);
-      if (teacherFilter) params.set('teacherId', teacherFilter);
       if (classGroupFilter) params.set('classGroupId', classGroupFilter);
       if (monthFilter) params.set('month', monthFilter);
       if (yearFilter) params.set('year', yearFilter);
@@ -121,19 +111,18 @@ export function useAdminClassPlans() {
   };
 
   useEffect(() => { loadDependencies(); }, []);
-  useEffect(() => { loadClassPlans(); }, [page, classGroupFilter, monthFilter, yearFilter, gymFilter, teacherFilter]);
+  useEffect(() => { loadClassPlans(); }, [page, classGroupFilter, monthFilter, yearFilter, gymFilter]);
 
   useEffect(() => {
     const nextParams = new URLSearchParams(searchParams);
     if (gymFilter) nextParams.set('gymId', gymFilter); else nextParams.delete('gymId');
-    if (teacherFilter) nextParams.set('teacherId', teacherFilter); else nextParams.delete('teacherId');
     if (classGroupFilter) nextParams.set('classGroupId', classGroupFilter); else nextParams.delete('classGroupId');
     if (monthFilter) nextParams.set('month', monthFilter); else nextParams.delete('month');
     if (yearFilter) nextParams.set('year', yearFilter); else nextParams.delete('year');
     if (page > 1) nextParams.set('page', String(page)); else nextParams.delete('page');
 
     if (nextParams.toString() !== searchParams.toString()) setSearchParams(nextParams, { replace: true });
-  }, [classGroupFilter, monthFilter, yearFilter, page, gymFilter, teacherFilter]);
+  }, [classGroupFilter, monthFilter, yearFilter, page, gymFilter]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,7 +149,6 @@ export function useAdminClassPlans() {
     setEditing(cp);
     setForm({
       gymId: cp.classGroup?.gym?.id ? String(cp.classGroup.gym.id) : '',
-      teacherId: cp.classGroup?.teacher?.id ? String(cp.classGroup.teacher.id) : '',
       classGroupId: String(cp.classGroupId),
       month: String(cp.month),
       year: String(cp.year),
@@ -201,8 +189,8 @@ export function useAdminClassPlans() {
   };
 
   return {
-    classPlans, total, loading, error, gymFilter, setGymFilter, teacherFilter, setTeacherFilter, classGroupFilter, setClassGroupFilter, monthFilter, setMonthFilter, yearFilter, setYearFilter,
-    page, setPage, pageSize, classGroups, gyms, teachers, searchParams, setSearchParams,
+    classPlans, total, loading, error, gymFilter, setGymFilter, classGroupFilter, setClassGroupFilter, monthFilter, setMonthFilter, yearFilter, setYearFilter,
+    page, setPage, pageSize, classGroups, gyms, searchParams, setSearchParams,
     createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
     editing, setEditing, form, setForm, saving, editError, handleSave, openEdit, handleDelete
   };

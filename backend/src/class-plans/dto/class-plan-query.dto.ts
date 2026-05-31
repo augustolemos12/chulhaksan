@@ -10,6 +10,20 @@ export class ClassPlanQueryDto {
   @IsPositive()
   classGroupId?: number;
 
+  @ApiPropertyOptional({ description: 'Filtrar por gimnasio', example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  gymId?: number;
+
+  @ApiPropertyOptional({ description: 'Filtrar por profesor', example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  teacherId?: number;
+
   @ApiPropertyOptional({ description: 'Filtrar por mes', example: 6 })
   @IsOptional()
   @Type(() => Number)

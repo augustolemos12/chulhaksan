@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useFeesManagement } from '../hooks/useFeesManagement';
-import { DirectPaymentModal, PayYearModal, ReviewPaymentModal } from '../components/FeeManagementModals';
+import { DirectPaymentModal, PayYearModal, ReviewPaymentModal, GenerateFeesModal } from '../components/FeeManagementModals';
 import type { FeeStatus } from '../../../services/fees';
 
 export function FeesManagementView() {
@@ -13,8 +14,11 @@ export function FeesManagementView() {
     processing,
     payYearStudent, setPayYearStudent, handlePayFullYear,
     directPaymentFee, setDirectPaymentFee, handleDirectPayment,
-    reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction
+    reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
+    handleGenerateFees
   } = useFeesManagement();
+
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
 
   const months = [
     { value: 1, label: 'Enero' }, { value: 2, label: 'Febrero' }, { value: 3, label: 'Marzo' },
@@ -47,9 +51,17 @@ export function FeesManagementView() {
           <Link className="text-text flex size-10 shrink-0 items-center justify-center" to="/dashboard">
             <span className="material-symbols-outlined">arrow_back_ios</span>
           </Link>
-          <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">
+          <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">
             Administración de Cuotas
           </h1>
+          <button 
+            onClick={() => setShowGenerateModal(true)}
+            className="flex items-center gap-1 text-xs font-bold text-primary hover:bg-primary/10 px-3 py-2 rounded-xl transition-colors"
+            title="Generar Cuotas del Mes"
+          >
+            <span className="material-symbols-outlined text-base">add_circle</span>
+            <span className="hidden sm:inline">Generar</span>
+          </button>
         </div>
       </header>
 
@@ -225,6 +237,17 @@ export function FeesManagementView() {
         onReject={handleRejectTransaction}
         processing={processing}
       />
+
+      {showGenerateModal && (
+        <GenerateFeesModal
+          onClose={() => setShowGenerateModal(false)}
+          onConfirm={async (m, y, d) => {
+            const success = await handleGenerateFees(m, y, d);
+            if (success) setShowGenerateModal(false);
+          }}
+          processing={processing}
+        />
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { MobileNavBar } from '../../../shared/components/MobileNavBar';
 export function DashboardView() {
   const {
     profile,
+    isLoadingProfile,
     role,
     pageTitle,
     displayName,
@@ -20,6 +21,15 @@ export function DashboardView() {
     monthEvent,
     executeLogout,
   } = useDashboardData();
+
+  if (isLoadingProfile) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
+        <p className="text-muted font-medium">Cargando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
@@ -52,56 +62,43 @@ export function DashboardView() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-              <div className="md:col-span-8">
-                <ContentCard className="h-full bg-gradient-to-br from-primary to-[#a81c00] text-white border-none relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-surface/10 rounded-full -translate-y-1/2 translate-x-1/3 group-hover:scale-110 transition-transform duration-500"></div>
-                  <div className="relative z-10 flex flex-col justify-between h-full min-h-[200px]">
-                    <div>
-                      <span className="inline-block px-3 py-1 bg-surface/20 rounded-full text-xs font-bold mb-4 backdrop-blur-sm uppercase tracking-wider">
-                        Tu Profesor
-                      </span>
-                      <h3 className="font-display text-2xl md:text-3xl font-bold mb-2">
-                        {teacherSummary ? `Prof. ${teacherSummary.firstName} ${teacherSummary.lastName}` : 'Sin profesor asignado'}
-                      </h3>
-                      <p className="text-white/80 mb-6 flex items-center gap-2 font-medium">
-                        <span className="material-symbols-outlined text-sm">info</span>
-                        Contacta a tu instructor para tu próxima clase
-                      </p>
-                    </div>
-                    <div>
-                      <button className="bg-surface text-primary px-6 py-2.5 rounded-full font-bold hover:bg-surface transition-colors shadow-md active:scale-95">
-                        Ver Detalles
-                      </button>
-                    </div>
-                  </div>
-                </ContentCard>
+            <ContentCard className="bg-gradient-to-br from-primary to-[#a81c00] text-white border-none relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-surface/10 rounded-full -translate-y-1/2 translate-x-1/3 group-hover:scale-110 transition-transform duration-500"></div>
+              <div className="relative z-10 p-2">
+                <span className="inline-block px-3 py-1 bg-surface/20 rounded-full text-xs font-bold mb-3 backdrop-blur-sm uppercase tracking-wider">
+                  Tu Profesor
+                </span>
+                <h3 className="font-display text-xl md:text-2xl font-bold mb-1">
+                  {teacherSummary ? `Prof. ${teacherSummary.firstName} ${teacherSummary.lastName}` : 'Sin profesor asignado'}
+                </h3>
+                <p className="text-white/80 flex items-center gap-2 text-sm font-medium">
+                  <span className="material-symbols-outlined text-sm">info</span>
+                  Contacta a tu instructor para tu próxima clase
+                </p>
               </div>
+            </ContentCard>
 
-              <div className="md:col-span-4">
-                <ContentCard className="h-full p-4 flex flex-col justify-center">
-                  <BlockTitle title="Acceso Rápido" subtitle="Herramientas principales" />
-                  <div className="grid grid-cols-2 gap-3 mt-2">
-                    <QuickAction to="/pagos" icon="payments" title="Pagos" />
-                    <QuickAction to="/alumno/asistencia" icon="checklist" title="Asist." />
-                    <QuickAction to="/alumno/formas" icon="link" title="Formas" />
-                    <QuickAction to="/perfil" icon="person" title="Perfil" />
-                  </div>
-                </ContentCard>
+            <ContentCard>
+              <BlockTitle title="Acceso Rápido" subtitle="Herramientas principales" />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                <QuickAction to="/pagos" icon="payments" title="Pagos" />
+                <QuickAction to="/alumno/asistencia" icon="checklist" title="Asistencia" />
+                <QuickAction to="/alumno/formas" icon="link" title="Formas" />
+                <QuickAction to="/perfil" icon="person" title="Perfil" />
               </div>
-            </div>
+            </ContentCard>
           </div>
         )}
 
         {role === 'TEACHER' && (
           <ContentCard>
             <BlockTitle title="Acceso rápido" subtitle="Gestión del profesor" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <QuickAction to="/profesor/comisiones" icon="checklist" title="Asistencias" subtitle="Tomar lista mensual" />
-              <QuickAction to="/profesor/alumnos" icon="group" title="Alumnos" subtitle="Listado y estado" />
-              <QuickAction to="/profesor/comisiones" icon="class" title="Comisiones" subtitle="Horarios y alumnos" />
-              <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" />
-              <QuickAction to="/profesor/cuotas" icon="receipt_long" title="Cuotas" subtitle="Administrar pagos de alumnos" />
+            <div className="flex flex-col gap-3">
+              <QuickAction to="/profesor/alumnos" icon="group" title="Alumnos" subtitle="Listado y estado" variant="row" />
+              <QuickAction to="/profesor/comisiones" icon="class" title="Comisiones" subtitle="Horarios y alumnos" variant="row" />
+              <QuickAction to="/profesor/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas por mes" variant="row" />
+              <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" variant="row" />
+              <QuickAction to="/profesor/cuotas" icon="receipt_long" title="Cuotas" subtitle="Administrar pagos de alumnos" variant="row" />
             </div>
           </ContentCard>
         )}

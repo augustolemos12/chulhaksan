@@ -119,38 +119,6 @@ export function useTeacherAttendance() {
     });
   };
 
-  const handleSavePlan = async () => {
-    if (!classGroupId || !totalClasses.trim()) return;
-    const num = Number(totalClasses);
-    if (isNaN(num) || num <= 0) return;
-
-    setWorking(true); setError(''); setSuccess('');
-    try {
-      if (classPlanId) {
-        // PATCH
-        const res = await httpClient.request(`/class-plans/${classPlanId}`, {
-          method: 'PATCH', json: true, body: JSON.stringify({ totalClasses: num })
-        });
-        if (!res.ok) throw new Error('Error al actualizar las clases del mes');
-      } else {
-        // POST
-        const res = await httpClient.request(`/class-plans`, {
-          method: 'POST', json: true, body: JSON.stringify({
-            classGroupId: Number(classGroupId), month, year, totalClasses: num
-          })
-        });
-        if (!res.ok) throw new Error('Error al guardar las clases del mes');
-        const created = await res.json();
-        setClassPlanId(created.id);
-      }
-      setSuccess('Cantidad de clases guardada');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al guardar el plan');
-    } finally {
-      setWorking(false);
-    }
-  };
-
   const handleSaveAttendance = async (day: number) => {
     if (!classGroupId) return;
     
@@ -214,7 +182,7 @@ export function useTeacherAttendance() {
   return {
     year, setYear, month, setMonth,
     classGroup, students, attendanceMap,
-    classPlanId, totalClasses, setTotalClasses, handleSavePlan,
+    classPlanId, totalClasses, setTotalClasses,
     classDaysInMonth,
     loading, working, error, success,
     handleToggle, handleToggleColumn, handleSaveAttendance

@@ -36,6 +36,20 @@ export class StudentsController {
     return this.studentsService.findAll(query);
   }
 
+  //STUDENT - Obtener su propio perfil (alternativa)
+  @Get('students/me')
+  @Roles(Role.STUDENT)
+  findOwnProfileAlternative(@CurrentUser() user: any) {
+    return this.studentsService.findOwnProfile(user.id);
+  }
+
+  //STUDENT - Obtener los datos de su profesor asignado
+  @Get('students/me/teacher')
+  @Roles(Role.STUDENT)
+  findOwnTeacher(@CurrentUser() user: any) {
+    return this.studentsService.findOwnTeacher(user.id);
+  }
+
   //ADMIN - Obtener un alumno por ID
   @Get('students/:id')
   @Roles(Role.ADMIN)
@@ -95,20 +109,6 @@ export class StudentsController {
   @Roles(Role.STUDENT)
   findOwnProfile(@CurrentUser() user: any) {
     return this.studentsService.findOwnProfile(user.id);
-  }
-
-  //STUDENT - Obtener su propio perfil (alternativa)
-  @Get('students/me')
-  @Roles(Role.STUDENT)
-  findOwnProfileAlternative(@CurrentUser() user: any) {
-    return this.studentsService.findOwnProfile(user.id);
-  }
-
-  //STUDENT - Obtener los datos de su profesor asignado
-  @Get('students/me/teacher')
-  @Roles(Role.STUDENT)
-  findOwnTeacher(@CurrentUser() user: any) {
-    return this.studentsService.findOwnTeacher(user.id);
   }
 
   //STUDENT - Actualizar su propio perfil
