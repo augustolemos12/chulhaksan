@@ -277,12 +277,6 @@ export function MyPaymentsView() {
               >
                 Volver al Panel
               </Link>
-              <button
-                onClick={handleResetSimulation}
-                className="text-xs text-muted hover:text-primary transition-colors underline pt-2"
-              >
-                Simular otro pago (Reset)
-              </button>
             </div>
           </section>
         ) : (

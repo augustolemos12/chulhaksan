@@ -329,9 +329,10 @@ export function GenerateFeesModal({ onClose, onConfirm, processing }: GenerateFe
   const [month, setMonth] = useState<number>(currentDate.getMonth() + 1);
   const [year, setYear] = useState<number>(currentDate.getFullYear());
   
-  // Default due date: 10th of the selected month
+  // Default due date: 10th of the NEXT month
   const [dueDate, setDueDate] = useState<string>(() => {
-    const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), 10);
+    // getMonth() is 0-indexed. Adding 1 gets us the next month.
+    const d = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 10);
     return d.toISOString().split('T')[0];
   });
 
@@ -345,7 +346,8 @@ export function GenerateFeesModal({ onClose, onConfirm, processing }: GenerateFe
   const handleMonthYearChange = (m: number, y: number) => {
     setMonth(m);
     setYear(y);
-    const newDueDate = new Date(y, m - 1, 10);
+    // m is 1-indexed. Using m directly as the 0-indexed month in Date gives us the next month.
+    const newDueDate = new Date(y, m, 10);
     setDueDate(newDueDate.toISOString().split('T')[0]);
   };
 
