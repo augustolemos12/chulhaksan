@@ -183,12 +183,7 @@ export function MyPaymentsView() {
     }
   };
 
-  const handleResetSimulation = () => {
-    setPaymentStatus('unpaid');
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    sessionStorage.removeItem('chs-payment-simulation-status');
-  };
+
 
   const teacherName = teacher ? `Prof. ${teacher.firstName} ${teacher.lastName}` : 'tu Instructor';
   const qrUrl = teacher?.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Pago-CHS-Profesor-${teacher?.lastName || 'Taekwondo'}`;
