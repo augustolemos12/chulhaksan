@@ -10,7 +10,8 @@ export function AdminFeeConfigView() {
     error,
     saving,
     actionError,
-    createFeeConfig
+    createFeeConfig,
+    deleteFeeConfig
   } = useAdminFeeConfig();
 
   const [baseAmount, setBaseAmount] = useState('');
@@ -50,6 +51,15 @@ export function AdminFeeConfigView() {
 
   const formatDate = (dateString: string) => {
     return new Intl.DateTimeFormat('es-AR', { dateStyle: 'long' }).format(new Date(dateString));
+  };
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta configuración de cuota?')) {
+      const success = await deleteFeeConfig(id);
+      if (success) {
+        alert('Configuración eliminada exitosamente.');
+      }
+    }
   };
 
   return (
@@ -198,9 +208,20 @@ export function AdminFeeConfigView() {
                         <span className="text-sm font-bold text-text">{formatMoney(config.baseAmount)}</span>
                         <span className="text-[11px] text-[#9a4c4c] font-medium">+ {formatMoney(config.lateFee)} mora</span>
                       </div>
-                      <div className="text-xs text-muted flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">calendar_month</span>
-                        {formatDate(config.validFrom)}
+                      <div className="text-xs text-muted flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[14px]">calendar_month</span>
+                          {formatDate(config.validFrom)}
+                        </div>
+                        <button
+                          onClick={() => handleDelete(config.id)}
+                          disabled={saving}
+                          className="flex items-center gap-1 text-red-500 hover:text-red-700 transition-colors mt-1 active:scale-95 disabled:opacity-50"
+                          title="Eliminar configuración"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                          <span className="text-[11px] font-medium uppercase tracking-wider">Eliminar</span>
+                        </button>
                       </div>
                     </div>
                   ))}

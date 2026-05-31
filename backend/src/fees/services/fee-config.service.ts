@@ -60,4 +60,18 @@ export class FeeConfigService {
       orderBy: { validFrom: 'desc' },
     });
   }
+
+  async deleteFeeConfig(id: number) {
+    const config = await this.prisma.feeConfig.findUnique({
+      where: { id },
+    });
+
+    if (!config) {
+      throw new NotFoundException('Configuración de cuota no encontrada.');
+    }
+
+    return this.prisma.feeConfig.delete({
+      where: { id },
+    });
+  }
 }

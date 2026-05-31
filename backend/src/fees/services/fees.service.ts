@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { FeeStatus, PaymentStatus } from '@prisma/client';
+import { FeeStatus, PaymentStatus, PaymentMethod } from '@prisma/client';
 import { FeeConfigService } from './fee-config.service';
 
 @Injectable()
@@ -166,5 +166,95 @@ export class FeesService {
     });
     if (!fee) throw new NotFoundException(`Fee ${feeId} no encontrada`);
     return fee;
+  }
+
+  async getAllFees(filters: { month?: number; year?: number; status?: FeeStatus; studentId?: number; teacherId?: number }) {
+    const { month, year, status, studentId, teacherId } = filters;
+    const where: any = {};
+    if (month !== undefined) where.month = month;
+    if (year !== undefined) where.year = year;
+    if (status) where.status = status;
+    if (studentId !== undefined) where.studentId = studentId;
+    
+    if (teacherId !== undefined) {
+      where.student = {
+        ...where.student,
+        teacherId,
+      };
+    }
+
+    return this.prisma.fee.findMany({
+      where,
+      include: {
+        student: true,
+        payments: true,
+      },
+      orderBy: [
+        { year: 'desc' },
+        { month: 'desc' },
+        { student: { lastName: 'asc' } }
+      ],
+    });
+  }
+
+  async payFullYear(studentId: number, year: number, method: PaymentMethod = PaymentMethod.CASH, proofImageUrl?: string) {
+    const currentMonth = new Date().getMonth() + 1; // 1-12
+    const currentYear = new Date().getFullYear();
+    
+    // Si el año a pagar es el actual, empezamos desde el mes actual. Si es un año futuro, desde enero.
+    const startMonth = year === currentYear ? currentMonth : 1;
+    
+    const latestConfig = await this.feeConfigService.getLatestFeeConfig();
+
+    for (let month = startMonth; month <= 12; month++) {
+      let fee = await this.prisma.fee.findUnique({
+        where: {
+          studentId_month_year: {
+            studentId,
+            month,
+            year,
+          },
+        },
+      });
+
+      // Si no existe, la creamos
+      if (!fee) {
+        // Fijamos vencimiento el día 10 del mes (o similar)
+        const dueDate = new Date(year, month - 1, 10);
+        fee = await this.prisma.fee.create({
+          data: {
+            studentId,
+            month,
+            year,
+            baseAmount: latestConfig.baseAmount,
+            totalAmount: latestConfig.baseAmount,
+            dueDate,
+            status: FeeStatus.PENDING,
+            paidAmount: 0,
+          },
+        });
+      }
+
+      // Si no está pagada totalmente, registramos un pago en efectivo por el monto restante
+      if (fee.status !== FeeStatus.PAID) {
+        const remainingAmount = fee.totalAmount - fee.paidAmount;
+        if (remainingAmount > 0) {
+          await this.prisma.transaction.create({
+            data: {
+              feeId: fee.id,
+              amount: remainingAmount,
+              method,
+              status: PaymentStatus.APPROVED,
+              proofImageUrl,
+              reviewedAt: new Date(),
+            },
+          });
+          // Recalcular el estado de la cuota
+          await this.recalculateFee(fee.id);
+        }
+      }
+    }
+
+    return { success: true, message: `Año ${year} marcado como pagado para el alumno ${studentId}` };
   }
 }

@@ -79,6 +79,28 @@ export function useAdminFeeConfig() {
     }
   };
 
+  const deleteFeeConfig = async (id: number) => {
+    setSaving(true);
+    setActionError('');
+    try {
+      const res = await httpClient.request(`/fee-config/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) {
+        throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo eliminar la configuración.');
+      }
+
+      await loadConfigs();
+      return true;
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'No se pudo eliminar la configuración.');
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return {
     history,
     latestConfig,
@@ -87,6 +109,7 @@ export function useAdminFeeConfig() {
     saving,
     actionError,
     createFeeConfig,
+    deleteFeeConfig,
     reload: loadConfigs
   };
 }

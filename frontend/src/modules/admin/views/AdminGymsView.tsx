@@ -59,7 +59,6 @@ export function AdminGymsView() {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <Link className="rounded-lg border border-border text-xs font-semibold px-3 py-2" to={`/admin/alumnos?gymId=${encodeURIComponent(gym.id)}`}>Ver alumnos</Link>
-                <Link className="rounded-lg border border-border text-xs font-semibold px-3 py-2" to={`/admin/gimnasios/${encodeURIComponent(gym.id)}/asistencia`}>Asistencia</Link>
                 <button className="rounded-lg border border-border text-xs font-semibold px-3 py-2" type="button" onClick={() => handleRename(gym)}>Renombrar</button>
                 <button className="rounded-lg border border-red-200 text-red-600 text-xs font-semibold px-3 py-2" type="button" onClick={() => openDeleteModal(gym)}>Eliminar</button>
               </div>

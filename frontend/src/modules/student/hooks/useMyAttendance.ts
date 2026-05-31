@@ -3,7 +3,7 @@ import { httpClient } from '../../../core/api/httpClient';
 
 export type AttendanceRow = {
   id: string; date: string; present: boolean;
-  notes: string | null; gym?: { name: string } | null;
+  notes: string | null; classGroup?: { name: string } | null;
 };
 
 export function useMyAttendance() {
@@ -15,7 +15,7 @@ export function useMyAttendance() {
     const load = async () => {
       setLoading(true); setError('');
       try {
-        const res = await httpClient.request('/attendance/me', { cache: 'no-store' });
+        const res = await httpClient.request('/attendance', { cache: 'no-store' });
         if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo cargar tu asistencia.');
         
         const data = await res.json() as AttendanceRow[];

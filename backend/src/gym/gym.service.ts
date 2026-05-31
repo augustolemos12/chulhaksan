@@ -156,12 +156,24 @@ export class GymService {
 
     const where: Prisma.GymWhereInput = {
       deletedAt: null,
-      classGroups: {
-        some: {
-          teacherId: teacher.id,
-          isActive: true,
+      OR: [
+        {
+          classGroups: {
+            some: {
+              teacherId: teacher.id,
+              isActive: true,
+            },
+          },
         },
-      },
+        {
+          students: {
+            some: {
+              teacherId: teacher.id,
+              deletedAt: null,
+            },
+          },
+        }
+      ]
     };
     
     if (isActive !== undefined) where.isActive = isActive;
@@ -178,8 +190,19 @@ export class GymService {
       this.prisma.gym.count({ where }),
     ]);
 
+    const itemsWithCount = await Promise.all(items.map(async (gym) => {
+      const studentsCount = await this.prisma.student.count({
+        where: {
+          gymId: gym.id,
+          teacherId: teacher.id,
+          deletedAt: null,
+        }
+      });
+      return { ...gym, studentsCount };
+    }));
+
     return {
-      items: items.map((gym) => this.mapGymResponse(gym)),
+      items: itemsWithCount.map((gym) => this.mapGymResponse(gym)),
       meta: {
         total,
         page,

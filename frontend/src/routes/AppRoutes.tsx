@@ -18,10 +18,11 @@ import { AdminEventView } from '../modules/admin/views/AdminEventView';
 import { AdminFeeConfigView } from '../modules/admin/views/AdminFeeConfigView';
 import { AdminClassGroupsView } from '../modules/admin/views/AdminClassGroupsView';
 import { AdminClassPlansView } from '../modules/admin/views/AdminClassPlansView';
+import { FeesManagementView } from '../modules/admin/views/FeesManagementView';
 
 // Teacher
 import { TeacherStudentsView } from '../modules/teacher/views/TeacherStudentsView';
-import { TeacherGymsView } from '../modules/teacher/views/TeacherGymsView';
+import { TeacherClassGroupsView } from '../modules/teacher/views/TeacherClassGroupsView';
 import { TeacherAttendanceView } from '../modules/teacher/views/TeacherAttendanceView';
 import { TeacherPaymentView } from '../modules/teacher/views/TeacherPaymentView';
 
@@ -56,12 +57,14 @@ export function AppRoutes() {
             <Route path="/admin/cuota-global" element={<AdminFeeConfigView />} />
             <Route path="/admin/comisiones" element={<AdminClassGroupsView />} />
             <Route path="/admin/planes" element={<AdminClassPlansView />} />
+            <Route path="/admin/cuotas" element={<FeesManagementView />} />
 
             {/* Teacher */}
+            <Route path="/profesor/comisiones" element={<TeacherClassGroupsView />} />
             <Route path="/profesor/alumnos" element={<TeacherStudentsView />} />
-            <Route path="/profesor/gimnasios" element={<TeacherGymsView />} />
-            <Route path="/profesor/gimnasios/:gymId/asistencia" element={<TeacherAttendanceView />} />
+            <Route path="/profesor/comisiones/:classGroupId/asistencia" element={<TeacherAttendanceView />} />
             <Route path="/profesor/datos-de-pago" element={<TeacherPaymentView />} />
+            <Route path="/profesor/cuotas" element={<FeesManagementView />} />
 
             {/* Student */}
             <Route path="/alumno/perfil" element={<StudentProfileView />} />

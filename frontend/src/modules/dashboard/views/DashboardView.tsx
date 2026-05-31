@@ -83,7 +83,7 @@ export function DashboardView() {
                   <BlockTitle title="Acceso Rápido" subtitle="Herramientas principales" />
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     <QuickAction to="/pagos" icon="payments" title="Pagos" />
-                    <QuickAction to="/asistencia" icon="checklist" title="Asist." />
+                    <QuickAction to="/alumno/asistencia" icon="checklist" title="Asist." />
                     <QuickAction to="/alumno/formas" icon="link" title="Formas" />
                     <QuickAction to="/perfil" icon="person" title="Perfil" />
                   </div>
@@ -97,10 +97,11 @@ export function DashboardView() {
           <ContentCard>
             <BlockTitle title="Acceso rápido" subtitle="Gestión del profesor" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <QuickAction to="/profesor/comisiones" icon="checklist" title="Asistencias" subtitle="Tomar lista mensual" />
               <QuickAction to="/profesor/alumnos" icon="group" title="Alumnos" subtitle="Listado y estado" />
-              <QuickAction to="/profesor/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" />
-              <QuickAction to="/alumno/perfil" icon="badge" title="Perfil" subtitle="Datos personales" />
+              <QuickAction to="/profesor/comisiones" icon="class" title="Comisiones" subtitle="Horarios y alumnos" />
               <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" />
+              <QuickAction to="/profesor/cuotas" icon="receipt_long" title="Cuotas" subtitle="Administrar pagos de alumnos" />
             </div>
           </ContentCard>
         )}
@@ -125,6 +126,7 @@ export function DashboardView() {
                 <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" variant="row" />
                 <QuickAction to="/admin/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" variant="row" />
                 <QuickAction to="/admin/eventos" icon="event" title="Evento del mes" subtitle="Gestión de banners" variant="row" />
+                <QuickAction to="/admin/cuotas" icon="receipt_long" title="Cuotas" subtitle="Administrar pagos de alumnos" variant="row" />
                 <QuickAction to="/admin/cuota-global" icon="payments" title="Cuota global" subtitle="Configurar precios" variant="row" />
               </div>
             </ContentCard>

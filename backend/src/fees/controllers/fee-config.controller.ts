@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 import { FeeConfigService } from '../services/fee-config.service';
 import { CreateFeeConfigDto } from '../dto/create-fee-config.dto';
@@ -34,5 +34,12 @@ export class FeeConfigController {
   @ApiOperation({ summary: 'Obtener historial de configuraciones' })
   async getAll() {
     return this.feeConfigService.getAllConfigs();
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Eliminar una configuración de cuota' })
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.feeConfigService.deleteFeeConfig(id);
   }
 }

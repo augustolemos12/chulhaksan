@@ -1,84 +1,155 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useTeacherAttendance } from '../hooks/useTeacherAttendance';
 
-type StudentAttendance = {
-  id: number; name: string; belt: string; beltColor: string; avatar: string; present: boolean;
-};
-
-const students: StudentAttendance[] = [
-  { id: 1, name: 'Mateo García', belt: 'Cinturón Blanco', beltColor: 'bg-surface border border-gray-300', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDWty76--705yT24M48_A_ZBjH-8h70y_Qm_zVlqpOVu9U5kGmSkphSFaODPCWWpdlP67kcxR7UxDHBGsLOBAIAJFZYAtY4qi1r7RKfx_HT25-t1Mq5XtLg_iHu0o4EMWuUeYTwMo5_JIqy4NKcZoPUYxGX9MRRveahm5ml55J6SVjE-A5sT4Dg7QaHmIqbUqRy3URbikhL4VenB1tMFhXerkXCSmWxuJ3xqehbERvmiTZ5RvSvxYpzd3-6leuIt9CyBaQN_8zZd6FP', present: true },
-  { id: 2, name: 'Sofía Rodríguez', belt: 'Cinturón Amarillo', beltColor: 'bg-yellow-400', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB6UooFRMU5pXrrI1FoajASFJhgA7uz1y-icrT9MQAtEIyqJLjlR7QR-Gts6YG5poWoXYcnhhI8CeEu0fBcBnBGLkhmS_HeF6R5ak_9DXW4i1iq_xUlflmqUy8y5b-FU7UydTnAHTpi75BabPVz0nMjcZCD3L46YddDaA4OT5G6bVekVJ4bIpBscPdyloNCLM5CqCC0xwTe82D3CfUhgG2YqL6aJ7FqtYKy1hXdU_j5TKdYJOIwYnfm7LV20X-0XKZ1eOhnKM8Ch-tQ', present: false },
-  { id: 3, name: 'Lucas Martínez', belt: 'Cinturón Azul', beltColor: 'bg-blue-500', avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA25zy8YMmQjKG-R_08Krq26100oSAJAxQud0DhmpRYiLQ1Cl7SdUgklvwzA0SSHs7xGyq-QZovsFZJTZeUV_0EMHG3VyMJjfwfeeMV2Vlq6epbO2VfRKr9tC504cZvs-elNX6ow6In3Ut_Y0DEyGT3V_KyX8O-bbF9RB0Z7k72rhjc61fZh23Y8-C89tnEYhXdzV9ESkmaTlW1oaMW4TVc3dKCHBLbR9T0pihWxNf10aiLq7vBjjDXlS36Z8dEL9lgxUMf03j0XCdt', present: true }
+const MONTHS = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
-const weekDays = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-
-function StudentCard({ student }: { student: StudentAttendance }) {
-  return (
-    <div className="flex items-center justify-between bg-surface px-4 py-3 rounded-xl shadow-soft border border-border">
-      <div className="flex items-center gap-4">
-        <div className="h-12 w-12 rounded-full bg-cover bg-center border-2 border-border" style={{ backgroundImage: `url("${student.avatar}")` }} />
-        <div>
-          <p className="font-semibold text-text">{student.name}</p>
-          <div className="flex items-center gap-2 mt-1">
-            <div className={`w-3 h-3 rounded-full ${student.beltColor}`} />
-            <span className="text-xs text-muted">{student.belt}</span>
-          </div>
-        </div>
-      </div>
-      <input type="checkbox" checked={student.present} readOnly className="h-5 w-5 rounded border-border" />
-    </div>
-  );
-}
-
 export function TeacherAttendanceView() {
-  const presentCount = students.filter((student) => student.present).length;
+  const navigate = useNavigate();
+  const {
+    year, setYear, month, setMonth,
+    classGroup, students, attendanceMap,
+    classPlanId, totalClasses, setTotalClasses, handleSavePlan,
+    classDaysInMonth,
+    loading, working, error, success,
+    handleToggle, handleToggleColumn, handleSaveAttendance
+  } = useTeacherAttendance();
 
   return (
     <div className="min-h-screen bg-background flex flex-col text-text">
-      <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="flex items-center justify-between p-4 max-w-2xl mx-auto">
-          <Link to="/profesor/alumnos" className="flex size-10 items-center justify-center">
-            <span className="material-symbols-outlined">arrow_back_ios</span>
-          </Link>
-          <h1 className="font-bold text-lg">Toma de asistencia</h1>
-          <button><span className="material-symbols-outlined">more_horiz</span></button>
+      <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-md border-b border-border shadow-soft">
+        <div className="flex items-center justify-between p-4 max-w-[95%] mx-auto w-full">
+          <button className="flex size-10 items-center justify-center text-muted hover:text-text transition-colors" type="button" onClick={() => navigate(-1)}>
+            <span className="material-symbols-outlined">arrow_back</span>
+          </button>
+          <div className="text-center">
+            <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Asistencia Mensual</p>
+            <h1 className="font-bold text-lg">{classGroup?.name || 'Comisión'}</h1>
+            {classGroup?.gym && <p className="text-xs text-muted">{classGroup.gym.name}</p>}
+          </div>
+          <div className="w-10" />
         </div>
       </header>
 
-      <main className="flex-1 max-w-2xl mx-auto w-full pb-32 space-y-5 p-4">
-        <section className="bg-surface rounded-xl border border-border p-4">
-          <div className="flex justify-between items-center mb-4">
-            <button><span className="material-symbols-outlined">chevron_left</span></button>
-            <h2 className="font-bold">Octubre 2023</h2>
-            <button><span className="material-symbols-outlined">chevron_right</span></button>
-          </div>
-          <div className="grid grid-cols-7 text-center gap-1">
-            {weekDays.map((day) => <span key={day} className="text-xs font-bold text-muted">{day}</span>)}
-            {Array.from({ length: 7 }, (_, index) => (
-              <button key={index} className={`h-10 rounded-full ${index === 4 ? 'bg-primary text-white' : 'text-text hover:bg-surface'}`}>{index + 1}</button>
-            ))}
+      <main className="flex-1 max-w-[95%] mx-auto w-full pb-32 space-y-5 p-4">
+        {error && <div className="bg-red-50 p-4 rounded-xl text-sm text-red-600 border border-red-200">{error}</div>}
+        {success && <div className="bg-green-50 p-4 rounded-xl text-sm text-green-700 border border-green-200">{success}</div>}
+
+        <section className="bg-surface rounded-xl border border-border p-4 shadow-soft">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div>
+                <p className="text-xs text-muted uppercase font-bold mb-1">Mes</p>
+                <select className="rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+                  {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                </select>
+              </div>
+              <div>
+                <p className="text-xs text-muted uppercase font-bold mb-1">Año</p>
+                <input type="number" className="rounded-lg border border-border bg-surface px-3 py-2 text-sm w-24" value={year} onChange={(e) => setYear(Number(e.target.value))} />
+              </div>
+            </div>
+
+            <div className="flex items-end gap-3 w-full sm:w-auto">
+              <div className="flex-1 sm:w-32">
+                <p className="text-xs text-muted uppercase font-bold mb-1">Clases del Mes</p>
+                <input type="number" placeholder="Ej: 8" className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={totalClasses} onChange={(e) => setTotalClasses(e.target.value)} />
+              </div>
+              <button 
+                className="rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-70 h-[38px]"
+                onClick={handleSavePlan} disabled={working || !totalClasses}
+              >
+                {classPlanId ? 'Actualizar' : 'Guardar'}
+              </button>
+            </div>
           </div>
         </section>
 
-        <section>
-          <div className="flex justify-between items-center mb-3">
-            <p className="text-sm font-semibold text-muted uppercase">Estudiantes ({students.length})</p>
-            <button className="text-primary text-sm font-bold">Marcar todos</button>
+        {loading ? (
+          <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border text-center shadow-soft">
+            Cargando alumnos y asistencia...
           </div>
-          <div className="space-y-3">
-            {students.map((student) => <StudentCard key={student.id} student={student} />)}
-          </div>
-        </section>
+        ) : (
+          <section className="bg-surface rounded-xl border border-border shadow-soft overflow-hidden">
+            {students.length === 0 ? (
+              <div className="p-4 text-sm text-muted text-center">
+                No hay estudiantes en esta comisión.
+              </div>
+            ) : classDaysInMonth.length === 0 ? (
+              <div className="p-4 text-sm text-muted text-center">
+                No hay días de clase configurados para este mes. Revisa los días de la semana de la comisión.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-background">
+                      <th className="p-3 border-b border-border min-w-[200px] sticky left-0 z-10 bg-background font-semibold text-sm text-muted">
+                        Alumno ({students.length})
+                      </th>
+                      {classDaysInMonth.map((day) => (
+                        <th key={day} className="p-2 border-b border-l border-border text-center min-w-[80px]">
+                          <div className="flex flex-col items-center gap-2">
+                            <span className="text-xs font-bold text-muted">Día {day}</span>
+                            <button 
+                              className="text-[10px] uppercase font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded"
+                              onClick={() => handleToggleColumn(day)}
+                            >
+                              Todos
+                            </button>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {students.map((student) => (
+                      <tr key={student.id} className="hover:bg-primary/5 transition-colors border-b border-border/50 last:border-0">
+                        <td className="p-3 sticky left-0 z-10 bg-surface whitespace-nowrap border-r border-border font-medium text-sm">
+                          {student.firstName} {student.lastName}
+                        </td>
+                        {classDaysInMonth.map((day) => {
+                          const isPresent = attendanceMap[`${student.id}_${day}`];
+                          return (
+                            <td key={day} className="p-2 border-l border-border/50 text-center">
+                              <button
+                                className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto transition-colors ${isPresent ? 'bg-primary text-white shadow-md' : 'bg-background border border-border hover:bg-primary/10'}`}
+                                onClick={() => handleToggle(student.id, day)}
+                              >
+                                {isPresent && <span className="material-symbols-outlined text-[18px]">check</span>}
+                              </button>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                    {/* Botones de guardado por columna */}
+                    <tr className="bg-background">
+                      <td className="p-3 sticky left-0 z-10 bg-background text-right text-xs font-bold text-muted border-r border-border border-t">
+                        Guardar día ➔
+                      </td>
+                      {classDaysInMonth.map((day) => (
+                        <td key={day} className="p-2 border-l border-border border-t text-center">
+                          <button 
+                            className="bg-primary/10 hover:bg-primary/20 text-primary rounded p-1.5 transition-colors w-full flex justify-center"
+                            title={`Guardar asistencia del día ${day}`}
+                            onClick={() => handleSaveAttendance(day)}
+                            disabled={working}
+                          >
+                            <span className="material-symbols-outlined text-[18px]">save</span>
+                          </button>
+                        </td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
       </main>
-
-      <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md p-4 border-t border-border">
-        <div className="max-w-2xl mx-auto">
-          <p className="text-center text-sm mb-3 text-muted">{presentCount} estudiantes presentes</p>
-          <button className="w-full bg-primary text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2">
-            <span className="material-symbols-outlined">save</span> Guardar asistencia
-          </button>
-        </div>
-      </footer>
     </div>
   );
 }

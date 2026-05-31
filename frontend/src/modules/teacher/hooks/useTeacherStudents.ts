@@ -29,6 +29,7 @@ export function useTeacherStudents() {
   const [query, setQuery] = useState(searchParams.get('search') ?? '');
   const [gymFilter, setGymFilter] = useState(searchParams.get('gymId') ?? '');
   const [categoryFilter, setCategoryFilter] = useState((searchParams.get('category') as 'ADULT' | 'CHILD' | null) ?? '');
+  const [classGroupFilter, setClassGroupFilter] = useState(searchParams.get('classGroupId') ?? '');
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -50,7 +51,7 @@ export function useTeacherStudents() {
   const loadInitialData = async () => {
     try {
       const [gRes, cRes] = await Promise.all([
-        httpClient.request('/gyms', { cache: 'no-store' }),
+        httpClient.request('/gyms/my', { cache: 'no-store' }),
         httpClient.request('/class-groups/my-groups', { cache: 'no-store' })
       ]);
       if (gRes.ok) {
@@ -71,12 +72,13 @@ export function useTeacherStudents() {
       if (query.trim()) params.set('search', query.trim());
       if (gymFilter) params.set('gymId', gymFilter);
       if (categoryFilter) params.set('category', categoryFilter);
+      if (classGroupFilter) params.set('classGroupId', classGroupFilter);
 
       const res = await httpClient.request(`/teachers/me/students?${params.toString()}`, { cache: 'no-store' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo cargar el listado.');
 
       const payload = await res.json();
-      const data = Array.isArray(payload) ? payload : payload?.data ?? [];
+      const data = Array.isArray(payload) ? payload : payload?.items ?? payload?.data ?? [];
       const total = Array.isArray(payload) ? data.length : payload?.total ?? data.length;
 
       const baseAssigned = (data ?? []).map((s: any) => ({ ...s, status: 'UNKNOWN' as const }));
@@ -85,7 +87,7 @@ export function useTeacherStudents() {
 
       const statusResults = await Promise.all(
         baseAssigned.map(async (student: any) => {
-          const feeRes = await httpClient.request(`/fees/student/${student.dni}`);
+          const feeRes = await httpClient.request(`/fees/student/${student.id}`);
           if (!feeRes.ok) return { dni: student.dni, status: 'UNKNOWN' as const };
           const fees = await feeRes.json();
           const hasDebt = Array.isArray(fees) ? fees.some((fee) => fee.status === 'PENDING') : false;
@@ -104,9 +106,9 @@ export function useTeacherStudents() {
     }
   };
 
-  useEffect(() => { loadStudents(); }, [page, query, gymFilter, categoryFilter]);
+  useEffect(() => { loadStudents(); }, [page, query, gymFilter, categoryFilter, classGroupFilter]);
   useEffect(() => { loadInitialData(); }, []);
-  useEffect(() => { setPage(1); }, [query, gymFilter, categoryFilter]);
+  useEffect(() => { setPage(1); }, [query, gymFilter, categoryFilter, classGroupFilter]);
 
   useEffect(() => {
     const search = searchParams.get('search') ?? '';
@@ -115,6 +117,8 @@ export function useTeacherStudents() {
     if (gymId !== gymFilter) setGymFilter(gymId);
     const category = (searchParams.get('category') as 'ADULT' | 'CHILD' | null) ?? '';
     if (category !== categoryFilter) setCategoryFilter(category);
+    const cGroupId = searchParams.get('classGroupId') ?? '';
+    if (cGroupId !== classGroupFilter) setClassGroupFilter(cGroupId);
     const pageParam = Math.max(1, Number(searchParams.get('page') ?? '1'));
     if (!Number.isNaN(pageParam) && pageParam !== page) setPage(pageParam);
   }, [searchParams]);
@@ -124,10 +128,11 @@ export function useTeacherStudents() {
     if (query.trim()) nextParams.set('search', query.trim()); else nextParams.delete('search');
     if (gymFilter) nextParams.set('gymId', gymFilter); else nextParams.delete('gymId');
     if (categoryFilter) nextParams.set('category', categoryFilter); else nextParams.delete('category');
+    if (classGroupFilter) nextParams.set('classGroupId', classGroupFilter); else nextParams.delete('classGroupId');
     if (page > 1) nextParams.set('page', String(page)); else nextParams.delete('page');
 
     if (nextParams.toString() !== searchParams.toString()) setSearchParams(nextParams, { replace: true });
-  }, [query, gymFilter, categoryFilter, page]);
+  }, [query, gymFilter, categoryFilter, classGroupFilter, page]);
 
   const openEdit = (student: StudentWithStatus) => {
     setEditing(student);
@@ -186,7 +191,7 @@ export function useTeacherStudents() {
   };
 
   return {
-    students: assigned, gyms, classGroups, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
+    students: assigned, gyms, classGroups, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter, classGroupFilter, setClassGroupFilter,
     loading, error, createOpen, setCreateOpen, form, setForm, saving, createError,
     page, setPage, total, pageSize, handleCreate, handleSave, openEdit, editing, setEditing, editError, searchParams, setSearchParams, createForm, setCreateForm, creating
   };
