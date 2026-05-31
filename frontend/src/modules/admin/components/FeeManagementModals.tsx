@@ -175,6 +175,8 @@ interface ReviewPaymentModalProps {
 }
 
 export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, processing }: ReviewPaymentModalProps) {
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+
   if (!transaction) return null;
 
   return (
@@ -190,13 +192,17 @@ export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, 
         <div className="px-6 py-4 overflow-y-auto">
           {transaction.proofImageUrl ? (
             <div className="rounded-xl overflow-hidden border border-border bg-background/50 flex flex-col justify-center items-center p-2">
-              <a href={transaction.proofImageUrl} target="_blank" rel="noopener noreferrer" className="flex justify-center">
+              <button 
+                type="button" 
+                onClick={() => setFullscreenImage(transaction.proofImageUrl)} 
+                className="flex justify-center w-full bg-background rounded-lg p-2 border border-border outline-none focus:ring-2 focus:ring-primary/50"
+              >
                 <img 
                   src={transaction.proofImageUrl} 
                   alt="Comprobante de pago" 
                   className="max-w-full h-auto max-h-[40vh] object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
                 />
-              </a>
+              </button>
               <p className="text-xs text-center text-muted p-2 bg-background">
                 Haz clic en la imagen para verla en tamaño completo
               </p>
@@ -233,6 +239,81 @@ export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, 
           </button>
         </div>
       </div>
+      <FullScreenImageModal imageUrl={fullscreenImage} onClose={() => setFullscreenImage(null)} />
+    </div>
+  );
+}
+
+export interface ViewReceiptsModalProps {
+  fee: any | null;
+  onClose: () => void;
+}
+
+export function ViewReceiptsModal({ fee, onClose }: ViewReceiptsModalProps) {
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+
+  if (!fee) return null;
+  const receipts = fee.payments?.filter((tx: any) => tx.proofImageUrl) || [];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-lg bg-surface rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+        <div className="p-6 pb-4 shrink-0 border-b border-border">
+          <h2 className="text-xl font-bold text-text mb-1">Comprobantes de Pago</h2>
+          <p className="text-sm text-muted">
+            Alumno: <span className="font-bold text-text">{fee.student?.firstName} {fee.student?.lastName}</span>
+          </p>
+        </div>
+        
+        <div className="px-6 py-4 overflow-y-auto space-y-6">
+          {receipts.length > 0 ? (
+            receipts.map((tx: any, index: number) => (
+              <div key={tx.id} className="rounded-xl overflow-hidden border border-border bg-background/50 flex flex-col justify-center items-center p-4">
+                <div className="w-full flex justify-between items-center mb-3">
+                  <span className="text-sm font-bold text-text">Comprobante #{index + 1}</span>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                    tx.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
+                    tx.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                    'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {tx.status === 'APPROVED' ? 'Aprobado' : tx.status === 'REJECTED' ? 'Rechazado' : 'Pendiente'}
+                  </span>
+                </div>
+                <div className="flex justify-between w-full text-xs text-muted mb-4 px-2">
+                  <span>Monto: ${tx.amount}</span>
+                  <span>Fecha: {new Date(tx.createdAt).toLocaleDateString()}</span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => setFullscreenImage(tx.proofImageUrl)} 
+                  className="flex justify-center w-full bg-background rounded-lg p-2 border border-border outline-none focus:ring-2 focus:ring-primary/50"
+                >
+                  <img 
+                    src={tx.proofImageUrl} 
+                    alt={`Comprobante ${index + 1}`} 
+                    className="max-w-full h-auto max-h-[40vh] object-contain cursor-pointer hover:opacity-90 transition-opacity rounded"
+                  />
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center p-8 bg-background rounded-xl border border-dashed border-border text-muted">
+              <span className="material-symbols-outlined text-4xl mb-2 opacity-50">image_not_supported</span>
+              <p className="text-sm text-center">No hay comprobantes asociados a esta cuota.</p>
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 bg-background/50 border-t border-border flex justify-end gap-3 shrink-0">
+          <button
+            className="px-4 py-2 text-sm font-semibold text-text hover:bg-surface border border-border rounded-xl transition-colors"
+            onClick={onClose}
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+      <FullScreenImageModal imageUrl={fullscreenImage} onClose={() => setFullscreenImage(null)} />
     </div>
   );
 }
@@ -338,6 +419,18 @@ export function GenerateFeesModal({ onClose, onConfirm, processing }: GenerateFe
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function FullScreenImageModal({ imageUrl, onClose }: { imageUrl: string | null; onClose: () => void }) {
+  if (!imageUrl) return null;
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={onClose}>
+      <button className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors" onClick={onClose} title="Cerrar">
+        <span className="material-symbols-outlined text-4xl">close</span>
+      </button>
+      <img src={imageUrl} alt="Comprobante completo" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in duration-200" onClick={(e) => e.stopPropagation()} />
     </div>
   );
 }

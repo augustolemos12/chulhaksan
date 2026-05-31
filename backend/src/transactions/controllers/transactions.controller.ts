@@ -56,7 +56,7 @@ export class TransactionsController {
     ) file?: Express.Multer.File,
   ) {
     if (file) {
-      const uploadResult = await this.cloudinaryService.uploadFile(file);
+      const uploadResult = await this.cloudinaryService.uploadReceipt(file);
       dto.proofImageUrl = uploadResult.secure_url;
     }
     return this.transactionsService.reportPayment(dto);

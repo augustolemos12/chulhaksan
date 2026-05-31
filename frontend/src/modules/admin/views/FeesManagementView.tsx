@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useFeesManagement } from '../hooks/useFeesManagement';
-import { DirectPaymentModal, PayYearModal, ReviewPaymentModal, GenerateFeesModal } from '../components/FeeManagementModals';
+import { DirectPaymentModal, PayYearModal, ReviewPaymentModal, GenerateFeesModal, ViewReceiptsModal } from '../components/FeeManagementModals';
 import type { FeeStatus } from '../../../services/fees';
 
 export function FeesManagementView() {
@@ -19,6 +19,7 @@ export function FeesManagementView() {
   } = useFeesManagement();
 
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [viewReceiptsFee, setViewReceiptsFee] = useState<any>(null);
 
   const months = [
     { value: 1, label: 'Enero' }, { value: 2, label: 'Febrero' }, { value: 3, label: 'Marzo' },
@@ -185,7 +186,20 @@ export function FeesManagementView() {
                         <span className="material-symbols-outlined text-[16px]">plagiarism</span>
                         <span className="hidden sm:inline">Revisar Pago</span>
                       </button>
-                    ) : (
+                    ) : null}
+
+                    {fee.payments?.some(tx => tx.proofImageUrl) && !pendingTx && (
+                      <button
+                        className="rounded-lg bg-indigo-500 text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-indigo-600 transition-colors shadow-sm"
+                        onClick={() => setViewReceiptsFee(fee)}
+                        title="Ver comprobantes"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">receipt_long</span>
+                        <span className="hidden sm:inline">Comprobantes</span>
+                      </button>
+                    )}
+
+                    {!pendingTx && (
                       <>
                         {fee.status !== 'PAID' && (
                           <button
@@ -248,6 +262,11 @@ export function FeesManagementView() {
           processing={processing}
         />
       )}
+
+      <ViewReceiptsModal
+        fee={viewReceiptsFee}
+        onClose={() => setViewReceiptsFee(null)}
+      />
     </div>
   );
 }

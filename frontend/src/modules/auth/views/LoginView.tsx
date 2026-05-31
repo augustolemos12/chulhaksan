@@ -31,7 +31,7 @@ export function LoginView() {
           </div>
 
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-display font-bold text-text">Bienvenida</h1>
+            <h1 className="text-3xl font-display font-bold text-text">Bienvenido</h1>
             <p className="text-muted mt-2">Iniciá sesión para acceder al sistema</p>
           </div>
 

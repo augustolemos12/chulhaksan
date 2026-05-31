@@ -83,6 +83,37 @@ export class CloudinaryService {
   }
 
   /**
+   * Sube un comprobante de pago a Cloudinary sin recortarlo.
+   */
+  uploadReceipt(
+    file: Express.Multer.File,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'chulhaksan_receipts',
+          transformation: [
+            {
+              width: 1200,
+              crop: 'limit',     // Límite de tamaño para no recortar ni deformar, solo achica si es excesivamente grande
+              quality: 'auto',
+              fetch_format: 'auto',
+            },
+          ],
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('Cloudinary no devolvió resultado'));
+          resolve(result);
+        },
+      );
+
+      // Crea un readable stream a partir del buffer en memoria y lo pipe-a a Cloudinary
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+  }
+
+  /**
    * Elimina una imagen de Cloudinary a partir de su public_id.
    * El public_id se extrae de la URL guardada en la base de datos.
    * Ejemplo de URL:

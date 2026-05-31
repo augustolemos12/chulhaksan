@@ -14,8 +14,8 @@
   .dark {
     --color-background: #09090b;
     /* Zinc 950 */
-    --color-surface: #18181b;
-    /* Zinc 900 */
+    --color-surface: #000000;
+    /* Pure Black */
     --color-text: #fafafa;
     /* Zinc 50 */
     --color-muted: #a1a1aa;

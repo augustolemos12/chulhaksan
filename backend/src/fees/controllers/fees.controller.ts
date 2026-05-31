@@ -98,7 +98,7 @@ export class FeesController {
   ) {
     let proofImageUrl: string | undefined;
     if (file) {
-      const uploadResult = await this.cloudinaryService.uploadFile(file);
+      const uploadResult = await this.cloudinaryService.uploadReceipt(file);
       proofImageUrl = uploadResult.secure_url;
     }
     return this.feesService.payFullYear(studentId, year, method, proofImageUrl);
