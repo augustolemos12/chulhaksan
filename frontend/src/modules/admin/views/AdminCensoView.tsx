@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useAdminCenso } from '../hooks/useAdminCenso';
 
+import { MetricCard } from '../../dashboard/components/DashboardUI';
+
 export function AdminCensoView() {
   const {
     data, loading, error,
@@ -22,14 +24,18 @@ export function AdminCensoView() {
       </header>
 
       <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-6">
-        <div className="bg-surface rounded-2xl border border-border shadow-soft p-6 flex flex-col items-center justify-center">
-          <p className="text-sm uppercase tracking-[0.2em] text-primary font-bold mb-2">Total Alumnos</p>
-          {loading ? (
-            <div className="h-10 w-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-          ) : (
-            <p className="text-5xl font-black text-text">{data?.total ?? 0}</p>
-          )}
-        </div>
+        <MetricCard 
+          label="Total Alumnos" 
+          value={
+            loading ? (
+              <div className="h-12 w-12 border-4 border-white/20 border-t-white rounded-full animate-spin mt-2"></div>
+            ) : (
+              data?.total ?? 0
+            )
+          } 
+          icon="groups" 
+          gradientClass="from-red-600 to-rose-500" 
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">

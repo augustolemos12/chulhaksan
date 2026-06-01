@@ -109,8 +109,8 @@ export function DashboardView() {
             <ContentCard>
               <BlockTitle eyebrow="Totales" title="Resumen general" subtitle="Información rápida" />
               <div className="grid grid-cols-2 gap-3">
-                <MetricCard label="Alumnos" value={adminStats.students} icon="group" />
-                <MetricCard label="Profesores" value={adminStats.teachers} icon="badge" />
+                <MetricCard label="Alumnos" value={adminStats.students} icon="group" gradientClass="from-red-600 to-rose-500" />
+                <MetricCard label="Profesores" value={adminStats.teachers} icon="badge" gradientClass="from-rose-600 to-red-500" />
               </div>
             </ContentCard>
 

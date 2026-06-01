@@ -70,14 +70,19 @@ export function BlockTitle({ eyebrow, title, subtitle }: { eyebrow?: string; tit
   );
 }
 
-export function MetricCard({ label, value, icon }: { label: string; value: number | string; icon: string }) {
+export function MetricCard({ label, value, icon, gradientClass = 'from-primary to-[#a81c00]' }: { label: string; value: React.ReactNode; icon: string; gradientClass?: string }) {
   return (
-    <div className="rounded-2xl bg-background border border-border p-4">
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-muted">{label}</span>
-        <span className="material-symbols-outlined text-primary">{icon}</span>
+    <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${gradientClass} text-white shadow-md p-5 group transition-transform duration-300 hover:-translate-y-1`}>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 group-hover:scale-110 transition-transform duration-500"></div>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm font-bold tracking-widest uppercase text-white/90">{label}</span>
+          <div className="h-10 w-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+            <span className="material-symbols-outlined text-xl">{icon}</span>
+          </div>
+        </div>
+        <p className="text-5xl md:text-6xl font-black drop-shadow-sm">{value}</p>
       </div>
-      <p className="mt-3 text-3xl font-black text-text">{value}</p>
     </div>
   );
 }
