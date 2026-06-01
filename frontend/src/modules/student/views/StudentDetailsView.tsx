@@ -4,16 +4,13 @@ import { TopHeader, ProfileAvatar, InfoRow, EditProfileForm } from '../component
 
 export function StudentDetailsView() {
   const {
-    student, studentName, birthDateFormatted, gyms, fees, formsAccess,
+    student, studentName, fees,
     isLoading, errorMsg, isEditing, isSaving, editForm, updateEditForm, toggleEditMode, saveProfile,
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
     actionLoading, unassignStudent, deleteStudent,
     markingFee, markFeeAsPaid,
-    formsUpdatingId, toggleFormAccess,
-    returnTo, canManageForms, isTeacher
+    returnTo, isTeacher
   } = useStudentDetails();
-
-  const [showFormsMenu, setShowFormsMenu] = useState(false);
 
   const categoryLabel = (val?: 'ADULT' | 'CHILD') => val === 'CHILD' ? 'Infantil' : 'Adulto';
   const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -22,7 +19,7 @@ export function StudentDetailsView() {
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] sm:max-w-[640px] md:max-w-[800px] mx-auto overflow-x-hidden border-x border-gray-200 bg-background-light text-[#1b0d0d]">
       <TopHeader returnTo={returnTo} />
-      <ProfileAvatar fullName={studentName} gymName={student?.gym} />
+      <ProfileAvatar fullName={studentName} gymName={student?.gym?.name} />
 
       {isLoading && <div className="px-4 pb-4 text-sm text-gray-500">Cargando alumno...</div>}
       {errorMsg && <div className="px-4 pb-4 text-sm text-red-600">{errorMsg}</div>}
@@ -33,16 +30,17 @@ export function StudentDetailsView() {
       <InfoRow icon="fingerprint" label="DNI" value={student?.dni ?? '-'} />
       <InfoRow icon="sell" label="Tipo" value={categoryLabel(student?.category)} />
       <InfoRow icon="phone" label="Teléfono" value={student?.phone ?? '-'} />
-      <InfoRow icon="support_agent" label="Tutor" value={student?.guardianPhone ?? '-'} />
       <InfoRow icon="mail" label="Correo electrónico" value={student?.email ?? '-'} />
-      <InfoRow icon="cake" label="Fecha de Nacimiento" value={birthDateFormatted} />
+      <InfoRow icon="home" label="Dirección" value={student?.address ?? '-'} />
+      <InfoRow icon="military_tech" label="Cinturón actual" value={student?.currentBelt ?? '-'} />
+      <InfoRow icon="class" label="Comisión" value={student?.classGroup?.name ?? '-'} />
 
       {isTeacher && (
         <div className="px-4 pt-4">
           <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm space-y-3">
             <p className="text-sm font-semibold">Acciones del profesor</p>
             {isEditing && (
-              <EditProfileForm editForm={editForm} updateEditForm={updateEditForm} gyms={gyms} onSave={saveProfile} isSaving={isSaving} />
+              <EditProfileForm editForm={editForm} updateEditForm={updateEditForm} gyms={[]} onSave={saveProfile} isSaving={isSaving} />
             )}
             <div className="flex flex-wrap items-center gap-2">
               <button
@@ -77,43 +75,7 @@ export function StudentDetailsView() {
         </div>
       )}
 
-      {canManageForms && (
-        <div className="px-4 pt-4">
-          <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm space-y-3">
-            <button type="button" className="flex w-full items-center justify-between gap-3" onClick={() => setShowFormsMenu(prev => !prev)}>
-              <div className="text-left">
-                <p className="text-sm font-semibold">Formas (desbloqueo manual)</p>
-                <p className="text-xs text-gray-500">{formsAccess.length} forma{formsAccess.length === 1 ? '' : 's'}</p>
-              </div>
-              <span className={`material-symbols-outlined text-gray-500 transition-transform ${showFormsMenu ? 'rotate-180' : ''}`}>expand_more</span>
-            </button>
-            {showFormsMenu && (
-              <div className="space-y-3">
-                {formsAccess.length === 0 && !isLoading && (
-                  <p className="text-xs text-gray-500">No hay formas cargadas o todavía no se pudieron cargar.</p>
-                )}
-                <div className="flex flex-col gap-2">
-                  {formsAccess.map((form) => (
-                    <div key={form.id} className="flex items-center gap-3 rounded-lg border border-gray-100 bg-background-light px-3 py-2">
-                      <a className="flex-1 min-w-0" href={form.url} target="_blank" rel="noreferrer">
-                        <p className="text-sm font-semibold truncate">{form.title}</p>
-                        <p className="text-[11px] text-gray-500 mt-0.5">Orden: {form.order} · {form.unlocked ? 'Desbloqueada' : 'Bloqueada'}</p>
-                      </a>
-                      <button
-                        className={`shrink-0 rounded-lg text-xs font-semibold px-3 py-2 disabled:opacity-70 ${form.unlocked ? 'border border-gray-200 text-[#1b0d0d] bg-white' : 'bg-primary text-white'}`}
-                        onClick={() => toggleFormAccess(form.id, form.unlocked)} disabled={formsUpdatingId === form.id}
-                      >
-                        {formsUpdatingId === form.id ? 'Guardando...' : form.unlocked ? 'Bloquear' : 'Desbloquear'}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-[11px] text-gray-500">El alumno ve solo las formas desbloqueadas en su panel.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+
 
       <h3 className="text-[#1b0d0d] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Estado de Pagos</h3>
       <div className="px-4 pb-24 space-y-3">

@@ -4,21 +4,20 @@ import { authService } from '../../auth/api/authService';
 import { httpClient } from '../../../core/api/httpClient';
 
 export type StudentData = {
+  id: number;
   dni: string;
   gymId?: string | null;
   firstName: string;
   lastName: string;
   category?: 'ADULT' | 'CHILD';
   phone?: string | null;
-  guardianPhone?: string | null;
   email?: string | null;
-  birthDate?: string | null;
   address?: string | null;
-  gym?: string | null;
+  gym?: { id: number; name: string } | null;
+  classGroup?: { id: number; name: string } | null;
+  currentBelt?: string;
 };
 
-export type GymOption = { id: string; name: string };
-export type FormAccessItem = { id: string; title: string; url: string; order: number; unlocked: boolean };
 export type FeeItem = { id: string; month: number; year: number; amount: number | string; status: 'PENDING' | 'PAID'; dueDate: string; paidAt?: string | null; lateFeeApplied?: boolean };
 
 export function useStudentDetails() {
@@ -35,9 +34,7 @@ export function useStudentDetails() {
     : profile?.role === 'ADMIN' ? '/admin/alumnos' : '/profesor/alumnos';
 
   const [student, setStudent] = useState<StudentData | null>(null);
-  const [gyms, setGyms] = useState<GymOption[]>([]);
   const [fees, setFees] = useState<FeeItem[]>([]);
-  const [formsAccess, setFormsAccess] = useState<FormAccessItem[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -46,7 +43,7 @@ export function useStudentDetails() {
   const [isSaving, setIsSaving] = useState(false);
   const [editForm, setEditForm] = useState({
     firstName: '', lastName: '', category: 'ADULT' as 'ADULT' | 'CHILD',
-    email: '', phone: '', guardianPhone: '', birthDate: '', address: '', gymId: '',
+    email: '', phone: '', address: '',
   });
 
   const [isResettingPass, setIsResettingPass] = useState(false);
@@ -66,25 +63,18 @@ export function useStudentDetails() {
 
     const fetchData = async () => {
       try {
-        const [studentRes, feesRes] = await Promise.all([
-          httpClient.get<StudentData>(`/students/${dni}`),
-          httpClient.get<FeeItem[]>(`/fees/student/${dni}`)
-        ]);
+        const studentRes = await httpClient.get<StudentData>(`/students/dni/${dni}`);
+        if (!studentRes || !studentRes.id) throw new Error('Alumno no encontrado');
 
         setStudent(studentRes);
         setEditForm({
           firstName: studentRes.firstName ?? '', lastName: studentRes.lastName ?? '',
           category: studentRes.category ?? 'ADULT', email: studentRes.email ?? '',
-          phone: studentRes.phone ?? '', guardianPhone: studentRes.guardianPhone ?? '',
-          birthDate: studentRes.birthDate ? studentRes.birthDate.split('T')[0] : '',
-          address: studentRes.address ?? '', gymId: studentRes.gymId ?? '',
+          phone: studentRes.phone ?? '', address: studentRes.address ?? '',
         });
-        setFees(feesRes ?? []);
 
-        if (canManageForms) {
-          const formsRes = await httpClient.get<FormAccessItem[]>(`/forms/student/${dni}`, { cache: 'no-store' });
-          setFormsAccess(Array.isArray(formsRes) ? formsRes : []);
-        }
+        const feesRes = await httpClient.get<FeeItem[]>(`/fees/student/${studentRes.id}`);
+        setFees(feesRes ?? []);
       } catch (err) {
         setErrorMsg(err instanceof Error ? err.message : 'No se pudo cargar el alumno.');
       } finally {
@@ -94,18 +84,7 @@ export function useStudentDetails() {
     fetchData();
   }, [dni, canManageForms]);
 
-  useEffect(() => {
-    if (!isTeacher) return;
-    const fetchGyms = async () => {
-      try {
-        const res = await httpClient.get<GymOption[]>('/gyms?limit=100', { cache: 'no-store' });
-        setGyms(Array.isArray(res) ? res : []);
-      } catch {
-        setGyms([]);
-      }
-    };
-    fetchGyms();
-  }, [isTeacher]);
+
 
   const toggleEditMode = () => setIsEditing((prev) => !prev);
   const updateEditForm = (field: keyof typeof editForm, value: string) => setEditForm((prev) => ({ ...prev, [field]: value }));
@@ -124,19 +103,18 @@ export function useStudentDetails() {
   };
 
   const saveProfile = async () => {
-    if (!dni) return;
+    if (!student?.id) return;
     setIsSaving(true);
     setErrorMsg('');
     try {
       const payload = {
         firstName: editForm.firstName.trim() || null, lastName: editForm.lastName.trim() || null,
         category: editForm.category, email: editForm.email.trim() || null,
-        phone: editForm.phone.trim() || null, guardianPhone: editForm.guardianPhone.trim() || null,
-        birthDate: editForm.birthDate.trim() || null, address: editForm.address.trim() || null,
-        gymId: editForm.gymId.trim() || null,
+        phone: editForm.phone.trim() || null, address: editForm.address.trim() || null,
       };
       
-      const res = await httpClient.request(`/teachers/me/students/${dni}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
+      const endpoint = isTeacher ? `/teacher/students/${student.id}` : `/students/${student.id}`;
+      const res = await httpClient.request(endpoint, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.message ?? 'Error al actualizar alumno');
@@ -151,26 +129,7 @@ export function useStudentDetails() {
     }
   };
 
-  const toggleFormAccess = async (formId: string, currentUnlocked: boolean) => {
-    if (!dni) return;
-    setFormsUpdatingId(formId);
-    setErrorMsg('');
-    const nextUnlocked = !currentUnlocked;
-    setFormsAccess((prev) => prev.map((f) => f.id === formId ? { ...f, unlocked: nextUnlocked } : f));
 
-    try {
-      const res = await httpClient.request(`/forms/student/${dni}/access`, { method: 'PATCH', json: true, body: JSON.stringify({ formId, unlocked: nextUnlocked }) });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message ?? 'No se pudo actualizar acceso.');
-      }
-    } catch (err) {
-      setFormsAccess((prev) => prev.map((f) => f.id === formId ? { ...f, unlocked: currentUnlocked } : f));
-      setErrorMsg(err instanceof Error ? err.message : 'No se pudo actualizar acceso.');
-    } finally {
-      setFormsUpdatingId(null);
-    }
-  };
 
   const resetPassword = async () => {
     if (!dni || !confirm('¿Quieres resetear la contraseña de este alumno?')) return;
@@ -199,10 +158,10 @@ export function useStudentDetails() {
   };
 
   const unassignStudent = async () => {
-    if (!dni || !confirm('¿Quieres desasignar este alumno?')) return;
+    if (!student?.id || !confirm('¿Quieres desasignar este alumno?')) return;
     setActionLoading('unassign');
     try {
-      await httpClient.post(`/teachers/me/students/${dni}/unassign`, {});
+      await httpClient.post(`/teacher/students/${student.id}/unassign`, {});
       navigate(returnTo);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Error al desasignar.');
@@ -212,10 +171,11 @@ export function useStudentDetails() {
   };
 
   const deleteStudent = async () => {
-    if (!dni || !confirm('¿Quieres eliminar este alumno? Esta acción no se puede deshacer.')) return;
+    if (!student?.id || !confirm('¿Quieres eliminar este alumno? Esta acción no se puede deshacer.')) return;
     setActionLoading('delete');
     try {
-      await httpClient.request(`/teachers/me/students/${dni}`, { method: 'DELETE' });
+      const endpoint = isTeacher ? `/teacher/students/${student.id}` : `/students/${student.id}`;
+      await httpClient.request(endpoint, { method: 'DELETE' });
       navigate(returnTo);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Error al eliminar.');
@@ -228,12 +188,11 @@ export function useStudentDetails() {
   const birthDateFormatted = useMemo(() => student?.birthDate ? new Date(student.birthDate).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : '-', [student]);
 
   return {
-    student, studentName, birthDateFormatted, gyms, fees, formsAccess,
+    student, studentName, fees,
     isLoading, errorMsg, isEditing, isSaving, editForm, updateEditForm, toggleEditMode, saveProfile,
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
     actionLoading, unassignStudent, deleteStudent,
     markingFee, markFeeAsPaid,
-    formsUpdatingId, toggleFormAccess,
-    returnTo, canManageForms, isTeacher
+    returnTo, isTeacher
   };
 }

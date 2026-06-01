@@ -100,6 +100,7 @@ export function DashboardView() {
               <QuickAction to="/profesor/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas por mes" variant="row" />
               <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" variant="row" />
               <QuickAction to="/profesor/cuotas" icon="receipt_long" title="Cuotas" subtitle="Administrar pagos de alumnos" variant="row" />
+              <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" variant="row" />
             </div>
           </ContentCard>
         )}

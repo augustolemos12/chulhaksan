@@ -14,6 +14,7 @@ import { EventsModule } from './events/events.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FeesModule } from './fees/fees.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { FormsModule } from './forms/forms.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     CloudinaryModule,
     FeesModule,
     TransactionsModule,
+    FormsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

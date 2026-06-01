@@ -7,15 +7,16 @@ export type StudentItem = {
   category?: 'ADULT' | 'CHILD'; gymId?: string; gym?: { id: number; name: string } | null;
   classGroup?: { id: number; name: string } | null;
   email?: string | null; phone?: string | null; address?: string | null;
+  currentBelt?: string;
 };
 
 export type StudentWithStatus = StudentItem & { status: 'OK' | 'DEBT' | 'UNKNOWN'; };
 
-export type StudentForm = { firstName: string; lastName: string; email: string; phone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; address: string; };
-export type CreateStudentForm = StudentForm & { dni: string; password: string; currentBelt: string; };
+export type StudentForm = { firstName: string; lastName: string; email: string; phone: string; classGroupId: string; category: 'ADULT' | 'CHILD'; address: string; currentBelt: string; };
+export type CreateStudentForm = StudentForm & { dni: string; password: string; };
 
-export const emptyForm: StudentForm = { firstName: '', lastName: '', email: '', phone: '', classGroupId: '', category: 'ADULT', address: '' };
-export const emptyCreateForm: CreateStudentForm = { ...emptyForm, dni: '', password: '', currentBelt: 'WHITE' };
+export const emptyForm: StudentForm = { firstName: '', lastName: '', email: '', phone: '', classGroupId: '', category: 'ADULT', address: '', currentBelt: 'WHITE' };
+export const emptyCreateForm: CreateStudentForm = { ...emptyForm, dni: '', password: '' };
 
 export type GymOption = { id: string; name: string; isArchived?: boolean; };
 export type ClassGroupOption = { id: number; name: string; isActive: boolean; gymId: string; };
@@ -139,7 +140,7 @@ export function useTeacherStudents() {
     setForm({
       firstName: student.firstName ?? '', lastName: student.lastName ?? '', email: student.email ?? '',
       phone: student.phone ?? '', classGroupId: student.classGroup ? String(student.classGroup.id) : '',
-      category: student.category ?? 'ADULT', address: student.address ?? '',
+      category: student.category ?? 'ADULT', address: student.address ?? '', currentBelt: student.currentBelt ?? 'WHITE',
     });
   };
 
@@ -154,6 +155,7 @@ export function useTeacherStudents() {
         email: form.email.trim() || null, phone: form.phone.trim() || null,
         classGroupId: form.classGroupId ? Number(form.classGroupId) : null,
         category: form.category, address: form.address.trim() || null,
+        currentBelt: form.currentBelt || undefined,
       };
       const res = await httpClient.request(`/teacher/students/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar el alumno.');

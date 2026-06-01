@@ -3,6 +3,22 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useFormsManager } from '../hooks/useFormsManager';
 import { authService } from '../../auth/api/authService';
 
+const BELT_OPTIONS = [
+  { value: 'WHITE', label: 'Blanco' },
+  { value: 'WHITE_YELLOW', label: 'Blanco Punta Amarilla' },
+  { value: 'YELLOW', label: 'Amarillo' },
+  { value: 'GREEN_STRIPE', label: 'Amarillo Punta Verde' },
+  { value: 'GREEN', label: 'Verde' },
+  { value: 'BLUE_STRIPE', label: 'Verde Punta Azul' },
+  { value: 'BLUE', label: 'Azul' },
+  { value: 'RED_STRIPE', label: 'Azul Punta Roja' },
+  { value: 'RED', label: 'Rojo' },
+  { value: 'BLACK_STRIPE', label: 'Rojo Punta Negra' },
+  { value: 'DAN', label: 'Dan (Cinturón Negro)' },
+];
+
+const beltLabel = (belt: string) => BELT_OPTIONS.find(b => b.value === belt)?.label || belt;
+
 export function FormsManagerView() {
   const navigate = useNavigate();
   const profile = authService.getCurrentProfile();
@@ -14,6 +30,7 @@ export function FormsManagerView() {
   } = useFormsManager();
 
   const backTo = profile?.role === 'ADMIN' ? '/dashboard' : profile?.role === 'TEACHER' ? '/dashboard' : '/dashboard';
+  const isAdmin = profile?.role === 'ADMIN';
 
   return (
     <div className="min-h-screen bg-background text-text">
@@ -26,20 +43,30 @@ export function FormsManagerView() {
       </header>
 
       <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-4">
-        <form className="bg-surface rounded-2xl border border-border shadow-soft p-4 space-y-3" onSubmit={handleCreate}>
-          <p className="text-sm font-bold">Nueva forma</p>
-          <label className="block">
-            <span className="block text-xs font-semibold text-muted mb-1">Título</span>
-            <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: Forma 1 - Taegeuk Il Jang" value={createEdit.title} onChange={(e) => setCreateEdit((p) => ({ ...p, title: e.target.value }))} disabled={creating} required />
-          </label>
-          <label className="block">
-            <span className="block text-xs font-semibold text-muted mb-1">URL</span>
-            <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="YouTube / Drive / etc" value={createEdit.url} onChange={(e) => setCreateEdit((p) => ({ ...p, url: e.target.value }))} disabled={creating} required />
-          </label>
-          <button className="w-full rounded-lg bg-primary text-white text-xs font-semibold px-4 py-2 disabled:opacity-70" type="submit" disabled={creating || !createEdit.title.trim() || !createEdit.url.trim()}>
-            {creating ? 'Creando...' : 'Crear'}
-          </button>
-        </form>
+        {isAdmin && (
+          <form className="bg-surface rounded-2xl border border-border shadow-soft p-4 space-y-3" onSubmit={handleCreate}>
+            <p className="text-sm font-bold">Nueva forma</p>
+            <label className="block">
+              <span className="block text-xs font-semibold text-muted mb-1">Título</span>
+              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="Ej: Forma 1 - Taegeuk Il Jang" value={createEdit.title} onChange={(e) => setCreateEdit((p) => ({ ...p, title: e.target.value }))} disabled={creating} required />
+            </label>
+            <label className="block">
+              <span className="block text-xs font-semibold text-muted mb-1">URL</span>
+              <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="YouTube / Drive / etc" value={createEdit.url} onChange={(e) => setCreateEdit((p) => ({ ...p, url: e.target.value }))} disabled={creating} required />
+            </label>
+            <label className="block">
+              <span className="block text-xs font-semibold text-muted mb-1">Cinturón Requerido</span>
+              <select className="w-full rounded-lg border border-border px-3 py-2 text-sm" value={createEdit.requiredBelt} onChange={(e) => setCreateEdit((p) => ({ ...p, requiredBelt: e.target.value }))} disabled={creating} required>
+                {BELT_OPTIONS.map((belt) => (
+                  <option key={belt.value} value={belt.value}>{belt.label}</option>
+                ))}
+              </select>
+            </label>
+            <button className="w-full rounded-lg bg-primary text-white text-xs font-semibold px-4 py-2 disabled:opacity-70" type="submit" disabled={creating || !createEdit.title.trim() || !createEdit.url.trim()}>
+              {creating ? 'Creando...' : 'Crear'}
+            </button>
+          </form>
+        )}
 
         <div className="rounded-2xl border border-border bg-surface p-4 shadow-soft">
           <button type="button" className="flex w-full items-center justify-between gap-3" onClick={() => setShowFormsMenu((c) => !c)}>
@@ -66,12 +93,19 @@ export function FormsManagerView() {
                       <div className="flex flex-col justify-center min-w-0">
                         <p className="text-text text-base font-semibold leading-tight truncate">{form.title}</p>
                         <p className="text-xs text-muted mt-1 truncate">{form.url}</p>
+                        <div className="mt-1">
+                          <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider">
+                            {beltLabel(form.requiredBelt)}
+                          </span>
+                        </div>
                       </div>
                     </a>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2" type="button" onClick={() => openEdit(form)}>Editar</button>
-                      <button className="rounded-lg border border-red-200 text-red-600 text-xs font-semibold px-3 py-2" type="button" onClick={() => handleDelete(form)}>Eliminar</button>
-                    </div>
+                    {isAdmin && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2" type="button" onClick={() => openEdit(form)}>Editar</button>
+                        <button className="rounded-lg border border-red-200 text-red-600 text-xs font-semibold px-3 py-2" type="button" onClick={() => handleDelete(form)}>Eliminar</button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -97,6 +131,14 @@ export function FormsManagerView() {
               <label className="block">
                 <span className="block text-xs font-semibold text-muted mb-1">URL</span>
                 <input className="w-full rounded-lg border border-border px-3 py-2 text-sm" placeholder="YouTube / Drive / etc" value={edit.url} onChange={(e) => setEdit((p) => ({ ...p, url: e.target.value }))} disabled={saving} required />
+              </label>
+              <label className="block">
+                <span className="block text-xs font-semibold text-muted mb-1">Cinturón Requerido</span>
+                <select className="w-full rounded-lg border border-border px-3 py-2 text-sm" value={edit.requiredBelt} onChange={(e) => setEdit((p) => ({ ...p, requiredBelt: e.target.value }))} disabled={saving} required>
+                  {BELT_OPTIONS.map((belt) => (
+                    <option key={belt.value} value={belt.value}>{belt.label}</option>
+                  ))}
+                </select>
               </label>
               <button className="w-full rounded-lg bg-primary text-white text-sm font-semibold py-3 disabled:opacity-70" type="submit" disabled={saving || !edit.title.trim() || !edit.url.trim()}>
                 {saving ? 'Guardando...' : 'Guardar'}

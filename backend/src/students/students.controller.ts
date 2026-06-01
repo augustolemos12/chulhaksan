@@ -65,6 +65,13 @@ export class StudentsController {
     return this.studentsService.findOne(id);
   }
 
+  //ADMIN & TEACHER - Obtener un alumno por DNI
+  @Get('students/dni/:dni')
+  @Roles(Role.ADMIN, Role.TEACHER, Role.STUDENT)
+  findOneByDni(@Param('dni') dni: string) {
+    return this.studentsService.findOneByDni(dni);
+  }
+
   //ADMIN - Actualizar un alumno
   @Patch('students/:id')
   @Roles(Role.ADMIN)

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { httpClient } from '../../../core/api/httpClient';
 
-export type FormLinkItem = { id: string; title: string; url: string; order: number; };
-export type FormEdit = { title: string; url: string; };
+export type FormLinkItem = { id: string; title: string; url: string; requiredBelt: string; order: number; };
+export type FormEdit = { title: string; url: string; requiredBelt: string; };
 
-export const emptyEdit: FormEdit = { title: '', url: '' };
+export const emptyEdit: FormEdit = { title: '', url: '', requiredBelt: 'WHITE' };
 
 export function useFormsManager() {
   const [forms, setForms] = useState<FormLinkItem[]>([]);
@@ -45,7 +45,7 @@ export function useFormsManager() {
     setCreating(true); setError('');
     try {
       const res = await httpClient.request('/forms', {
-        method: 'POST', json: true, body: JSON.stringify({ title: titleValue, url: urlValue }),
+        method: 'POST', json: true, body: JSON.stringify({ title: titleValue, url: urlValue, requiredBelt: createEdit.requiredBelt }),
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear la forma.');
       
@@ -60,7 +60,7 @@ export function useFormsManager() {
 
   const openEdit = (form: FormLinkItem) => {
     setEditing(form);
-    setEdit({ title: form.title ?? '', url: form.url ?? '' });
+    setEdit({ title: form.title ?? '', url: form.url ?? '', requiredBelt: form.requiredBelt ?? 'WHITE' });
   };
 
   const handleSave = async (event: React.FormEvent) => {
@@ -73,7 +73,7 @@ export function useFormsManager() {
     setSaving(true); setError('');
     try {
       const res = await httpClient.request(`/forms/${editing.id}`, {
-        method: 'PATCH', json: true, body: JSON.stringify({ title: titleValue, url: urlValue }),
+        method: 'PATCH', json: true, body: JSON.stringify({ title: titleValue, url: urlValue, requiredBelt: edit.requiredBelt }),
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar la forma.');
       

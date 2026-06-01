@@ -54,9 +54,9 @@ export function InfoRow({ icon, label, value }: { icon: string; label: string; v
 }
 
 export function EditProfileForm({
-  editForm, updateEditForm, gyms, onSave, isSaving
+  editForm, updateEditForm, onSave, isSaving
 }: {
-  editForm: any; updateEditForm: (f: any, v: string) => void; gyms: GymOption[]; onSave: () => void; isSaving: boolean;
+  editForm: any; updateEditForm: (f: any, v: string) => void; gyms?: any[]; onSave: () => void; isSaving: boolean;
 }) {
   return (
     <div className="space-y-3 rounded-xl border border-gray-100 bg-background-light p-3">
@@ -80,28 +80,12 @@ export function EditProfileForm({
           <input className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" value={editForm.phone} onChange={(e) => updateEditForm('phone', e.target.value)} />
         </label>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <label className="space-y-1">
-          <span className="text-xs text-gray-500">Telefono tutor (opcional)</span>
-          <input className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" value={editForm.guardianPhone} onChange={(e) => updateEditForm('guardianPhone', e.target.value)} />
-        </label>
-        <label className="space-y-1">
-          <span className="text-xs text-gray-500">Fecha nacimiento (opcional)</span>
-          <input type="date" className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" value={editForm.birthDate} onChange={(e) => updateEditForm('birthDate', e.target.value)} />
-        </label>
-      </div>
-      <label className="space-y-1">
+      <label className="space-y-1 block mb-2">
         <span className="text-xs text-gray-500">Direccion (opcional)</span>
         <input className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" value={editForm.address} onChange={(e) => updateEditForm('address', e.target.value)} />
       </label>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <label className="space-y-1">
-          <span className="text-xs text-gray-500">Gimnasio</span>
-          <select className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" value={editForm.gymId} onChange={(e) => updateEditForm('gymId', e.target.value)}>
-            <option value="">Sin asignacion</option>
-            {gyms.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
-          </select>
-        </label>
+        <div />
         <label className="space-y-1">
           <span className="text-xs text-gray-500">Tipo</span>
           <select className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" value={editForm.category} onChange={(e) => updateEditForm('category', e.target.value)}>

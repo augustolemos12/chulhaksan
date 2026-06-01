@@ -67,6 +67,21 @@ export function EditTeacherStudentModal({
                   {classGroups.filter((c) => c.isActive).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted">Cinturón actual</label>
+              <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.currentBelt} onChange={(e) => setForm((prev: any) => ({ ...prev, currentBelt: e.target.value }))} required>
+                <option value="WHITE">Blanco</option>
+                <option value="WHITE_YELLOW">Blanco Punta Amarilla</option>
+                <option value="YELLOW">Amarillo</option>
+                <option value="GREEN_STRIPE">Amarillo Punta Verde</option>
+                <option value="GREEN">Verde</option>
+                <option value="BLUE_STRIPE">Verde Punta Azul</option>
+                <option value="BLUE">Azul</option>
+                <option value="RED_STRIPE">Azul Punta Roja</option>
+                <option value="RED">Rojo</option>
+                <option value="BLACK_STRIPE">Rojo Punta Negra</option>
+                <option value="DAN">Dan (Negro)</option>
+              </select>
             </div>
             
             <button className="w-full rounded-lg bg-primary text-white text-sm font-semibold py-3 disabled:opacity-70" type="submit" disabled={saving}>

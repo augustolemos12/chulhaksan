@@ -311,6 +311,22 @@ export class StudentsService {
     return this.mapStudentResponse(student);
   }
 
+  async findOneByDni(dni: string) {
+    const student = await this.prisma.student.findFirst({
+      where: { user: { dni }, deletedAt: null },
+      include: {
+        ...this.commonInclude,
+        user: true,
+      },
+    });
+
+    if (!student) {
+      throw new NotFoundException(`Alumno con DNI ${dni} no encontrado`);
+    }
+
+    return this.mapStudentResponse(student);
+  }
+
   async update(id: number, teacherUserId: number | null, updateStudentDto: UpdateStudentDto) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
