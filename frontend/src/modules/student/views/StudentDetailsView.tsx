@@ -32,7 +32,7 @@ export function StudentDetailsView() {
       <InfoRow icon="mail" label="Correo electrónico" value={student?.email ?? '-'} />
       <InfoRow icon="home" label="Dirección" value={student?.address ?? '-'} />
       <InfoRow icon="military_tech" label="Cinturón actual" value={student?.currentBelt ?? '-'} />
-      <InfoRow icon="class" label="Comisión" value={student?.classGroup?.name ?? '-'} />
+      <InfoRow icon="class" label="Clase" value={student?.classGroup?.name ?? '-'} />
 
       {isTeacher && (
         <div className="px-4 pt-4">

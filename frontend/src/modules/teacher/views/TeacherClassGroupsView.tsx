@@ -27,7 +27,7 @@ export function TeacherClassGroupsView() {
             <span className="material-symbols-outlined">arrow_back_ios</span>
           </Link>
           <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">
-            Mis Comisiones
+            Mis Clases
           </h1>
           <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm" type="button" onClick={() => setCreateOpen(true)}>
             <span className="material-symbols-outlined text-[18px]">add_circle</span>
@@ -39,7 +39,7 @@ export function TeacherClassGroupsView() {
       <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-4">
         <div className="bg-surface rounded-2xl border border-border shadow-soft p-4 flex items-center justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Total comisiones</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Total clases</p>
             <p className="text-2xl font-bold text-text">{total}</p>
           </div>
           <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
@@ -72,9 +72,9 @@ export function TeacherClassGroupsView() {
           </div>
         </div>
 
-        {loading && <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">Cargando comisiones...</div>}
+        {loading && <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">Cargando clases...</div>}
         {error && <div className="bg-red-50 p-4 rounded-xl text-sm text-red-600 border border-red-200">{error}</div>}
-        {!loading && !error && classGroups.length === 0 && <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">No tenés comisiones creadas.</div>}
+        {!loading && !error && classGroups.length === 0 && <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">No tenés clases creadas.</div>}
 
         <div className="flex flex-col gap-3">
           {classGroups.map((cg) => (
@@ -89,7 +89,7 @@ export function TeacherClassGroupsView() {
                   </span>
                 </div>
                 <h3 className="text-text text-base font-semibold leading-tight truncate">
-                  {cg.name || `Comisión ${cg.id}`}
+                  {cg.name || `Clase ${cg.id}`}
                 </h3>
                 <p className="text-xs text-muted mt-1 truncate">
                   Gimnasio: <span className="font-medium text-text">{cg.gym?.name}</span>
@@ -103,7 +103,7 @@ export function TeacherClassGroupsView() {
                 <Link className="rounded-lg border border-primary text-primary text-xs font-semibold px-3 py-2 text-center" to={`/profesor/alumnos?classGroupId=${cg.id}`}>
                   Ver Alumnos
                 </Link>
-                <Link className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2 text-center" to={`/profesor/comisiones/${cg.id}/asistencia`}>
+                <Link className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2 text-center" to={`/profesor/clases/${cg.id}/asistencia`}>
                   Tomar Asistencia
                 </Link>
                 <button className="rounded-lg border border-border text-text text-xs font-semibold px-3 py-2 text-center" type="button" onClick={() => openEdit(cg)}>

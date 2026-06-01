@@ -41,7 +41,7 @@ export class ClassPlansService {
     });
 
     if (!classGroup || !classGroup.isActive) {
-      throw new BadRequestException('La comisión seleccionada no existe o está inactiva');
+      throw new BadRequestException('La clase seleccionada no existe o está inactiva');
     }
 
     // 2. Ownership
@@ -50,7 +50,7 @@ export class ClassPlansService {
         where: { userId: actor.id },
       });
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para crear planes para esta comisión');
+        throw new ForbiddenException('No tienes permiso para crear planes para esta clase');
       }
     }
 
@@ -68,7 +68,7 @@ export class ClassPlansService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException(
-          `Ya existe un plan de clases para esta comisión en ${month}/${year}`
+          `Ya existe un plan de clases para esta clase en ${month}/${year}`
         );
       }
       throw error;
@@ -84,7 +84,7 @@ export class ClassPlansService {
     if (month) where.month = month;
     if (year) where.year = year;
     
-    // Filtro por comisión específica
+    // Filtro por clase específica
     if (classGroupId) {
         where.classGroupId = classGroupId;
     } else if (gymId || teacherId) {
@@ -104,7 +104,7 @@ export class ClassPlansService {
         throw new ForbiddenException('Perfil de profesor no encontrado');
       }
 
-      // Si el profesor pidió una comisión específica, ya se filtró arriba, 
+      // Si el profesor pidió una clase específica, ya se filtró arriba, 
       // pero debemos asegurar que sea SUYA.
       // Si no pidió ninguna, mostramos todas las SUYAS.
       where.classGroup = {
@@ -163,19 +163,19 @@ export class ClassPlansService {
 
     const { classGroupId, month, year } = updateClassPlanDto;
 
-    // Si se cambia la comisión, validar
+    // Si se cambia la clase, validar
     if (classGroupId && classGroupId !== classPlan.classGroupId) {
         const newClassGroup = await this.prisma.classGroup.findUnique({
             where: { id: classGroupId },
         });
         if (!newClassGroup || !newClassGroup.isActive) {
-            throw new BadRequestException('La nueva comisión no existe o está inactiva');
+            throw new BadRequestException('La nueva clase no existe o está inactiva');
         }
         
         if (actor.role === Role.TEACHER) {
             const teacher = await this.prisma.teacher.findUnique({ where: { userId: actor.id } });
             if (newClassGroup.teacherId !== teacher?.id) {
-                throw new ForbiddenException('No puedes mover el plan a una comisión que no te pertenece');
+                throw new ForbiddenException('No puedes mover el plan a una clase que no te pertenece');
             }
         }
     }
@@ -189,7 +189,7 @@ export class ClassPlansService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException(
-          `Ya existe un plan de clases para esta comisión en el periodo especificado`
+          `Ya existe un plan de clases para esta clase en el periodo especificado`
         );
       }
       throw error;

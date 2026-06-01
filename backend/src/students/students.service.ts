@@ -55,13 +55,13 @@ export class StudentsService {
     const normalizedFirstName = firstName.trim().toUpperCase();
     const normalizedLastName = lastName.trim().toUpperCase();
 
-    // 1. Validar la Comisión (ClassGroup)
+    // 1. Validar la Clase (ClassGroup)
     const classGroup = await this.prisma.classGroup.findUnique({
       where: { id: classGroupId }
     });
 
     if (!classGroup || !classGroup.isActive) {
-      throw new NotFoundException('La comisión seleccionada no existe o está inactiva');
+      throw new NotFoundException('La clase seleccionada no existe o está inactiva');
     }
 
     // 2. Validar permisos
@@ -71,7 +71,7 @@ export class StudentsService {
       });
 
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para asignar alumnos a esta comisión');
+        throw new ForbiddenException('No tienes permiso para asignar alumnos a esta clase');
       }
     }
 
@@ -351,7 +351,7 @@ export class StudentsService {
     const { currentBelt, firstName, lastName, classGroupId, gymId, teacherId, ...rest } = updateStudentDto;
     const dataToUpdate: Prisma.StudentUpdateInput = { ...rest };
 
-    // 2. Manejar cambio de Comisión y forzar consistencia
+    // 2. Manejar cambio de Clase y forzar consistencia
     const effectiveClassGroupId = classGroupId || student.classGroupId;
     
     const currentClassGroup = await this.prisma.classGroup.findUnique({
@@ -359,14 +359,14 @@ export class StudentsService {
     });
 
     if (!currentClassGroup || !currentClassGroup.isActive) {
-      throw new NotFoundException('La comisión asignada no existe o está inactiva');
+      throw new NotFoundException('La clase asignada no existe o está inactiva');
     }
 
-    // Si se cambia la comisión, validar que la nueva también sea del profesor
+    // Si se cambia la clase, validar que la nueva también sea del profesor
     if (classGroupId && classGroupId !== student.classGroupId && teacherUserId) {
       const teacher = await this.prisma.teacher.findUnique({ where: { userId: teacherUserId } });
       if (currentClassGroup.teacherId !== teacher?.id) {
-        throw new ForbiddenException('No puedes mover al alumno a una comisión que no te pertenece');
+        throw new ForbiddenException('No puedes mover al alumno a una clase que no te pertenece');
       }
     }
 

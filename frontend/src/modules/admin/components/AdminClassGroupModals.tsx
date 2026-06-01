@@ -47,7 +47,7 @@ export function CreateClassGroupModal({
     <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
       <div className="bg-surface w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mb-4 shrink-0">
-          <h2 className="text-lg font-bold">Nueva Comisión</h2>
+          <h2 className="text-lg font-bold">Nueva Clase</h2>
           <button className="text-gray-400" type="button" onClick={() => { setCreateOpen(false); setCreateForm(emptyForm); }}>
             <span className="material-symbols-outlined">close</span>
           </button>
@@ -119,7 +119,7 @@ export function CreateClassGroupModal({
             </div>
 
             <button className="w-full rounded-lg bg-primary text-white text-sm font-semibold py-3 disabled:opacity-70 mt-2" type="submit" disabled={creating || createForm.daysOfWeek.length === 0}>
-              {creating ? 'Creando...' : 'Crear comisión'}
+              {creating ? 'Creando...' : 'Crear clase'}
             </button>
           </form>
         </div>
@@ -158,7 +158,7 @@ export function EditClassGroupModal({
     <div className="fixed inset-0 bg-black/40 z-30 flex items-end sm:items-center justify-center p-4">
       <div className="bg-surface w-full max-w-[430px] sm:max-w-[520px] md:max-w-[640px] rounded-t-2xl sm:rounded-2xl p-5 max-h-[85vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mb-4 shrink-0">
-          <h2 className="text-lg font-bold">Editar Comisión</h2>
+          <h2 className="text-lg font-bold">Editar Clase</h2>
           <button className="text-gray-400" type="button" onClick={() => { setEditing(null); setForm(emptyForm); }}>
             <span className="material-symbols-outlined">close</span>
           </button>

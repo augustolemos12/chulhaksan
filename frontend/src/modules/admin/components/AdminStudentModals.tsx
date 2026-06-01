@@ -104,9 +104,9 @@ export function EditStudentModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Comisión</label>
+                <label className="text-xs text-muted">Clase</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.classGroupId} onChange={(e) => setForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
-                  <option value="">Selecciona una comisión</option>
+                  <option value="">Selecciona una clase</option>
                   {filteredCommissions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
@@ -242,9 +242,9 @@ export function CreateStudentModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Comisión</label>
+                <label className="text-xs text-muted">Clase</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.classGroupId} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
-                  <option value="">Selecciona una comisión</option>
+                  <option value="">Selecciona una clase</option>
                   {filteredCommissions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>

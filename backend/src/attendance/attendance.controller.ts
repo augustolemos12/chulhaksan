@@ -18,7 +18,7 @@ export class AttendanceController {
 
   @Post('bulk')
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Registrar asistencia de forma masiva para una comisión y fecha' })
+  @ApiOperation({ summary: 'Registrar asistencia de forma masiva para una clase y fecha' })
   recordAttendance(@Req() req, @Body() recordDto: RecordAttendanceDto) {
     return this.attendanceService.recordAttendance(req.user.id, req.user.role, recordDto);
   }
@@ -33,7 +33,7 @@ export class AttendanceController {
 
   @Get('class-date')
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Obtener asistencia de una comisión en una fecha específica' })
+  @ApiOperation({ summary: 'Obtener asistencia de una clase en una fecha específica' })
   getAttendanceByClassAndDate(@Query() queryDto: GetAttendanceByClassDateDto) {
     return this.attendanceService.getAttendanceByClassAndDate(queryDto.classGroupId, queryDto.date);
   }

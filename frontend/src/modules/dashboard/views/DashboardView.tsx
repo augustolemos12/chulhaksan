@@ -7,7 +7,6 @@ import {
   MetricCard,
   QuickAction,
 } from '../components/DashboardUI';
-import { MobileNavBar } from '../../../shared/components/MobileNavBar';
 
 export function DashboardView() {
   const {
@@ -96,7 +95,7 @@ export function DashboardView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <QuickAction to="/profesor/alumnos" icon="group" title="Alumnos" subtitle="Listado y estado" variant="row" />
               <QuickAction to="/profesor/censo" icon="pie_chart" title="Censo de Alumnos" subtitle="Métricas y estadísticas" variant="row" />
-              <QuickAction to="/profesor/comisiones" icon="class" title="Comisiones" subtitle="Horarios y alumnos" variant="row" />
+              <QuickAction to="/profesor/clases" icon="class" title="Mis Clases" subtitle="Horarios y alumnos" variant="row" />
               <QuickAction to="/profesor/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas por mes" variant="row" />
               <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" variant="row" />
               <QuickAction to="/profesor/cuotas" icon="receipt_long" title="Cuotas" subtitle="Administrar pagos de alumnos" variant="row" />
@@ -121,7 +120,7 @@ export function DashboardView() {
                 <QuickAction to="/admin/alumnos" icon="group" title="Alumnos" subtitle="Gestión total" variant="row" />
                 <QuickAction to="/admin/censo" icon="pie_chart" title="Censo de Alumnos" subtitle="Métricas y estadísticas" variant="row" />
                 <QuickAction to="/admin/profesores" icon="badge" title="Profesores" subtitle="Gestión total" variant="row" />
-                <QuickAction to="/admin/comisiones" icon="class" title="Comisiones" subtitle="Horarios y profesores" variant="row" />
+                <QuickAction to="/admin/clases" icon="class" title="Mis Clases" subtitle="Horarios y profesores" variant="row" />
                 <QuickAction to="/admin/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas" variant="row" />
                 <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" variant="row" />
                 <QuickAction to="/admin/gimnasios" icon="folder" title="Gimnasios" subtitle="Carpetas y conteos" variant="row" />
@@ -133,7 +132,6 @@ export function DashboardView() {
           </>
         )}
       </main>
-      <MobileNavBar />
     </div>
   );
 }

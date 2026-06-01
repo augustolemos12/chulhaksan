@@ -15,7 +15,7 @@ export class CreateClassGroupDto {
   @IsPositive()
   gymId: number;
 
-  @ApiPropertyOptional({ description: 'Nombre opcional para la comisión', example: 'Turno Mañana' })
+  @ApiPropertyOptional({ description: 'Nombre opcional para la clase', example: 'Turno Mañana' })
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value?.trim())

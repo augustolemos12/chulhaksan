@@ -14,7 +14,7 @@ export class AttendanceRecordDto {
 }
 
 export class RecordAttendanceDto {
-  @ApiProperty({ description: 'ID de la Comisión', example: 1 })
+  @ApiProperty({ description: 'ID de la Clase', example: 1 })
   @IsInt()
   @IsPositive()
   classGroupId: number;

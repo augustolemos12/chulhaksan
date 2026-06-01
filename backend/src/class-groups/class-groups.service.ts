@@ -65,7 +65,7 @@ export class ClassGroupsService {
       // Verificar si hay intersección de días
       const hasOverlappingDays = group.daysOfWeek.some((day: any) => daysOfWeek.includes(day));
       if (hasOverlappingDays) {
-        throw new ConflictException('Ya existe una comisión activa con estas características en el mismo horario y días');
+        throw new ConflictException('Ya existe una clase activa con estas características en el mismo horario y días');
       }
     }
   }
@@ -79,7 +79,7 @@ export class ClassGroupsService {
 
     if (isAdmin) {
       if (!dtoTeacherId) {
-        throw new ForbiddenException('Un administrador debe especificar el teacherId al crear una comisión');
+        throw new ForbiddenException('Un administrador debe especificar el teacherId al crear una clase');
       }
       const teacher = await this.prisma.teacher.findUnique({ where: { id: dtoTeacherId } });
       if (!teacher) {
@@ -162,7 +162,7 @@ export class ClassGroupsService {
     });
 
     if (!classGroup) {
-      throw new NotFoundException(`Comisión con ID ${id} no encontrada`);
+      throw new NotFoundException(`Clase con ID ${id} no encontrada`);
     }
 
     if (userContext && userContext.role !== Role.ADMIN) {
@@ -170,7 +170,7 @@ export class ClassGroupsService {
         where: { userId: userContext.id },
       });
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para ver esta comisión');
+        throw new ForbiddenException('No tienes permiso para ver esta clase');
       }
     }
 
@@ -183,7 +183,7 @@ export class ClassGroupsService {
     });
 
     if (!classGroup) {
-      throw new NotFoundException(`Comisión con ID ${id} no encontrada`);
+      throw new NotFoundException(`Clase con ID ${id} no encontrada`);
     }
 
     // Ownership check for updates
@@ -192,7 +192,7 @@ export class ClassGroupsService {
         where: { userId: teacherUserId },
       });
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para modificar esta comisión');
+        throw new ForbiddenException('No tienes permiso para modificar esta clase');
       }
     }
 
@@ -262,7 +262,7 @@ export class ClassGroupsService {
     });
 
     if (!classGroup) {
-      throw new NotFoundException(`Comisión con ID ${id} no encontrada`);
+      throw new NotFoundException(`Clase con ID ${id} no encontrada`);
     }
 
     if (teacherUserId) {
@@ -270,12 +270,12 @@ export class ClassGroupsService {
         where: { userId: teacherUserId },
       });
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para eliminar esta comisión');
+        throw new ForbiddenException('No tienes permiso para eliminar esta clase');
       }
     }
 
     if (!classGroup.isActive) {
-      throw new BadRequestException('La comisión ya se encuentra inactiva');
+      throw new BadRequestException('La clase ya se encuentra inactiva');
     }
 
     // Soft delete actualizando isActive a false
@@ -284,6 +284,6 @@ export class ClassGroupsService {
       data: { isActive: false },
     });
 
-    return { success: true, message: 'Comisión desactivada correctamente' };
+    return { success: true, message: 'Clase desactivada correctamente' };
   }
 }

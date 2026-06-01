@@ -52,10 +52,10 @@ export function CreateClassPlanModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Mis Comisiones</label>
+                <label className="text-xs text-muted">Mis Clases</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={createForm.classGroupId} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
                   <option value="">Seleccionar...</option>
-                  {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Comisión ${cg.id}`}</option>)}
+                  {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Clase ${cg.id}`}</option>)}
                 </select>
               </div>
             </div>
@@ -131,10 +131,10 @@ export function EditClassPlanModal({
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted">Mis Comisiones</label>
+                <label className="text-xs text-muted">Mis Clases</label>
                 <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={form.classGroupId} onChange={(e) => setForm((prev: any) => ({ ...prev, classGroupId: e.target.value }))} required>
                   <option value="">Seleccionar...</option>
-                  {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Comisión ${cg.id}`}</option>)}
+                  {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Clase ${cg.id}`}</option>)}
                 </select>
               </div>
             </div>

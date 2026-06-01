@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsPositive, Max, Min } from 'class-validator';
 
 export class ClassPlanQueryDto {
-  @ApiPropertyOptional({ description: 'Filtrar por comisión', example: 1 })
+  @ApiPropertyOptional({ description: 'Filtrar por clase', example: 1 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

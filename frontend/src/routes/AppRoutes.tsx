@@ -60,15 +60,15 @@ export function AppRoutes() {
             <Route path="/admin/gimnasios" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminGymsView /></ProtectedRoute>} />
             <Route path="/admin/eventos" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminEventView /></ProtectedRoute>} />
             <Route path="/admin/cuota-global" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminFeeConfigView /></ProtectedRoute>} />
-            <Route path="/admin/comisiones" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminClassGroupsView /></ProtectedRoute>} />
+            <Route path="/admin/clases" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminClassGroupsView /></ProtectedRoute>} />
             <Route path="/admin/planes" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminClassPlansView /></ProtectedRoute>} />
             <Route path="/admin/cuotas" element={<ProtectedRoute allowedRoles={['ADMIN']}><FeesManagementView /></ProtectedRoute>} />
 
             {/* Teacher */}
-            <Route path="/profesor/comisiones" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherClassGroupsView /></ProtectedRoute>} />
+            <Route path="/profesor/clases" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherClassGroupsView /></ProtectedRoute>} />
             <Route path="/profesor/alumnos" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherStudentsView /></ProtectedRoute>} />
             <Route path="/profesor/censo" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherCensoView /></ProtectedRoute>} />
-            <Route path="/profesor/comisiones/:classGroupId/asistencia" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAttendanceView /></ProtectedRoute>} />
+            <Route path="/profesor/clases/:classGroupId/asistencia" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAttendanceView /></ProtectedRoute>} />
             <Route path="/profesor/datos-de-pago" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherPaymentView /></ProtectedRoute>} />
             <Route path="/profesor/cuotas" element={<ProtectedRoute allowedRoles={['TEACHER']}><FeesManagementView /></ProtectedRoute>} />
             <Route path="/profesor/planes" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherClassPlansView /></ProtectedRoute>} />

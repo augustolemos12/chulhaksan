@@ -3,7 +3,7 @@ import { IsOptional, IsInt, IsPositive, IsDateString, Min, Max } from 'class-val
 import { Type } from 'class-transformer';
 
 export class AttendanceQueryDto {
-  @ApiPropertyOptional({ description: 'Filtrar por ID de Comisión', example: 1 })
+  @ApiPropertyOptional({ description: 'Filtrar por ID de Clase', example: 1 })
   @IsOptional()
   @IsInt()
   @IsPositive()

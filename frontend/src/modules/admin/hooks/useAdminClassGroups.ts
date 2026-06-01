@@ -98,7 +98,7 @@ export function useAdminClassGroups() {
       if (categoryFilter) params.set('category', categoryFilter);
 
       const res = await httpClient.request(`/class-groups?${params.toString()}`);
-      if (!res.ok) throw new Error('Error al cargar comisiones');
+      if (!res.ok) throw new Error('Error al cargar clases');
       const payload = await res.json();
       const items = Array.isArray(payload) ? payload : (payload.items ?? payload.data ?? []);
       setClassGroups(items);
@@ -142,7 +142,7 @@ export function useAdminClassGroups() {
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo crear');
       setCreateForm(emptyForm); setCreateOpen(false); await loadClassGroups();
     } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'Error al crear la comisión');
+      setCreateError(err instanceof Error ? err.message : 'Error al crear la clase');
     } finally {
       setCreating(false);
     }
@@ -186,7 +186,7 @@ export function useAdminClassGroups() {
   };
 
   const handleDelete = async (cg: ClassGroupItem) => {
-    if (!confirm('¿Seguro que deseas archivar/eliminar esta comisión?')) return;
+    if (!confirm('¿Seguro que deseas archivar/eliminar esta clase?')) return;
     try {
       const res = await httpClient.request(`/class-groups/${cg.id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'Error al eliminar');

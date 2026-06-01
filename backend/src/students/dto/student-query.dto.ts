@@ -32,7 +32,7 @@ export class StudentQueryDto {
   @IsPositive()
   gymId?: number;
 
-  @ApiPropertyOptional({ description: 'Filtrar por comisión', example: 1 })
+  @ApiPropertyOptional({ description: 'Filtrar por clase', example: 1 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

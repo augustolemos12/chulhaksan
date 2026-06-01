@@ -33,7 +33,7 @@ export class CreateStudentDto {
   @IsPositive()
   gymId: number;
 
-  @ApiProperty({ description: 'ID de la comisión/clase', example: 1 })
+  @ApiProperty({ description: 'ID de la clase', example: 1 })
   @IsInt()
   @IsPositive()
   classGroupId: number;

@@ -3,7 +3,7 @@ import { IsInt, IsPositive, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetAttendanceByClassDateDto {
-  @ApiProperty({ description: 'ID de la Comisión', example: 1 })
+  @ApiProperty({ description: 'ID de la Clase', example: 1 })
   @Type(() => Number)
   @IsInt()
   @IsPositive()

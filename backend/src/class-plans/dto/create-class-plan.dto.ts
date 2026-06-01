@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsPositive, Max, Min } from 'class-validator';
 
 export class CreateClassPlanDto {
-  @ApiProperty({ description: 'ID de la comisión', example: 1 })
+  @ApiProperty({ description: 'ID de la clase', example: 1 })
   @IsInt()
   @IsPositive()
   @IsNotEmpty()

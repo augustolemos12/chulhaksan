@@ -26,7 +26,7 @@ export function TeacherAttendanceView() {
           </button>
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Asistencia Mensual</p>
-            <h1 className="font-bold text-lg">{classGroup?.name || 'Comisión'}</h1>
+            <h1 className="font-bold text-lg">{classGroup?.name || 'Clase'}</h1>
             {classGroup?.gym && <p className="text-xs text-muted">{classGroup.gym.name}</p>}
           </div>
           <div className="w-10" />
@@ -77,11 +77,11 @@ export function TeacherAttendanceView() {
           <section className="bg-surface rounded-xl border border-border shadow-soft overflow-hidden">
             {students.length === 0 ? (
               <div className="p-4 text-sm text-muted text-center">
-                No hay estudiantes en esta comisión.
+                No hay estudiantes en esta clase.
               </div>
             ) : classDaysInMonth.length === 0 ? (
               <div className="p-4 text-sm text-muted text-center">
-                No hay días de clase configurados para este mes. Revisa los días de la semana de la comisión.
+                No hay días de clase configurados para este mes. Revisa los días de la semana de la clase.
               </div>
             ) : (
               <div className="overflow-x-auto">

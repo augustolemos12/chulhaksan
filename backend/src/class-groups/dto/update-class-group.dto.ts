@@ -4,7 +4,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsBoolean } from 'class-validator';
 
 export class UpdateClassGroupDto extends PartialType(CreateClassGroupDto) {
-  @ApiPropertyOptional({ description: 'Indica si la comisión está activa' })
+  @ApiPropertyOptional({ description: 'Indica si la clase está activa' })
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;

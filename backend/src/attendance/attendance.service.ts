@@ -43,19 +43,19 @@ export class AttendanceService {
       throw new BadRequestException('No se puede registrar asistencia en una fecha futura');
     }
 
-    // Verificar si la comisión existe
+    // Verificar si la clase existe
     const classGroup = await this.prisma.classGroup.findUnique({
       where: { id: classGroupId },
       include: { teacher: true },
     });
 
     if (!classGroup) {
-      throw new NotFoundException(`Comisión con ID ${classGroupId} no encontrada`);
+      throw new NotFoundException(`Clase con ID ${classGroupId} no encontrada`);
     }
 
-    // Validar que la comisión esté activa
+    // Validar que la clase esté activa
     if (!classGroup.isActive) {
-      throw new BadRequestException('No se puede registrar asistencia en una comisión inactiva');
+      throw new BadRequestException('No se puede registrar asistencia en una clase inactiva');
     }
 
     // Validar que exista un plan de clases para este mes y año
@@ -83,11 +83,11 @@ export class AttendanceService {
       });
 
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para registrar asistencia en esta comisión');
+        throw new ForbiddenException('No tienes permiso para registrar asistencia en esta clase');
       }
     }
 
-    // Verificar que todos los alumnos pertenecen a la comisión
+    // Verificar que todos los alumnos pertenecen a la clase
     const validStudents = await this.prisma.student.findMany({
       where: {
         id: { in: studentIds },
@@ -97,7 +97,7 @@ export class AttendanceService {
     });
 
     if (validStudents.length !== studentIds.length) {
-      throw new BadRequestException('Uno o más alumnos no pertenecen a esta comisión o no existen');
+      throw new BadRequestException('Uno o más alumnos no pertenecen a esta clase o no existen');
     }
 
     // Registrar asistencia (usando upsert para cada registro en una transacción)
@@ -168,7 +168,7 @@ export class AttendanceService {
       }
     }
 
-    // Si es profesor, solo puede ver asistencia de sus comisiones o sus alumnos
+    // Si es profesor, solo puede ver asistencia de sus clases o sus alumnos
     if (role === Role.TEACHER && actorUserId) {
       const teacher = await this.prisma.teacher.findUnique({
         where: { userId: actorUserId },

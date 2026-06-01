@@ -9,7 +9,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
-@ApiTags('Class Groups (Comisiones)')
+@ApiTags('Class Groups (Mis Clases)')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('class-groups')
@@ -17,7 +17,7 @@ export class ClassGroupsController {
   constructor(private readonly classGroupsService: ClassGroupsService) {}
 
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Crear una nueva comisión' })
+  @ApiOperation({ summary: 'Crear una nueva clase' })
   @Post()
   create(@Req() req, @Body() createClassGroupDto: CreateClassGroupDto) {
     const isAdmin = req.user.role === Role.ADMIN;
@@ -25,28 +25,28 @@ export class ClassGroupsController {
   }
 
   @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Obtener todas las comisiones (Solo Admin)' })
+  @ApiOperation({ summary: 'Obtener todas las clases (Solo Admin)' })
   @Get()
   findAll(@Query() query: ClassGroupQueryDto) {
     return this.classGroupsService.findAll(query);
   }
 
   @Roles(Role.TEACHER)
-  @ApiOperation({ summary: 'Obtener las comisiones del profesor autenticado' })
+  @ApiOperation({ summary: 'Obtener las clases del profesor autenticado' })
   @Get('my-groups')
   findMyGroups(@Req() req, @Query() query: ClassGroupQueryDto) {
     return this.classGroupsService.findMyGroupsByUser(req.user.id, query);
   }
 
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Obtener una comisión por ID' })
+  @ApiOperation({ summary: 'Obtener una clase por ID' })
   @Get(':id')
   findOne(@Req() req, @Param('id', ParseIntPipe) id: number) {
     return this.classGroupsService.findOne(id, req.user);
   }
 
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Actualizar una comisión' })
+  @ApiOperation({ summary: 'Actualizar una clase' })
   @Patch(':id')
   update(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() updateClassGroupDto: UpdateClassGroupDto) {
     const teacherUserId = req.user.role === Role.TEACHER ? req.user.id : null;
@@ -54,7 +54,7 @@ export class ClassGroupsController {
   }
 
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Eliminar una comisión' })
+  @ApiOperation({ summary: 'Eliminar una clase' })
   @Delete(':id')
   remove(@Req() req, @Param('id', ParseIntPipe) id: number) {
     const teacherUserId = req.user.role === Role.TEACHER ? req.user.id : null;

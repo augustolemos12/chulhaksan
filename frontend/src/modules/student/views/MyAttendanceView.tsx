@@ -72,7 +72,7 @@ export function MyAttendanceView() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-text">{formatDate(r.date)}</p>
-                    <p className="text-xs text-muted mt-1 truncate">{r.classGroup?.name ? r.classGroup.name : 'Sin comisión'}</p>
+                    <p className="text-xs text-muted mt-1 truncate">{r.classGroup?.name ? r.classGroup.name : 'Sin clase'}</p>
                     {r.notes && <p className="text-xs text-gray-400 mt-1 truncate">{r.notes}</p>}
                   </div>
                 </div>

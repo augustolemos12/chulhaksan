@@ -79,10 +79,10 @@ export function AdminClassPlansView() {
                 </select>
               </div>
               <div className="sm:col-span-1">
-                <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Comisión</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Clase</p>
                 <select className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={classGroupFilter} onChange={(e) => { setClassGroupFilter(e.target.value); setPage(1); }}>
                   <option value="">Todas</option>
-                  {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Comisión ${cg.id}`}</option>)}
+                  {filteredCommissions.map((cg) => <option key={cg.id} value={cg.id}>{cg.name || `Clase ${cg.id}`}</option>)}
                 </select>
               </div>
               <div>
@@ -119,7 +119,7 @@ export function AdminClassPlansView() {
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
                   <h3 className="text-text text-base font-semibold leading-tight truncate">
-                    {cp.classGroup?.name || `Comisión ${cp.classGroupId}`}
+                    {cp.classGroup?.name || `Clase ${cp.classGroupId}`}
                   </h3>
                   <p className="text-xs text-muted mt-1 truncate">
                     Prof: <span className="font-medium text-text">{cp.classGroup?.teacher?.firstName} {cp.classGroup?.teacher?.lastName}</span>
