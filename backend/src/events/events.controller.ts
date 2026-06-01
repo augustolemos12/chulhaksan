@@ -38,7 +38,6 @@ const ALLOWED_MIME_TYPES = /^image\/(jpeg|png|webp)$/;
 @ApiTags('Events (Event of the month)')
 @ApiCookieAuth()
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('events')
 export class EventsController {
   constructor(
@@ -58,6 +57,7 @@ export class EventsController {
   // ─── POST ───────────────────────────────────────────────────────────────────
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
   @ApiConsumes('multipart/form-data')
@@ -104,6 +104,7 @@ export class EventsController {
   // ─── DELETE ─────────────────────────────────────────────────────────────────
 
   @Delete()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Eliminar el evento del mes y su imagen en Cloudinary' })
   remove() {
