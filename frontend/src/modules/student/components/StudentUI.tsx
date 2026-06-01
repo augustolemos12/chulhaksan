@@ -21,7 +21,7 @@ export function ProfileAvatar({ fullName, gymName }: { fullName: string; gymName
     <div className="flex p-4 @container">
       <div className="flex w-full flex-col gap-4 items-center">
         <div className="flex gap-4 flex-col items-center">
-          <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-28 w-28">
+          <div className="bg-primary text-white flex items-center justify-center rounded-full h-28 w-28 shadow-soft">
             <span className="material-symbols-outlined text-4xl">person</span>
           </div>
           <div className="flex flex-col items-center justify-center">

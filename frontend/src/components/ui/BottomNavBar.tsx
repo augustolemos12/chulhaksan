@@ -34,9 +34,9 @@ export function BottomNavBar() {
             >
               <div className={`
                 flex items-center justify-center rounded-full w-14 h-8 transition-all duration-300
-                ${isActive ? 'bg-primary/10 dark:bg-primary/20' : 'bg-transparent'}
+                ${isActive ? 'bg-primary text-white shadow-soft' : 'bg-transparent'}
               `}>
-                <span className={`material-symbols-outlined text-[24px] ${isActive ? 'font-bold' : ''}`}>
+                <span className={`material-symbols-outlined text-[24px] ${isActive ? 'font-bold text-white' : ''}`}>
                   {item.icon}
                 </span>
               </div>

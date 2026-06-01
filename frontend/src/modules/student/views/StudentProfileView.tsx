@@ -40,7 +40,7 @@ export function StudentProfileView() {
             <div className="bg-surface rounded-2xl p-4 shadow-soft border border-border transition-colors duration-300">
               <h3 className="text-sm uppercase tracking-[0.2em] text-primary font-bold">Profesor Actual</h3>
               <div className="mt-3 flex items-center gap-3">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white">
                   <span className="material-symbols-outlined">sports_martial_arts</span>
                 </div>
                 <div>

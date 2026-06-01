@@ -25,8 +25,8 @@ export function MobileNavBar() {
               to={navItem.path}
               className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-all duration-300 ${isSelected ? 'text-primary' : 'text-muted hover:text-text'}`}
             >
-              <div className={`flex items-center justify-center rounded-full w-14 h-8 transition-all duration-300 ${isSelected ? 'bg-primary/10 dark:bg-primary/20' : 'bg-transparent'}`}>
-                <span className={`material-symbols-outlined text-[24px] ${isSelected ? 'font-bold' : ''}`}>
+              <div className={`flex items-center justify-center rounded-full w-14 h-8 transition-all duration-300 ${isSelected ? 'bg-primary text-white shadow-soft' : 'bg-transparent'}`}>
+                <span className={`material-symbols-outlined text-[24px] ${isSelected ? 'font-bold text-white' : ''}`}>
                   {navItem.icon}
                 </span>
               </div>
