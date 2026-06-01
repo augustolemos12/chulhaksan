@@ -50,7 +50,7 @@ export function DashboardView() {
                 />
                 <div className="absolute bottom-0 left-0 p-5 md:p-6 z-20 w-full flex flex-col justify-end gap-2">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white rounded-full text-xs font-bold mb-2 uppercase tracking-wider shadow-sm">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white rounded-full text-xs font-bold mb-2 uppercase tracking-wider shadow-soft">
                       Evento del Mes
                     </span>
                     <h3 className="font-display text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-md">

@@ -32,7 +32,7 @@ export function AdminClassPlansView() {
           <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">
             Planes de Clases
           </h1>
-          <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm" type="button" onClick={() => setCreateOpen(true)}>
+          <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-soft" type="button" onClick={() => setCreateOpen(true)}>
             <span className="material-symbols-outlined text-[18px]">add_circle</span>
             Crear Plan
           </button>
@@ -125,7 +125,7 @@ export function AdminClassPlansView() {
                     Prof: <span className="font-medium text-text">{cp.classGroup?.teacher?.firstName} {cp.classGroup?.teacher?.lastName}</span>
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="inline-flex items-center justify-center bg-gray-100 text-gray-800 text-[11px] font-bold px-2 py-1 rounded-md">
+                    <span className="inline-flex items-center justify-center bg-gray-100 text-text text-[11px] font-bold px-2 py-1 rounded-md">
                       {cp.totalClasses} CLASES ESPERADAS
                     </span>
                   </div>

@@ -18,7 +18,7 @@ export function AdminGymsView() {
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <h1 className="text-lg font-bold">Gimnasios</h1>
-        <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm" type="button" onClick={() => setIsCreateOpen(true)} aria-label="Agregar gimnasio">
+        <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-soft" type="button" onClick={() => setIsCreateOpen(true)} aria-label="Agregar gimnasio">
           <span className="material-symbols-outlined text-[18px]">add</span>
           Crear Gimnasio
         </button>

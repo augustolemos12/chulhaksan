@@ -179,7 +179,7 @@ export function FeesManagementView() {
                   <div className="flex items-center gap-2">
                     {pendingTx ? (
                       <button
-                        className="rounded-lg bg-orange-500 text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-orange-600 transition-colors shadow-sm"
+                        className="rounded-lg bg-orange-500 text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-orange-600 transition-colors shadow-soft"
                         onClick={() => setReviewPaymentTx(pendingTx)}
                         title="Revisar comprobante pendiente"
                       >
@@ -190,7 +190,7 @@ export function FeesManagementView() {
 
                     {fee.payments?.some(tx => tx.proofImageUrl) && !pendingTx && (
                       <button
-                        className="rounded-lg bg-indigo-500 text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-indigo-600 transition-colors shadow-sm"
+                        className="rounded-lg bg-indigo-500 text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-indigo-600 transition-colors shadow-soft"
                         onClick={() => setViewReceiptsFee(fee)}
                         title="Ver comprobantes"
                       >
@@ -203,7 +203,7 @@ export function FeesManagementView() {
                       <>
                         {fee.status !== 'PAID' && (
                           <button
-                            className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-primary/90 transition-colors shadow-sm"
+                            className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-primary/90 transition-colors shadow-soft"
                             onClick={() => setDirectPaymentFee(fee)}
                             title="Registrar pago en efectivo"
                           >
@@ -212,7 +212,7 @@ export function FeesManagementView() {
                           </button>
                         )}
                         <button
-                          className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-background transition-colors shadow-sm"
+                          className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-background transition-colors shadow-soft"
                           onClick={() => setPayYearStudent({ id: fee.studentId, name: `${fee.student?.firstName} ${fee.student?.lastName}` })}
                           title="Marcar el año completo como pagado"
                         >

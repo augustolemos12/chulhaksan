@@ -223,7 +223,7 @@ export function TeacherPaymentView() {
                   <img
                     src={qrCodeUrl}
                     alt="QR Registrado"
-                    className="h-44 w-44 object-contain bg-white p-2 rounded-xl border border-border shadow-sm"
+                    className="h-44 w-44 object-contain bg-surface p-2 rounded-xl border border-border shadow-soft"
                   />
                   <p className="text-xs text-muted mt-2">Para reemplazarlo, arrastra o selecciona un nuevo archivo debajo.</p>
                 </div>
@@ -266,7 +266,7 @@ export function TeacherPaymentView() {
                     <img
                       src={previewUrl}
                       alt="Vista previa del nuevo QR"
-                      className="h-36 w-36 object-contain bg-white p-2 rounded-xl border border-border mb-3 shadow-md animate-fadeIn"
+                      className="h-36 w-36 object-contain bg-surface p-2 rounded-xl border border-border mb-3 shadow-md animate-fadeIn"
                     />
                     <div className="max-w-[240px] truncate text-xs font-bold text-text">
                       {selectedFile?.name}

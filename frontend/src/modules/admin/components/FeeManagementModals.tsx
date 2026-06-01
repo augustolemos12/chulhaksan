@@ -68,7 +68,7 @@ export function DirectPaymentModal({ fee, onClose, onConfirm, processing }: Dire
             Cancelar
           </button>
           <button
-            className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors shadow-sm disabled:opacity-50"
+            className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors shadow-soft disabled:opacity-50"
             onClick={() => onConfirm(amount)}
             disabled={processing || amount <= 0 || amount > (fee.totalAmount - fee.paidAmount)}
           >
@@ -154,7 +154,7 @@ export function PayYearModal({ student, year, onClose, onConfirm, processing }: 
             Cancelar
           </button>
           <button
-            className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors shadow-sm disabled:opacity-50"
+            className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors shadow-soft disabled:opacity-50"
             onClick={() => onConfirm(method, file || undefined)}
             disabled={processing}
           >
@@ -231,7 +231,7 @@ export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, 
             Rechazar
           </button>
           <button
-            className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl transition-colors shadow-sm disabled:opacity-50"
+            className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl transition-colors shadow-soft disabled:opacity-50"
             onClick={onApprove}
             disabled={processing}
           >
@@ -413,7 +413,7 @@ export function GenerateFeesModal({ onClose, onConfirm, processing }: GenerateFe
             Cancelar
           </button>
           <button
-            className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors shadow-sm disabled:opacity-50"
+            className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors shadow-soft disabled:opacity-50"
             onClick={() => onConfirm(month, year, new Date(dueDate).toISOString())}
             disabled={processing}
           >

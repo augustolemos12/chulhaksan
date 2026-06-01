@@ -15,16 +15,16 @@ interface TeacherInfo {
 export function MyPaymentsView() {
   const navigate = useNavigate();
   const { profile, loading: profileLoading } = useStudentProfile();
-  
+
   const [teacher, setTeacher] = useState<TeacherInfo | null>(null);
   const [loadingTeacher, setLoadingTeacher] = useState(true);
-  
+
   const [latestConfig, setLatestConfig] = useState<any>(null);
   const [loadingConfig, setLoadingConfig] = useState(true);
 
   const [currentFee, setCurrentFee] = useState<any>(null);
   const [loadingFee, setLoadingFee] = useState(true);
-  
+
   // File upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export function MyPaymentsView() {
         setLoadingTeacher(false);
       }
     };
-    
+
     const fetchConfig = async () => {
       try {
         const res = await httpClient.request('/fee-config/latest');
@@ -64,7 +64,7 @@ export function MyPaymentsView() {
 
     fetchTeacher();
     fetchConfig();
-    
+
     // Check if there's already a pending payment in sessionStorage for simulation
     const savedStatus = sessionStorage.getItem('chs-payment-simulation-status');
     if (savedStatus === 'pending_approval') {
@@ -75,12 +75,12 @@ export function MyPaymentsView() {
   useEffect(() => {
     const fetchFee = async () => {
       if (profileLoading) return; // Wait until profile loading completes
-      
+
       if (!profile?.id) {
         setLoadingFee(false);
         return;
       }
-      
+
       try {
         const res = await httpClient.request(`/fees/student/${profile.id}`);
         if (res.ok) {
@@ -143,10 +143,10 @@ export function MyPaymentsView() {
   const handleSubmitReceipt = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) return;
-    
+
     // Si no hay cuota actual, usamos latestConfig para crear el monto
     const amount = currentFee?.totalAmount || latestConfig?.baseAmount || 12000;
-    
+
     // Si currentFee es nulo, deberíamos crear la cuota o enviar el pago globalmente.
     // Como el endpoint /transactions/report requiere feeId, vamos a reportar que falta.
     if (!currentFee) {
@@ -155,14 +155,14 @@ export function MyPaymentsView() {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('image', selectedFile);
       formData.append('feeId', String(currentFee.id));
       formData.append('amount', String(amount));
       formData.append('method', 'TRANSFER');
-      
+
       const res = await httpClient.request('/transactions/report', {
         method: 'POST',
         body: formData,
@@ -300,7 +300,7 @@ export function MyPaymentsView() {
                     <img
                       src={qrUrl}
                       alt="QR de Pago del Profesor"
-                      className="w-[220px] h-[220px] object-contain bg-white p-2 rounded-xl shadow-md transition-transform duration-300 group-hover:scale-105"
+                      className="w-[220px] h-[220px] object-contain bg-surface p-2 rounded-xl shadow-md transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl pointer-events-none" />
                   </div>
@@ -310,8 +310,8 @@ export function MyPaymentsView() {
                     {teacher?.qrCodeUrl ? 'Paga escaneando el QR oficial de tu profesor' : 'Paga mediante Mercado Pago o Transferencia'}
                   </p>
                   <p className="text-[10px] text-muted mt-1">
-                    {teacher?.qrCodeUrl 
-                      ? 'Escaneá desde la app de tu billetera virtual para realizar la transacción.' 
+                    {teacher?.qrCodeUrl
+                      ? 'Escaneá desde la app de tu billetera virtual para realizar la transacción.'
                       : 'Escaneá desde la app de tu banco o billetera virtual para realizar la transacción.'}
                   </p>
                 </div>
@@ -340,7 +340,7 @@ export function MyPaymentsView() {
                 </div>
                 <div>
                   <h3 className="text-base font-bold">Subir Comprobante</h3>
-                  <p className="text-xs text-muted">Notificá tu pago subiendo una foto o PDF</p>
+                  <p className="text-xs text-muted">Notificá tu pago subiendo una captura de pantalla</p>
                 </div>
               </div>
 
@@ -366,15 +366,15 @@ export function MyPaymentsView() {
                       }
                     }}
                   />
-                  
+
                   {!selectedFile ? (
                     <>
                       <span className="material-symbols-outlined text-4xl text-muted mb-2 group-hover:text-primary transition-colors">
                         cloud_upload
                       </span>
-                      <p className="text-sm font-bold text-text">Arrastrá tu comprobante acá</p>
+                      <p className="text-sm font-bold text-text">Arrastrá tu captura de pantalla acá</p>
                       <p className="text-xs text-muted mt-1">o hacé clic para seleccionar un archivo</p>
-                      <p className="text-[10px] text-muted mt-2">Formatos aceptados: PNG, JPG, PDF (Max. 5MB)</p>
+                      <p className="text-[10px] text-muted mt-2">Formatos aceptados: PNG, JPG (Max. 5MB)</p>
                     </>
                   ) : (
                     <div className="w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
@@ -382,7 +382,7 @@ export function MyPaymentsView() {
                         <img
                           src={previewUrl}
                           alt="Vista previa del comprobante"
-                          className="h-28 max-w-full object-contain rounded-lg border border-border mb-3 shadow-sm"
+                          className="h-28 max-w-full object-contain rounded-lg border border-border mb-3 shadow-soft"
                         />
                       ) : (
                         <div className="h-14 w-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-3">

@@ -163,13 +163,13 @@ export function AdminEventView() {
                       <p className="text-sm font-medium">Haz clic para seleccionar imagen</p>
                     </div>
                   ) : (
-                    <div className="relative rounded-xl overflow-hidden shadow-sm border border-border">
+                    <div className="relative rounded-xl overflow-hidden shadow-soft border border-border">
                       <img src={preview} alt="Vista previa" className="w-full h-40 object-cover opacity-90" />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
                         <button 
                           type="button" 
                           onClick={() => fileInputRef.current?.click()}
-                          className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2"
+                          className="bg-surface/20 hover:bg-surface/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2"
                         >
                           <span className="material-symbols-outlined text-[18px]">edit</span>
                           Cambiar

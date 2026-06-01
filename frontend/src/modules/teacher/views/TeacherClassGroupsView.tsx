@@ -29,7 +29,7 @@ export function TeacherClassGroupsView() {
           <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">
             Mis Clases
           </h1>
-          <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm" type="button" onClick={() => setCreateOpen(true)}>
+          <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-soft" type="button" onClick={() => setCreateOpen(true)}>
             <span className="material-symbols-outlined text-[18px]">add_circle</span>
             Nueva
           </button>
