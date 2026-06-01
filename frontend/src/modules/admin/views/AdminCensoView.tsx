@@ -57,7 +57,7 @@ export function AdminCensoView() {
           <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined">checkroom</span>
+                <span className="material-symbols-outlined">sports_martial_arts</span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Cinturones</p>

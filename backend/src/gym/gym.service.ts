@@ -156,24 +156,6 @@ export class GymService {
 
     const where: Prisma.GymWhereInput = {
       deletedAt: null,
-      OR: [
-        {
-          classGroups: {
-            some: {
-              teacherId: teacher.id,
-              isActive: true,
-            },
-          },
-        },
-        {
-          students: {
-            some: {
-              teacherId: teacher.id,
-              deletedAt: null,
-            },
-          },
-        }
-      ]
     };
     
     if (isActive !== undefined) where.isActive = isActive;

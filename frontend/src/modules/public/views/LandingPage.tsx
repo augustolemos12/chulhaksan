@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logoColor from '../../../assets/logo-color.png';
+import logoColor from '../../../assets/logo-fotor-2026052717752.png';
 import logoNavbar from '../../../assets/logo-fotor-2026052717752.png';
 import filosofiaImg from '../../../assets/filosofia.png';
 import { useAppTheme } from '../../../core/theme/ThemeProvider';
