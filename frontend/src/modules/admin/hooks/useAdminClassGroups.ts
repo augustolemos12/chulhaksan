@@ -72,7 +72,7 @@ export function useAdminClassGroups() {
   const loadDependencies = async () => {
     try {
       const [gymsRes, teachersRes] = await Promise.all([
-        httpClient.request('/gyms', { cache: 'no-store' }),
+        httpClient.request('/gyms?limit=100', { cache: 'no-store' }),
         httpClient.request('/teachers?limit=100', { cache: 'no-store' })
       ]);
       

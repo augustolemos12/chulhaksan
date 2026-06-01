@@ -98,7 +98,7 @@ export function useStudentDetails() {
     if (!isTeacher) return;
     const fetchGyms = async () => {
       try {
-        const res = await httpClient.get<GymOption[]>('/gyms', { cache: 'no-store' });
+        const res = await httpClient.get<GymOption[]>('/gyms?limit=100', { cache: 'no-store' });
         setGyms(Array.isArray(res) ? res : []);
       } catch {
         setGyms([]);

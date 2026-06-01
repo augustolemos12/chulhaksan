@@ -76,8 +76,8 @@ export function useAdminStudents() {
       try {
         const [tRes, gRes, cRes] = await Promise.all([
           httpClient.request('/teachers?page=1&limit=100', { cache: 'no-store' }),
-          httpClient.request('/gyms', { cache: 'no-store' }),
-          httpClient.request('/class-groups', { cache: 'no-store' })
+          httpClient.request('/gyms?limit=100', { cache: 'no-store' }),
+          httpClient.request('/class-groups?limit=100', { cache: 'no-store' })
         ]);
         if (tRes.ok) {
           const tData = await tRes.json();

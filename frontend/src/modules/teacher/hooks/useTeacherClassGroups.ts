@@ -67,7 +67,7 @@ export function useTeacherClassGroups() {
 
   const loadDependencies = async () => {
     try {
-      const gymsRes = await httpClient.request('/gyms/my', { cache: 'no-store' });
+      const gymsRes = await httpClient.request('/gyms/my?limit=100', { cache: 'no-store' });
       if (gymsRes.ok) {
         const payload = await gymsRes.json();
         setGyms(Array.isArray(payload) ? payload : payload?.items ?? payload?.data ?? []);

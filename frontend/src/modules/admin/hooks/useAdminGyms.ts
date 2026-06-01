@@ -19,7 +19,7 @@ export function useAdminGyms() {
   const load = async () => {
     setLoading(true); setError('');
     try {
-      const res = await httpClient.request('/gyms', { cache: 'no-store' });
+      const res = await httpClient.request('/gyms?limit=100', { cache: 'no-store' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo cargar el listado.');
       
       const payload = await res.json();

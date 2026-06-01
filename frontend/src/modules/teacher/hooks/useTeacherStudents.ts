@@ -51,7 +51,7 @@ export function useTeacherStudents() {
   const loadInitialData = async () => {
     try {
       const [gRes, cRes] = await Promise.all([
-        httpClient.request('/gyms/my', { cache: 'no-store' }),
+        httpClient.request('/gyms/my?limit=100', { cache: 'no-store' }),
         httpClient.request('/class-groups/my-groups', { cache: 'no-store' })
       ]);
       if (gRes.ok) {
