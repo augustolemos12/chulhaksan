@@ -3,8 +3,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { StudentQueryDto } from './dto/student-query.dto';
+import { CensusQueryDto, BeltGroup } from './dto/census-query.dto';
 import { UpdateOwnStudentProfileDto } from './dto/update-own-student-profile.dto';
-import { Prisma, Role, UserStatus } from '@prisma/client';
+import { Prisma, Role, UserStatus, StudentCategory, Belt } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -183,6 +184,93 @@ export class StudentsService {
     };
   }
 
+  async getCensus(query: CensusQueryDto, internalTeacherId?: number) {
+    const { gymId, category, beltGroup } = query;
+
+    const where: Prisma.StudentWhereInput = {
+      deletedAt: null,
+    };
+
+    if (internalTeacherId) {
+      where.teacherId = internalTeacherId;
+    }
+
+    if (gymId) where.gymId = gymId;
+    if (category) where.category = category;
+
+    // Filter by beltGroup if provided
+    if (beltGroup) {
+      if (beltGroup === BeltGroup.GROUP1) {
+        where.currentBelt = { in: ['WHITE', 'WHITE_YELLOW'] };
+      } else if (beltGroup === BeltGroup.GROUP2) {
+        where.currentBelt = { in: ['YELLOW', 'GREEN_STRIPE', 'GREEN', 'BLUE_STRIPE'] };
+      } else if (beltGroup === BeltGroup.GROUP3) {
+        where.currentBelt = { in: ['BLUE', 'RED_STRIPE', 'RED', 'BLACK_STRIPE'] };
+      } else if (beltGroup === BeltGroup.GROUP4) {
+        where.currentBelt = 'DAN';
+      }
+    }
+
+    const students = await this.prisma.student.findMany({
+      where,
+      select: {
+        category: true,
+        currentBelt: true,
+      },
+    });
+
+    const total = students.length;
+    if (total === 0) {
+      return {
+        total: 0,
+        byCategory: {
+          CHILD: { count: 0, percentage: 0 },
+          ADULT: { count: 0, percentage: 0 },
+        },
+        byBeltGroup: {
+          group1: { count: 0, percentage: 0 },
+          group2: { count: 0, percentage: 0 },
+          group3: { count: 0, percentage: 0 },
+          group4: { count: 0, percentage: 0 },
+        },
+      };
+    }
+
+    let childCount = 0;
+    let adultCount = 0;
+    let g1Count = 0;
+    let g2Count = 0;
+    let g3Count = 0;
+    let g4Count = 0;
+
+    for (const s of students) {
+      if (s.category === 'CHILD') childCount++;
+      else if (s.category === 'ADULT') adultCount++;
+
+      const b = s.currentBelt;
+      if (b === 'WHITE' || b === 'WHITE_YELLOW') g1Count++;
+      else if (b === 'YELLOW' || b === 'GREEN_STRIPE' || b === 'GREEN' || b === 'BLUE_STRIPE') g2Count++;
+      else if (b === 'BLUE' || b === 'RED_STRIPE' || b === 'RED' || b === 'BLACK_STRIPE') g3Count++;
+      else if (b === 'DAN') g4Count++;
+    }
+
+    const round2 = (num: number) => Math.round(num * 100) / 100;
+
+    return {
+      total,
+      byCategory: {
+        CHILD: { count: childCount, percentage: round2((childCount / total) * 100) },
+        ADULT: { count: adultCount, percentage: round2((adultCount / total) * 100) },
+      },
+      byBeltGroup: {
+        group1: { count: g1Count, percentage: round2((g1Count / total) * 100) },
+        group2: { count: g2Count, percentage: round2((g2Count / total) * 100) },
+        group3: { count: g3Count, percentage: round2((g3Count / total) * 100) },
+        group4: { count: g4Count, percentage: round2((g4Count / total) * 100) },
+      },
+    };
+  }
+
   async findByTeacher(teacherUserId: number, query: StudentQueryDto) {
     const teacher = await this.prisma.teacher.findUnique({
       where: { userId: teacherUserId },
@@ -193,6 +281,18 @@ export class StudentsService {
     }
 
     return this.findAll(query, teacher.id);
+  }
+
+  async getTeacherCensus(teacherUserId: number, query: CensusQueryDto) {
+    const teacher = await this.prisma.teacher.findUnique({
+      where: { userId: teacherUserId },
+    });
+
+    if (!teacher) {
+      throw new NotFoundException('Perfil de profesor no encontrado');
+    }
+
+    return this.getCensus(query, teacher.id);
   }
 
   async findOne(id: number) {

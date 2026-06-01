@@ -95,6 +95,7 @@ export function DashboardView() {
             <BlockTitle title="Acceso rápido" subtitle="Gestión del profesor" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <QuickAction to="/profesor/alumnos" icon="group" title="Alumnos" subtitle="Listado y estado" variant="row" />
+              <QuickAction to="/profesor/censo" icon="pie_chart" title="Censo de Alumnos" subtitle="Métricas y estadísticas" variant="row" />
               <QuickAction to="/profesor/comisiones" icon="class" title="Comisiones" subtitle="Horarios y alumnos" variant="row" />
               <QuickAction to="/profesor/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas por mes" variant="row" />
               <QuickAction to="/profesor/datos-de-pago" icon="qr_code_2" title="Datos de Pago" subtitle="Cargar QR y billetera virtual" variant="row" />
@@ -117,6 +118,7 @@ export function DashboardView() {
               <BlockTitle title="Acceso rápido" subtitle="Herramientas administrativas" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <QuickAction to="/admin/alumnos" icon="group" title="Alumnos" subtitle="Gestión total" variant="row" />
+                <QuickAction to="/admin/censo" icon="pie_chart" title="Censo de Alumnos" subtitle="Métricas y estadísticas" variant="row" />
                 <QuickAction to="/admin/profesores" icon="badge" title="Profesores" subtitle="Gestión total" variant="row" />
                 <QuickAction to="/admin/comisiones" icon="class" title="Comisiones" subtitle="Horarios y profesores" variant="row" />
                 <QuickAction to="/admin/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas" variant="row" />

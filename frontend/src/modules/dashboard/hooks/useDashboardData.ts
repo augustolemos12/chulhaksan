@@ -106,12 +106,12 @@ export function useDashboardData() {
 
         if (studentsRes.ok) {
           const data = await studentsRes.json();
-          setAdminStats((prev) => ({ ...prev, students: data?.total ?? 0 }));
+          setAdminStats((prev) => ({ ...prev, students: data?.meta?.total ?? 0 }));
         }
 
         if (teachersRes.ok) {
           const data = await teachersRes.json();
-          setAdminStats((prev) => ({ ...prev, teachers: data?.total ?? 0 }));
+          setAdminStats((prev) => ({ ...prev, teachers: data?.meta?.total ?? 0 }));
         }
       } catch {
         setAdminStats({ students: 0, teachers: 0 });

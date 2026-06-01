@@ -3,6 +3,7 @@ import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { StudentQueryDto } from './dto/student-query.dto';
+import { CensusQueryDto } from './dto/census-query.dto';
 import { UpdateOwnStudentProfileDto } from './dto/update-own-student-profile.dto';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -34,6 +35,13 @@ export class StudentsController {
   @Roles(Role.ADMIN)
   findAllAdmin(@Query() query: StudentQueryDto) {
     return this.studentsService.findAll(query);
+  }
+
+  //ADMIN - Censo de alumnos
+  @Get('students/census')
+  @Roles(Role.ADMIN)
+  getAdminCensus(@Query() query: CensusQueryDto) {
+    return this.studentsService.getCensus(query);
   }
 
   //STUDENT - Obtener su propio perfil (alternativa)
@@ -80,6 +88,13 @@ export class StudentsController {
   @Roles(Role.TEACHER)
   findTeacherStudents(@Query() query: StudentQueryDto, @CurrentUser() user: any) {
     return this.studentsService.findByTeacher(user.id, query);
+  }
+
+  //TEACHER - Censo de alumnos
+  @Get('teacher/students/census')
+  @Roles(Role.TEACHER)
+  getTeacherCensus(@Query() query: CensusQueryDto, @CurrentUser() user: any) {
+    return this.studentsService.getTeacherCensus(user.id, query);
   }
 
   //TEACHER - Crear un alumno

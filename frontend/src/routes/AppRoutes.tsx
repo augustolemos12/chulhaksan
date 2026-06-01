@@ -20,6 +20,7 @@ import { AdminFeeConfigView } from '../modules/admin/views/AdminFeeConfigView';
 import { AdminClassGroupsView } from '../modules/admin/views/AdminClassGroupsView';
 import { AdminClassPlansView } from '../modules/admin/views/AdminClassPlansView';
 import { FeesManagementView } from '../modules/admin/views/FeesManagementView';
+import { AdminCensoView } from '../modules/admin/views/AdminCensoView';
 
 // Teacher
 import { TeacherStudentsView } from '../modules/teacher/views/TeacherStudentsView';
@@ -27,6 +28,7 @@ import { TeacherClassGroupsView } from '../modules/teacher/views/TeacherClassGro
 import { TeacherAttendanceView } from '../modules/teacher/views/TeacherAttendanceView';
 import { TeacherPaymentView } from '../modules/teacher/views/TeacherPaymentView';
 import { TeacherClassPlansView } from '../modules/teacher/views/TeacherClassPlansView';
+import { TeacherCensoView } from '../modules/teacher/views/TeacherCensoView';
 
 // Student
 import { StudentProfileView } from '../modules/student/views/StudentProfileView';
@@ -53,6 +55,7 @@ export function AppRoutes() {
 
             {/* Admin */}
             <Route path="/admin/alumnos" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminStudentsView /></ProtectedRoute>} />
+            <Route path="/admin/censo" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminCensoView /></ProtectedRoute>} />
             <Route path="/admin/profesores" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminTeachersView /></ProtectedRoute>} />
             <Route path="/admin/gimnasios" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminGymsView /></ProtectedRoute>} />
             <Route path="/admin/eventos" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminEventView /></ProtectedRoute>} />
@@ -64,6 +67,7 @@ export function AppRoutes() {
             {/* Teacher */}
             <Route path="/profesor/comisiones" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherClassGroupsView /></ProtectedRoute>} />
             <Route path="/profesor/alumnos" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherStudentsView /></ProtectedRoute>} />
+            <Route path="/profesor/censo" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherCensoView /></ProtectedRoute>} />
             <Route path="/profesor/comisiones/:classGroupId/asistencia" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAttendanceView /></ProtectedRoute>} />
             <Route path="/profesor/datos-de-pago" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherPaymentView /></ProtectedRoute>} />
             <Route path="/profesor/cuotas" element={<ProtectedRoute allowedRoles={['TEACHER']}><FeesManagementView /></ProtectedRoute>} />
