@@ -52,7 +52,6 @@ export function useStudentDetails() {
 
   const [actionLoading, setActionLoading] = useState<'unassign' | 'delete' | null>(null);
   const [markingFee, setMarkingFee] = useState<string | null>(null);
-  const [formsUpdatingId, setFormsUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!dni) {
@@ -185,7 +184,6 @@ export function useStudentDetails() {
   };
 
   const studentName = useMemo(() => student ? `${student.firstName} ${student.lastName}` : 'Alumno', [student]);
-  const birthDateFormatted = useMemo(() => student?.birthDate ? new Date(student.birthDate).toLocaleDateString('es-AR', { timeZone: 'UTC' }) : '-', [student]);
 
   return {
     student, studentName, fees,

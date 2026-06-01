@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import type { GymOption } from '../hooks/useStudentDetails';
 
 export function TopHeader({ returnTo }: { returnTo: string }) {
   return (

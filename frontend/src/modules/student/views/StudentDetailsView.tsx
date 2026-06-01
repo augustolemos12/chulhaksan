@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useStudentDetails } from '../hooks/useStudentDetails';
 import { TopHeader, ProfileAvatar, InfoRow, EditProfileForm } from '../components/StudentUI';
 
