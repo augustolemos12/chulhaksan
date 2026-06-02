@@ -1,5 +1,6 @@
 import { useStudentDetails } from '../hooks/useStudentDetails';
 import { TopHeader, ProfileAvatar, InfoRow, EditProfileForm } from '../components/StudentUI';
+import { DirectPaymentModal, PayYearModal, ReviewPaymentModal, ViewReceiptsModal } from '../../admin/components/FeeManagementModals';
 
 export function StudentDetailsView() {
   const {
@@ -7,7 +8,10 @@ export function StudentDetailsView() {
     isLoading, errorMsg, isEditing, isSaving, editForm, updateEditForm, toggleEditMode, saveProfile,
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
     actionLoading, unassignStudent, deleteStudent,
-    markingFee, markFeeAsPaid,
+    processingFees, payYearStudent, setPayYearStudent, handlePayFullYear,
+    directPaymentFee, setDirectPaymentFee, handleDirectPayment,
+    reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
+    viewReceiptsFee, setViewReceiptsFee,
     returnTo, isTeacher, canManage
   } = useStudentDetails();
 
@@ -31,6 +35,19 @@ export function StudentDetailsView() {
   };
   const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const formatDateAsCalendar = (d: string) => new Date(d).toLocaleDateString('es-AR', { timeZone: 'UTC' });
+
+  const getStatusBadge = (status: 'PENDING' | 'PARTIALLY_PAID' | 'PAID') => {
+    switch (status) {
+      case 'PAID':
+        return <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap uppercase">Pagado</span>;
+      case 'PARTIALLY_PAID':
+        return <span className="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap uppercase">Pago Parcial</span>;
+      case 'PENDING':
+        return <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap uppercase">Pendiente</span>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] sm:max-w-[640px] md:max-w-[800px] mx-auto overflow-x-hidden border-x border-border bg-background text-text">
@@ -102,34 +119,118 @@ export function StudentDetailsView() {
           const monthLabel = monthNames[fee.month - 1] ?? `Mes ${fee.month}`;
           const isPaid = fee.status === 'PAID';
           const amountLabel = Number(fee.totalAmount).toLocaleString('es-AR');
+          const pendingTx = fee.payments?.find(tx => tx.status === 'PENDING');
+          
           return (
             <div key={fee.id} className="bg-surface border border-border rounded-xl p-4 shadow-soft space-y-3">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold">{monthLabel} {fee.year}</p>
-                  <p className="text-xs text-muted">Vence: {formatDateAsCalendar(fee.dueDate)}</p>
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    {pendingTx && (
+                      <span className="absolute -top-1 -right-1 flex h-3 w-3 z-10">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-surface"></span>
+                      </span>
+                    )}
+                    <div>
+                      <p className="text-sm font-semibold">{monthLabel} {fee.year}</p>
+                      <p className="text-xs text-muted">Vence: {formatDateAsCalendar(fee.dueDate)}</p>
+                    </div>
+                  </div>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${isPaid ? 'bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 'bg-primary/10 text-primary dark:bg-primary/20'}`}>
-                  {isPaid ? 'Pagado' : 'Pendiente'}
-                </span>
+                {getStatusBadge(fee.status)}
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted">Monto</p>
-                  <p className="text-base font-bold">${amountLabel}</p>
-                  {fee.lateFeeApplied && !isPaid && <p className="text-[11px] text-primary mt-1">Incluye recargo por mora.</p>}
+              
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-muted">Total: <span className="font-bold text-text">${amountLabel}</span></p>
+                    <p className="text-xs text-muted">Pagado: <span className="font-bold text-text">${fee.paidAmount}</span></p>
+                    {fee.lateFeeApplied && !isPaid && <p className="text-[11px] text-primary mt-1">Incluye recargo por mora.</p>}
+                  </div>
                 </div>
-                {!isPaid && (
-                  <button className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2 disabled:opacity-70" onClick={() => markFeeAsPaid(fee.id)} disabled={markingFee === fee.id}>
-                    {markingFee === fee.id ? 'Marcando...' : 'Marcar efectivo'}
-                  </button>
+                
+                {canManage && (
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    {pendingTx ? (
+                      <button
+                        className="rounded-lg bg-orange-500 text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-orange-600 transition-colors shadow-soft"
+                        onClick={() => setReviewPaymentTx(pendingTx)}
+                        title="Revisar comprobante pendiente"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">plagiarism</span>
+                        Revisar Pago
+                      </button>
+                    ) : null}
+
+                    {fee.payments?.some(tx => tx.proofImageUrl) && !pendingTx && (
+                      <button
+                        className="rounded-lg bg-indigo-500 text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-indigo-600 transition-colors shadow-soft"
+                        onClick={() => setViewReceiptsFee(fee)}
+                        title="Ver comprobantes"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">receipt_long</span>
+                        Comprobantes
+                      </button>
+                    )}
+
+                    {!pendingTx && (
+                      <>
+                        {fee.status !== 'PAID' && (
+                          <button
+                            className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-primary/90 transition-colors shadow-soft"
+                            onClick={() => setDirectPaymentFee(fee)}
+                            title="Registrar pago en efectivo"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">payments</span>
+                            Pagar
+                          </button>
+                        )}
+                        <button
+                          className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-2 flex items-center gap-1 hover:bg-background transition-colors shadow-soft"
+                          onClick={() => setPayYearStudent({ id: fee.studentId, name: `${student?.firstName} ${student?.lastName}` })}
+                          title="Marcar el año completo como pagado"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">calendar_month</span>
+                          Año
+                        </button>
+                      </>
+                    )}
+                  </div>
                 )}
-                {isPaid && fee.paidAt && <span className="text-xs text-muted">{new Date(fee.paidAt).toLocaleDateString('es-AR')}</span>}
               </div>
             </div>
           );
         })}
       </div>
+
+      <DirectPaymentModal
+        fee={directPaymentFee}
+        onClose={() => setDirectPaymentFee(null)}
+        onConfirm={handleDirectPayment}
+        processing={processingFees}
+      />
+
+      <PayYearModal
+        student={payYearStudent}
+        year={new Date().getFullYear()}
+        onClose={() => setPayYearStudent(null)}
+        onConfirm={handlePayFullYear}
+        processing={processingFees}
+      />
+
+      <ReviewPaymentModal
+        transaction={reviewPaymentTx}
+        onClose={() => setReviewPaymentTx(null)}
+        onApprove={handleApproveTransaction}
+        onReject={handleRejectTransaction}
+        processing={processingFees}
+      />
+
+      <ViewReceiptsModal
+        fee={viewReceiptsFee}
+        onClose={() => setViewReceiptsFee(null)}
+      />
     </div>
   );
 }

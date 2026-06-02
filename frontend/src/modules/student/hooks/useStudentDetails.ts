@@ -3,6 +3,9 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { authService } from '../../auth/api/authService';
 import { httpClient } from '../../../core/api/httpClient';
 
+import { payFullYear, registerDirectPayment, approveTransaction, rejectTransaction } from '../../../services/fees';
+import type { Fee, Transaction } from '../../../services/fees';
+
 export type StudentData = {
   id: number;
   dni: string;
@@ -19,8 +22,6 @@ export type StudentData = {
   currentBelt?: string;
 };
 
-export type FeeItem = { id: string; month: number; year: number; totalAmount: number | string; status: 'PENDING' | 'PAID'; dueDate: string; paidAt?: string | null; lateFeeApplied?: boolean };
-
 export function useStudentDetails() {
   const { dni } = useParams();
   const [searchParams] = useSearchParams();
@@ -35,7 +36,7 @@ export function useStudentDetails() {
     : profile?.role === 'ADMIN' ? '/admin/alumnos' : '/profesor/alumnos';
 
   const [student, setStudent] = useState<StudentData | null>(null);
-  const [fees, setFees] = useState<FeeItem[]>([]);
+  const [fees, setFees] = useState<Fee[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -52,7 +53,22 @@ export function useStudentDetails() {
   const [copiedReset, setCopiedReset] = useState(false);
 
   const [actionLoading, setActionLoading] = useState<'unassign' | 'delete' | null>(null);
-  const [markingFee, setMarkingFee] = useState<string | null>(null);
+  
+  // Fees Modals States
+  const [processingFees, setProcessingFees] = useState(false);
+  const [payYearStudent, setPayYearStudent] = useState<{ id: number; name: string } | null>(null);
+  const [directPaymentFee, setDirectPaymentFee] = useState<Fee | null>(null);
+  const [reviewPaymentTx, setReviewPaymentTx] = useState<Transaction | null>(null);
+  const [viewReceiptsFee, setViewReceiptsFee] = useState<Fee | null>(null);
+
+  const fetchFees = async (studentId: number) => {
+    try {
+      const feesRes = await httpClient.get<Fee[]>(`/fees/student/${studentId}`);
+      setFees(feesRes ?? []);
+    } catch (err) {
+      console.error('Error cargando cuotas', err);
+    }
+  };
 
   useEffect(() => {
     if (!dni) {
@@ -73,8 +89,7 @@ export function useStudentDetails() {
           phone: studentRes.phone ?? '', address: studentRes.address ?? '',
         });
 
-        const feesRes = await httpClient.get<FeeItem[]>(`/fees/student/${studentRes.id}`);
-        setFees(feesRes ?? []);
+        await fetchFees(studentRes.id);
       } catch (err) {
         setErrorMsg(err instanceof Error ? err.message : 'No se pudo cargar el alumno.');
       } finally {
@@ -84,21 +99,64 @@ export function useStudentDetails() {
     fetchData();
   }, [dni, canManageForms]);
 
-
-
   const toggleEditMode = () => setIsEditing((prev) => !prev);
   const updateEditForm = (field: keyof typeof editForm, value: string) => setEditForm((prev) => ({ ...prev, [field]: value }));
 
-  const markFeeAsPaid = async (feeId: string) => {
-    setMarkingFee(feeId);
-    setErrorMsg('');
+  const handlePayFullYear = async (method: 'CASH' | 'TRANSFER', proofFile?: File) => {
+    if (!payYearStudent || !student) return;
+    setProcessingFees(true);
     try {
-      await httpClient.request(`/fees/${feeId}/mark-paid`, { method: 'PATCH' });
-      setFees((prev) => prev.map((f) => f.id === feeId ? { ...f, status: 'PAID', paidAt: new Date().toISOString() } : f));
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'No se pudo marcar el pago.');
+      // Usamos el año de la primera cuota pendiente o el año actual
+      const yearToPay = fees.find(f => f.status !== 'PAID')?.year || new Date().getFullYear();
+      await payFullYear(payYearStudent.id, yearToPay, method, proofFile);
+      setPayYearStudent(null);
+      await fetchFees(student.id);
+    } catch (err: any) {
+      alert(err.message || 'Error al pagar el año completo');
     } finally {
-      setMarkingFee(null);
+      setProcessingFees(false);
+    }
+  };
+
+  const handleDirectPayment = async (amount: number) => {
+    if (!directPaymentFee || !student) return;
+    setProcessingFees(true);
+    try {
+      await registerDirectPayment(directPaymentFee.id, amount, 'CASH');
+      setDirectPaymentFee(null);
+      await fetchFees(student.id);
+    } catch (err: any) {
+      alert(err.message || 'Error al registrar pago en efectivo');
+    } finally {
+      setProcessingFees(false);
+    }
+  };
+
+  const handleApproveTransaction = async (amount: number) => {
+    if (!reviewPaymentTx || !student) return;
+    setProcessingFees(true);
+    try {
+      await approveTransaction(reviewPaymentTx.id, amount);
+      setReviewPaymentTx(null);
+      await fetchFees(student.id);
+    } catch (err: any) {
+      alert(err.message || 'Error al aprobar el pago');
+    } finally {
+      setProcessingFees(false);
+    }
+  };
+
+  const handleRejectTransaction = async () => {
+    if (!reviewPaymentTx || !student) return;
+    setProcessingFees(true);
+    try {
+      await rejectTransaction(reviewPaymentTx.id);
+      setReviewPaymentTx(null);
+      await fetchFees(student.id);
+    } catch (err: any) {
+      alert(err.message || 'Error al rechazar el pago');
+    } finally {
+      setProcessingFees(false);
     }
   };
 
@@ -201,7 +259,13 @@ export function useStudentDetails() {
     isLoading, errorMsg, isEditing, isSaving, editForm, updateEditForm, toggleEditMode, saveProfile,
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
     actionLoading, unassignStudent, deleteStudent,
-    markingFee, markFeeAsPaid,
+    
+    processingFees,
+    payYearStudent, setPayYearStudent, handlePayFullYear,
+    directPaymentFee, setDirectPaymentFee, handleDirectPayment,
+    reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
+    viewReceiptsFee, setViewReceiptsFee,
+    
     returnTo, isTeacher, isAdmin, canManage
   };
 }

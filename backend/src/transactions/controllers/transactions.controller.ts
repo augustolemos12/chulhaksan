@@ -72,8 +72,11 @@ export class TransactionsController {
   @Patch(':id/approve')
   @Roles(Role.TEACHER, Role.ADMIN)
   @ApiOperation({ summary: 'Aprobar un pago PENDING' })
-  async approveTransaction(@Param('id', ParseIntPipe) id: number) {
-    return this.transactionsService.approveTransaction(id);
+  async approveTransaction(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('amount') amount?: number
+  ) {
+    return this.transactionsService.approveTransaction(id, amount);
   }
 
   @Patch(':id/reject')

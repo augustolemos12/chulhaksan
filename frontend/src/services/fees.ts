@@ -79,10 +79,15 @@ export async function payFullYear(studentId: number, year: number, method: Payme
   return response.json();
 }
 
-export async function approveTransaction(transactionId: number): Promise<any> {
-  const response = await apiFetch(`/transactions/${transactionId}/approve`, {
-    method: 'PATCH',
-  });
+export async function approveTransaction(transactionId: number, amount?: number): Promise<any> {
+  const options: RequestInit = { method: 'PATCH' };
+  
+  if (amount !== undefined) {
+    options.headers = { 'Content-Type': 'application/json' };
+    options.body = JSON.stringify({ amount });
+  }
+
+  const response = await apiFetch(`/transactions/${transactionId}/approve`, options);
   if (!response.ok) {
     throw new Error('Error al aprobar la transacción');
   }

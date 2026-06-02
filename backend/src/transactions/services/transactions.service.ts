@@ -59,7 +59,7 @@ export class TransactionsService {
     return transaction;
   }
 
-  async approveTransaction(transactionId: number) {
+  async approveTransaction(transactionId: number, amount?: number) {
     const transaction = await this.prisma.transaction.findUnique({ where: { id: transactionId } });
     if (!transaction) throw new NotFoundException(`Transaction ${transactionId} no encontrada`);
     
@@ -67,12 +67,18 @@ export class TransactionsService {
       return transaction; // Already approved
     }
 
+    const dataToUpdate: any = {
+      status: PaymentStatus.APPROVED,
+      reviewedAt: new Date(),
+    };
+
+    if (amount !== undefined && amount > 0) {
+      dataToUpdate.amount = amount;
+    }
+
     await this.prisma.transaction.update({
       where: { id: transactionId },
-      data: { 
-        status: PaymentStatus.APPROVED,
-        reviewedAt: new Date(),
-      },
+      data: dataToUpdate,
     });
 
     // ¡Recalcular la cuota!

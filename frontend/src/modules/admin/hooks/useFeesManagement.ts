@@ -77,11 +77,11 @@ export function useFeesManagement() {
     }
   };
 
-  const handleApproveTransaction = async () => {
+  const handleApproveTransaction = async (amount: number) => {
     if (!reviewPaymentTx) return;
     setProcessing(true);
     try {
-      await approveTransaction(reviewPaymentTx.id);
+      await approveTransaction(reviewPaymentTx.id, amount);
       setReviewPaymentTx(null);
       await fetchFees();
     } catch (err: any) {

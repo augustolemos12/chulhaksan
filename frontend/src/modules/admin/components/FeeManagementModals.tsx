@@ -169,13 +169,20 @@ export function PayYearModal({ student, year, onClose, onConfirm, processing }: 
 interface ReviewPaymentModalProps {
   transaction: any;
   onClose: () => void;
-  onApprove: () => void;
+  onApprove: (amount: number) => void;
   onReject: () => void;
   processing: boolean;
 }
 
 export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, processing }: ReviewPaymentModalProps) {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [amount, setAmount] = useState<number>(0);
+
+  useEffect(() => {
+    if (transaction) {
+      setAmount(transaction.amount || 0);
+    }
+  }, [transaction]);
 
   if (!transaction) return null;
 
@@ -187,6 +194,19 @@ export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, 
           <p className="text-sm text-muted mb-4">
             El alumno ha reportado un pago por <span className="font-bold text-text">${transaction.amount}</span> vía {transaction.method === 'TRANSFER' ? 'Transferencia' : 'Efectivo'}.
           </p>
+          <div className="mb-4">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1">
+              Monto a aprobar ($)
+            </label>
+            <input
+              type="number"
+              className="w-full form-input bg-background border border-border rounded-xl px-4 py-3 text-text focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+              min={1}
+            />
+            <p className="text-xs text-muted mt-1">Puedes ajustar el monto si es un pago parcial.</p>
+          </div>
         </div>
         
         <div className="px-6 py-4 overflow-y-auto">
@@ -232,8 +252,8 @@ export function ReviewPaymentModal({ transaction, onClose, onApprove, onReject, 
           </button>
           <button
             className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-xl transition-colors shadow-soft disabled:opacity-50"
-            onClick={onApprove}
-            disabled={processing}
+            onClick={() => onApprove(amount)}
+            disabled={processing || amount <= 0}
           >
             Aprobar
           </button>
