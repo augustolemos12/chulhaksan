@@ -28,9 +28,13 @@ export function useAdminTeacherDetails() {
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState<string | null>(null);
   const [walletUrl, setWalletUrl] = useState('');
+  const [lateFeeWalletUrl, setLateFeeWalletUrl] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [lateFeeQrCodeUrl, setLateFeeQrCodeUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedLateFeeFile, setSelectedLateFeeFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [lateFeePreviewUrl, setLateFeePreviewUrl] = useState<string | null>(null);
 
   const loadTeacher = async () => {
     setLoading(true);
@@ -43,7 +47,9 @@ export function useAdminTeacherDetails() {
       const data = await res.json();
       setTeacher(data);
       setWalletUrl(data.walletUrl || '');
+      setLateFeeWalletUrl(data.lateFeeWalletUrl || '');
       setQrCodeUrl(data.qrCodeUrl || null);
+      setLateFeeQrCodeUrl(data.lateFeeQrCodeUrl || null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar.');
     } finally {
@@ -132,21 +138,33 @@ export function useAdminTeacherDetails() {
     }
   };
 
-  const handleFileChange = (file: File) => {
+  const handleFileChange = (file: File, isLateFee: boolean = false) => {
     setPaymentError(null);
     if (!file.type.startsWith('image/')) {
       setPaymentError('Por favor, selecciona una imagen.');
       return;
     }
-    setSelectedFile(file);
     const reader = new FileReader();
-    reader.onloadend = () => setPreviewUrl(reader.result as string);
+    reader.onloadend = () => {
+      if (isLateFee) {
+        setSelectedLateFeeFile(file);
+        setLateFeePreviewUrl(reader.result as string);
+      } else {
+        setSelectedFile(file);
+        setPreviewUrl(reader.result as string);
+      }
+    };
     reader.readAsDataURL(file);
   };
 
-  const handleRemovePreview = () => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
+  const handleRemovePreview = (isLateFee: boolean = false) => {
+    if (isLateFee) {
+      setSelectedLateFeeFile(null);
+      setLateFeePreviewUrl(null);
+    } else {
+      setSelectedFile(null);
+      setPreviewUrl(null);
+    }
   };
 
   const handlePaymentSubmit = async (e: React.FormEvent) => {
@@ -156,7 +174,13 @@ export function useAdminTeacherDetails() {
     setPaymentSuccess(null);
 
     if (walletUrl.trim() && !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(walletUrl.trim())) {
-      setPaymentError('El enlace debe ser una URL válida.');
+      setPaymentError('El enlace normal debe ser una URL válida.');
+      setPaymentSaving(false);
+      return;
+    }
+
+    if (lateFeeWalletUrl.trim() && !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(lateFeeWalletUrl.trim())) {
+      setPaymentError('El enlace de mora debe ser una URL válida.');
       setPaymentSaving(false);
       return;
     }
@@ -164,7 +188,9 @@ export function useAdminTeacherDetails() {
     try {
       const formData = new FormData();
       formData.append('walletUrl', walletUrl.trim());
+      formData.append('lateFeeWalletUrl', lateFeeWalletUrl.trim());
       if (selectedFile) formData.append('qrCode', selectedFile);
+      if (selectedLateFeeFile) formData.append('lateFeeQrCode', selectedLateFeeFile);
 
       const res = await httpClient.request(`/teachers/${id}/payment-info`, {
         method: 'PATCH',
@@ -178,9 +204,13 @@ export function useAdminTeacherDetails() {
 
       const data = await res.json();
       setQrCodeUrl(data.qrCodeUrl || null);
+      setLateFeeQrCodeUrl(data.lateFeeQrCodeUrl || null);
       setWalletUrl(data.walletUrl || '');
+      setLateFeeWalletUrl(data.lateFeeWalletUrl || '');
       setSelectedFile(null);
       setPreviewUrl(null);
+      setSelectedLateFeeFile(null);
+      setLateFeePreviewUrl(null);
       setPaymentSuccess('Datos actualizados correctamente.');
       setTimeout(() => setPaymentSuccess(null), 4000);
       await loadTeacher(); // Reload the teacher just to keep everything in sync
@@ -196,7 +226,9 @@ export function useAdminTeacherDetails() {
     isEditing, form, setForm, saving, editError, openEdit, closeEdit, handleSave,
     handleDelete, actionLoading,
     handleResetPassword, resetting, resetInfo,
-    paymentSaving, paymentError, paymentSuccess, walletUrl, setWalletUrl, qrCodeUrl, previewUrl, selectedFile,
+    paymentSaving, paymentError, paymentSuccess, 
+    walletUrl, setWalletUrl, qrCodeUrl, previewUrl, selectedFile,
+    lateFeeWalletUrl, setLateFeeWalletUrl, lateFeeQrCodeUrl, lateFeePreviewUrl, selectedLateFeeFile,
     handleFileChange, handleRemovePreview, handlePaymentSubmit,
   };
 }

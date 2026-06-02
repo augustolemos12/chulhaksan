@@ -195,7 +195,10 @@ export class TeachersService {
   async updatePaymentDetails(
     teacherId: number,
     dto: UpdateTeacherPaymentDto,
-    file?: Express.Multer.File,
+    files?: {
+      qrCode?: Express.Multer.File[];
+      lateFeeQrCode?: Express.Multer.File[];
+    },
   ) {
     const teacher = await this.prisma.teacher.findUnique({
       where: { id: teacherId },
@@ -206,28 +209,41 @@ export class TeachersService {
     }
 
     let qrCodeUrl = teacher.qrCodeUrl;
+    let lateFeeQrCodeUrl = teacher.lateFeeQrCodeUrl;
 
-    if (file) {
+    if (files?.qrCode && files.qrCode.length > 0) {
       if (teacher.qrCodeUrl) {
         try {
           const publicId = this.cloudinaryService.extractPublicId(teacher.qrCodeUrl);
-          if (publicId) {
-            await this.cloudinaryService.deleteFile(publicId);
-          }
+          if (publicId) await this.cloudinaryService.deleteFile(publicId);
         } catch (err) {
           console.error('Error deleting previous QR from Cloudinary:', err);
         }
       }
-
-      const uploadResult = await this.cloudinaryService.uploadQrCode(file);
+      const uploadResult = await this.cloudinaryService.uploadQrCode(files.qrCode[0]);
       qrCodeUrl = uploadResult.secure_url;
+    }
+
+    if (files?.lateFeeQrCode && files.lateFeeQrCode.length > 0) {
+      if (teacher.lateFeeQrCodeUrl) {
+        try {
+          const publicId = this.cloudinaryService.extractPublicId(teacher.lateFeeQrCodeUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId);
+        } catch (err) {
+          console.error('Error deleting previous Late Fee QR from Cloudinary:', err);
+        }
+      }
+      const uploadResult = await this.cloudinaryService.uploadQrCode(files.lateFeeQrCode[0]);
+      lateFeeQrCodeUrl = uploadResult.secure_url;
     }
 
     const updatedTeacher = await this.prisma.teacher.update({
       where: { id: teacher.id },
       data: {
         walletUrl: dto.walletUrl || null,
+        lateFeeWalletUrl: dto.lateFeeWalletUrl || null,
         qrCodeUrl,
+        lateFeeQrCodeUrl,
       },
       include: {
         user: true,

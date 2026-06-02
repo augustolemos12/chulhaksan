@@ -82,7 +82,6 @@ enum DayOfWeek {
   SUNDAY
 }
 
-
 //
 // USERS
 //
@@ -120,6 +119,9 @@ model Teacher {
 
   qrCodeUrl String?
   walletUrl String?
+
+  lateFeeQrCodeUrl String?
+  lateFeeWalletUrl String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

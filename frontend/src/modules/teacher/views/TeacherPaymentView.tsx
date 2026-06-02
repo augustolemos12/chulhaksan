@@ -12,6 +12,7 @@ export function TeacherPaymentView() {
   // Profile data
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [walletUrl, setWalletUrl] = useState<string>('');
+  const [teacher, setTeacher] = useState<any>(null);
 
   // Fetch existing details
   useEffect(() => {
@@ -20,6 +21,7 @@ export function TeacherPaymentView() {
         const res = await httpClient.request('/teachers/me');
         if (res.ok) {
           const data = await res.json();
+          setTeacher(data);
           setQrCodeUrl(data.qrCodeUrl || null);
           setWalletUrl(data.walletUrl || '');
         } else {
@@ -57,7 +59,7 @@ export function TeacherPaymentView() {
         </div>
       </header>
 
-      <main className="w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 pb-24 space-y-5">
+      <main className="w-full max-w-md sm:max-w-lg md:max-w-4xl mx-auto p-4 pb-24 space-y-5">
         {error && (
           <div className="bg-danger/10 border border-danger/20 text-danger rounded-2xl p-4 flex items-start gap-3 animate-fadeIn">
             <span className="material-symbols-outlined shrink-0">error</span>
@@ -79,71 +81,151 @@ export function TeacherPaymentView() {
                 <p className="text-sm text-muted mt-2">Comunícate con el administrador para registrar tu link de cobro o código QR.</p>
               </div>
             )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-5">
+                <h2 className="font-bold text-text mb-2 px-2 border-l-4 border-primary">Pago Normal</h2>
+                {/* Wallet URL Card */}
+                {walletUrl && (
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined">link</span>
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold">Enlace de Billetera Virtual</h3>
+                        <p className="text-xs text-muted">Redireccioná a tus alumnos a tu link de pago directo</p>
+                      </div>
+                    </div>
 
-            {/* Wallet URL Card */}
-            {walletUrl && (
-              <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined">link</span>
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold">Enlace de Billetera Virtual</h3>
-                    <p className="text-xs text-muted">Redireccioná a tus alumnos a tu link de pago directo</p>
-                  </div>
-                </div>
+                    <div className="bg-background rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                      <div className="truncate flex-1">
+                        <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Tu enlace actual</p>
+                        <a 
+                          href={walletUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline font-medium text-sm truncate block"
+                        >
+                          {walletUrl}
+                        </a>
+                      </div>
+                      <a 
+                        href={walletUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="shrink-0 flex items-center gap-2 rounded-xl bg-primary/10 text-primary px-4 py-2 font-bold text-sm hover:bg-primary hover:text-white transition-colors"
+                      >
+                        <span>Abrir enlace</span>
+                        <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                      </a>
+                    </div>
+                  </section>
+                )}
 
-                <div className="bg-background rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
-                  <div className="truncate flex-1">
-                    <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Tu enlace actual</p>
-                    <a 
-                      href={walletUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline font-medium text-sm truncate block"
-                    >
-                      {walletUrl}
-                    </a>
-                  </div>
-                  <a 
-                    href={walletUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="shrink-0 flex items-center gap-2 rounded-xl bg-primary/10 text-primary px-4 py-2 font-bold text-sm hover:bg-primary hover:text-white transition-colors"
-                  >
-                    <span>Abrir enlace</span>
-                    <span className="material-symbols-outlined text-[18px]">open_in_new</span>
-                  </a>
-                </div>
-              </section>
-            )}
+                {/* QR Code Card */}
+                {qrCodeUrl && (
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined">qr_code_2</span>
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold">Código QR Normal</h3>
+                        <p className="text-xs text-muted">Tus alumnos pueden escanear este QR para abonar en término</p>
+                      </div>
+                    </div>
 
-            {/* QR Code Card */}
-            {qrCodeUrl && (
-              <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined">qr_code_2</span>
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold">Código QR de Pago</h3>
-                    <p className="text-xs text-muted">Tus alumnos pueden escanear este QR para abonar</p>
-                  </div>
-                </div>
+                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-2xl border border-border">
+                      <img
+                        src={qrCodeUrl}
+                        alt="QR Registrado"
+                        className="h-56 w-56 object-contain bg-white p-3 rounded-2xl border border-border shadow-sm mb-4"
+                      />
+                      <p className="text-sm font-bold text-text">QR configurado correctamente</p>
+                      <p className="text-xs text-muted mt-1 text-center max-w-[280px]">
+                        Si necesitás modificar este código, solicitá el cambio a tu administrador.
+                      </p>
+                    </div>
+                  </section>
+                )}
+              </div>
 
-                <div className="flex flex-col items-center justify-center p-6 bg-background rounded-2xl border border-border">
-                  <img
-                    src={qrCodeUrl}
-                    alt="QR Registrado"
-                    className="h-56 w-56 object-contain bg-white p-3 rounded-2xl border border-border shadow-sm mb-4"
-                  />
-                  <p className="text-sm font-bold text-text">QR configurado correctamente</p>
-                  <p className="text-xs text-muted mt-1 text-center max-w-[280px]">
-                    Si necesitás modificar este código, solicitá el cambio a tu administrador.
-                  </p>
-                </div>
-              </section>
-            )}
+              <div className="space-y-5">
+                <h2 className="font-bold text-text mb-2 px-2 border-l-4 border-amber-500">Pago Fuera de Término (Mora)</h2>
+                {/* Late Fee Wallet URL Card */}
+                {(teacher as any)?.lateFeeWalletUrl && (
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined">link</span>
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold">Enlace de Billetera (Mora)</h3>
+                        <p className="text-xs text-muted">Redireccioná a tus alumnos a tu link de cobro con mora incluida</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-background rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                      <div className="truncate flex-1">
+                        <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Tu enlace actual</p>
+                        <a 
+                          href={(teacher as any)?.lateFeeWalletUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-amber-600 hover:underline font-medium text-sm truncate block"
+                        >
+                          {(teacher as any)?.lateFeeWalletUrl}
+                        </a>
+                      </div>
+                      <a 
+                        href={(teacher as any)?.lateFeeWalletUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="shrink-0 flex items-center gap-2 rounded-xl bg-amber-500/10 text-amber-600 px-4 py-2 font-bold text-sm hover:bg-amber-500 hover:text-white transition-colors"
+                      >
+                        <span>Abrir enlace</span>
+                        <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                      </a>
+                    </div>
+                  </section>
+                )}
+
+                {/* Late Fee QR Code Card */}
+                {(teacher as any)?.lateFeeQrCodeUrl && (
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined">qr_code_2</span>
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold">Código QR de Mora</h3>
+                        <p className="text-xs text-muted">Tus alumnos pueden escanear este QR para abonar con recargo</p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-2xl border border-border">
+                      <img
+                        src={(teacher as any)?.lateFeeQrCodeUrl}
+                        alt="QR Mora Registrado"
+                        className="h-56 w-56 object-contain bg-white p-3 rounded-2xl border border-border shadow-sm mb-4"
+                      />
+                      <p className="text-sm font-bold text-text">QR de Mora configurado correctamente</p>
+                      <p className="text-xs text-muted mt-1 text-center max-w-[280px]">
+                        Si necesitás modificar este código, solicitá el cambio a tu administrador.
+                      </p>
+                    </div>
+                  </section>
+                )}
+
+                {!((teacher as any)?.lateFeeWalletUrl) && !((teacher as any)?.lateFeeQrCodeUrl) && (
+                  <div className="bg-surface border border-border rounded-3xl p-8 shadow-soft flex flex-col items-center text-center opacity-70">
+                    <span className="material-symbols-outlined text-4xl text-muted mb-3">warning</span>
+                    <p className="text-sm font-bold text-text">Sin configuración para mora</p>
+                    <p className="text-xs text-muted mt-1">Si deseas usar QR o link diferenciado para mora, contáctate con el administrador.</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </main>

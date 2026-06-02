@@ -164,10 +164,13 @@ export function FeesManagementView() {
                       {fee.student?.firstName} {fee.student?.lastName}
                     </p>
                     <p className="text-muted text-xs font-medium mt-1">DNI: {fee.student?.dni}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs font-medium text-text">Total: ${fee.totalAmount}</span>
-                      <span className="text-muted text-[10px]">|</span>
-                      <span className="text-xs font-medium text-text">Pagado: ${fee.paidAmount}</span>
+                    <div className="flex flex-col gap-1 mt-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-text">Total: ${fee.totalAmount}</span>
+                        <span className="text-muted text-[10px]">|</span>
+                        <span className="text-xs font-medium text-text">Pagado: ${fee.paidAmount}</span>
+                      </div>
+                      {fee.lateFeeApplied && <span className="text-[11px] text-primary">Incluye recargo por mora (${fee.surchargeAmount}).</span>}
                     </div>
                   </div>
                 </div>

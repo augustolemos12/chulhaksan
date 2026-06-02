@@ -117,7 +117,6 @@ export function StudentDetailsView() {
         {fees.length === 0 && !isLoading && <div className="bg-surface p-4 rounded-xl text-sm text-muted border border-border">No hay cuotas registradas.</div>}
         {fees.map((fee) => {
           const monthLabel = monthNames[fee.month - 1] ?? `Mes ${fee.month}`;
-          const isPaid = fee.status === 'PAID';
           const amountLabel = Number(fee.totalAmount).toLocaleString('es-AR');
           const pendingTx = fee.payments?.find(tx => tx.status === 'PENDING');
           
@@ -146,7 +145,7 @@ export function StudentDetailsView() {
                   <div>
                     <p className="text-xs text-muted">Total: <span className="font-bold text-text">${amountLabel}</span></p>
                     <p className="text-xs text-muted">Pagado: <span className="font-bold text-text">${fee.paidAmount}</span></p>
-                    {fee.lateFeeApplied && !isPaid && <p className="text-[11px] text-primary mt-1">Incluye recargo por mora.</p>}
+                    {fee.lateFeeApplied && <p className="text-[11px] text-primary mt-1">Incluye recargo por mora (${fee.surchargeAmount}).</p>}
                   </div>
                 </div>
                 

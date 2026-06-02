@@ -10,6 +10,8 @@ interface TeacherInfo {
   email?: string;
   qrCodeUrl?: string;
   walletUrl?: string;
+  lateFeeQrCodeUrl?: string;
+  lateFeeWalletUrl?: string;
 }
 
 export function MyPaymentsView() {
@@ -186,7 +188,15 @@ export function MyPaymentsView() {
 
 
   const teacherName = teacher ? `Prof. ${teacher.firstName} ${teacher.lastName}` : 'tu Instructor';
-  const qrUrl = teacher?.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Pago-CHS-Profesor-${teacher?.lastName || 'Taekwondo'}`;
+  const hasLateFee = !!currentFee?.lateFeeApplied;
+
+  // Determine what to show
+  const missingLateFeeInfo = hasLateFee && !teacher?.lateFeeQrCodeUrl && !teacher?.lateFeeWalletUrl;
+
+  const targetQr = hasLateFee && teacher?.lateFeeQrCodeUrl ? teacher.lateFeeQrCodeUrl : teacher?.qrCodeUrl;
+  const targetWallet = hasLateFee && teacher?.lateFeeWalletUrl ? teacher.lateFeeWalletUrl : teacher?.walletUrl;
+
+  const qrUrl = targetQr || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Pago-CHS-Profesor-${teacher?.lastName || 'Taekwondo'}`;
 
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-300">
@@ -277,15 +287,36 @@ export function MyPaymentsView() {
         ) : (
           /* Unpaid State: QR + Upload Section */
           <>
-            {/* Teacher QR Code Section */}
-            <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+            {/* Si tiene mora pero el profesor no subió nada, mostramos mensaje */}
+            {missingLateFeeInfo && (
+              <section className="bg-amber-50 border border-amber-200 rounded-3xl p-6 shadow-soft space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined">warning</span>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-amber-900">Atención: Cuota con Mora</h3>
+                    <p className="text-xs text-amber-700">El profesor no ha configurado sus medios de cobro para montos con mora.</p>
+                  </div>
+                </div>
+                <p className="text-sm font-semibold text-amber-800">
+                  Por favor, contacta directamente a {teacherName} para que te indique cómo abonar el monto exacto antes de continuar.
+                </p>
+              </section>
+            )}
+
+            {!missingLateFeeInfo && (
+              <>
+                {/* Teacher QR Code Section */}
+                <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined">qr_code_2</span>
                 </div>
                 <div>
-                  <h3 className="text-base font-bold">QR de Pago</h3>
+                  <h3 className="text-base font-bold">QR de Pago {hasLateFee && '(Mora)'}</h3>
                   <p className="text-xs text-muted">Escaneá el código de {teacherName}</p>
+                  {hasLateFee && <p className="text-[10px] text-danger font-bold uppercase mt-1">Monto con recargo incluido</p>}
                 </div>
               </div>
 
@@ -307,23 +338,23 @@ export function MyPaymentsView() {
                 )}
                 <div className="mt-4 text-center max-w-xs">
                   <p className="text-xs font-semibold text-text">
-                    {teacher?.qrCodeUrl ? 'Paga escaneando el QR oficial de tu profesor' : 'Paga mediante Mercado Pago o Transferencia'}
+                    {targetQr ? (hasLateFee ? 'Paga escaneando el QR de mora de tu profesor' : 'Paga escaneando el QR oficial de tu profesor') : 'Paga mediante Mercado Pago o Transferencia'}
                   </p>
                   <p className="text-[10px] text-muted mt-1">
-                    {teacher?.qrCodeUrl
+                    {targetQr
                       ? 'Escaneá desde la app de tu billetera virtual para realizar la transacción.'
                       : 'Escaneá desde la app de tu banco o billetera virtual para realizar la transacción.'}
                   </p>
                 </div>
               </div>
 
-              {teacher?.walletUrl && (
+              {targetWallet && (
                 <div className="pt-2 animate-fadeIn">
                   <a
-                    href={teacher.walletUrl}
+                    href={targetWallet}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 hover:scale-[1.01]"
+                    className={`w-full ${hasLateFee ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-gradient-to-r from-primary to-accent'} hover:shadow-glow text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 hover:scale-[1.01]`}
                   >
                     <span className="material-symbols-outlined text-lg">open_in_new</span>
                     <span>Pagar con Billetera Virtual (Redirección)</span>
@@ -428,7 +459,9 @@ export function MyPaymentsView() {
             </section>
           </>
         )}
-      </main>
+      </>
+    )}
+  </main>
     </div>
   );
 }

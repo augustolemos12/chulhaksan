@@ -8,6 +8,7 @@ export function AdminTeacherDetailsView() {
     isEditing, form, setForm, saving, editError, openEdit, closeEdit, handleSave,
     handleDelete, actionLoading, handleResetPassword, resetting, resetInfo,
     paymentSaving, paymentError, paymentSuccess, walletUrl, setWalletUrl, qrCodeUrl, previewUrl, selectedFile,
+    lateFeeWalletUrl, setLateFeeWalletUrl, lateFeeQrCodeUrl, lateFeePreviewUrl, selectedLateFeeFile,
     handleFileChange, handleRemovePreview, handlePaymentSubmit,
   } = useAdminTeacherDetails();
 
@@ -19,13 +20,23 @@ export function AdminTeacherDetailsView() {
     setTimeout(() => setCopiedReset(false), 2000);
   };
 
-  const [isDragging, setIsDragging] = useState(false);
-  const onDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
-  const onDragLeave = () => setIsDragging(false);
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault(); setIsDragging(false);
+  const [isDraggingNormal, setIsDraggingNormal] = useState(false);
+  const onDragOverNormal = (e: React.DragEvent) => { e.preventDefault(); setIsDraggingNormal(true); };
+  const onDragLeaveNormal = () => setIsDraggingNormal(false);
+  const onDropNormal = (e: React.DragEvent) => {
+    e.preventDefault(); setIsDraggingNormal(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileChange(e.dataTransfer.files[0]);
+      handleFileChange(e.dataTransfer.files[0], false);
+    }
+  };
+
+  const [isDraggingLate, setIsDraggingLate] = useState(false);
+  const onDragOverLate = (e: React.DragEvent) => { e.preventDefault(); setIsDraggingLate(true); };
+  const onDragLeaveLate = () => setIsDraggingLate(false);
+  const onDropLate = (e: React.DragEvent) => {
+    e.preventDefault(); setIsDraggingLate(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFileChange(e.dataTransfer.files[0], true);
     }
   };
 
@@ -123,49 +134,103 @@ export function AdminTeacherDetailsView() {
             {paymentSuccess && <div className="mb-4 bg-success/10 border border-success/20 text-success rounded-2xl p-4 flex items-start gap-3"><span className="material-symbols-outlined shrink-0 text-success">check_circle</span><p className="text-sm font-semibold">{paymentSuccess}</p></div>}
 
             <form onSubmit={handlePaymentSubmit} className="space-y-5">
-              <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">link</span></div>
-                  <div><h3 className="text-base font-bold">Enlace de Billetera Virtual</h3><p className="text-xs text-muted">URL directa de cobro</p></div>
-                </div>
-                <div className="space-y-1.5">
-                  <div className="relative">
-                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
-                    <input id="wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias" value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
-                  </div>
-                </div>
-              </section>
-
-              <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">qr_code_2</span></div>
-                  <div><h3 className="text-base font-bold">Código QR de Pago</h3><p className="text-xs text-muted">Imagen para escanear al abonar</p></div>
-                </div>
-
-                {qrCodeUrl && !previewUrl && (
-                  <div className="flex flex-col items-center justify-center p-4 bg-background rounded-2xl border border-border">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-muted mb-2">QR Actual Registrado</span>
-                    <img src={qrCodeUrl} alt="QR Registrado" className="h-44 w-44 object-contain bg-white p-2 rounded-xl border border-border shadow-sm" />
-                  </div>
-                )}
-
-                <div
-                  onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}
-                  className={`border-2 border-dashed rounded-2xl p-6 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer min-h-[160px] ${isDragging ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
-                  onClick={() => document.getElementById('qr-upload-input')?.click()}
-                >
-                  <input id="qr-upload-input" type="file" className="hidden" accept="image/*" onChange={(e) => { if (e.target.files && e.target.files.length > 0) handleFileChange(e.target.files[0]); }} />
-                  {!previewUrl ? (
-                    <><span className="material-symbols-outlined text-4xl text-muted mb-2">cloud_upload</span><p className="text-sm font-bold text-text">Arrastrá un nuevo código QR acá</p><p className="text-xs text-muted mt-1">o hacé clic para seleccionar un archivo</p></>
-                  ) : (
-                    <div className="w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                      <img src={previewUrl} alt="Vista previa del nuevo QR" className="h-36 w-36 object-contain bg-white p-2 rounded-xl border border-border mb-3 shadow-md" />
-                      <div className="max-w-[240px] truncate text-xs font-bold text-text">{selectedFile?.name}</div>
-                      <button type="button" onClick={handleRemovePreview} className="mt-3 flex items-center gap-1 text-xs font-bold text-danger hover:text-red-700"><span className="material-symbols-outlined text-sm">delete</span>Cancelar reemplazo</button>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Pago Normal */}
+                <div className="space-y-5">
+                  <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-primary">Pago en Término (Normal)</h4>
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">link</span></div>
+                      <div><h3 className="text-base font-bold">Enlace de Billetera</h3><p className="text-xs text-muted">URL directa de cobro normal</p></div>
                     </div>
-                  )}
+                    <div className="space-y-1.5">
+                      <div className="relative">
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
+                        <input id="wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias" value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">qr_code_2</span></div>
+                      <div><h3 className="text-base font-bold">Código QR Normal</h3><p className="text-xs text-muted">Imagen para escanear al abonar en término</p></div>
+                    </div>
+
+                    {qrCodeUrl && !previewUrl && (
+                      <div className="flex flex-col items-center justify-center p-4 bg-background rounded-2xl border border-border">
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-muted mb-2">QR Actual Registrado</span>
+                        <img src={qrCodeUrl} alt="QR Registrado" className="h-44 w-44 object-contain bg-white p-2 rounded-xl border border-border shadow-sm" />
+                      </div>
+                    )}
+
+                    <div
+                      onDragOver={onDragOverNormal} onDragLeave={onDragLeaveNormal} onDrop={onDropNormal}
+                      className={`border-2 border-dashed rounded-2xl p-6 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer min-h-[160px] ${isDraggingNormal ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
+                      onClick={() => document.getElementById('qr-upload-input')?.click()}
+                    >
+                      <input id="qr-upload-input" type="file" className="hidden" accept="image/*" onChange={(e) => { if (e.target.files && e.target.files.length > 0) handleFileChange(e.target.files[0], false); }} />
+                      {!previewUrl ? (
+                        <><span className="material-symbols-outlined text-4xl text-muted mb-2">cloud_upload</span><p className="text-sm font-bold text-text">Arrastrá un nuevo QR acá</p><p className="text-xs text-muted mt-1">o hacé clic para seleccionar un archivo</p></>
+                      ) : (
+                        <div className="w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                          <img src={previewUrl} alt="Vista previa del nuevo QR" className="h-36 w-36 object-contain bg-white p-2 rounded-xl border border-border mb-3 shadow-md" />
+                          <div className="max-w-[240px] truncate text-xs font-bold text-text">{selectedFile?.name}</div>
+                          <button type="button" onClick={() => handleRemovePreview(false)} className="mt-3 flex items-center gap-1 text-xs font-bold text-danger hover:text-red-700"><span className="material-symbols-outlined text-sm">delete</span>Cancelar reemplazo</button>
+                        </div>
+                      )}
+                    </div>
+                  </section>
                 </div>
-              </section>
+
+                {/* Pago Fuera de Término (Mora) */}
+                <div className="space-y-5">
+                  <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-amber-500">Pago Fuera de Término (Mora)</h4>
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">link</span></div>
+                      <div><h3 className="text-base font-bold">Enlace de Billetera (Mora)</h3><p className="text-xs text-muted">URL directa de cobro con mora incluida</p></div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="relative">
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
+                        <input id="late-wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-amber-500 focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias-mora" value={lateFeeWalletUrl} onChange={(e) => setLateFeeWalletUrl(e.target.value)} />
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">qr_code_2</span></div>
+                      <div><h3 className="text-base font-bold">Código QR de Mora</h3><p className="text-xs text-muted">Imagen para escanear al abonar con recargo</p></div>
+                    </div>
+
+                    {lateFeeQrCodeUrl && !lateFeePreviewUrl && (
+                      <div className="flex flex-col items-center justify-center p-4 bg-background rounded-2xl border border-border">
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-muted mb-2">QR de Mora Actual Registrado</span>
+                        <img src={lateFeeQrCodeUrl} alt="QR Mora Registrado" className="h-44 w-44 object-contain bg-white p-2 rounded-xl border border-border shadow-sm" />
+                      </div>
+                    )}
+
+                    <div
+                      onDragOver={onDragOverLate} onDragLeave={onDragLeaveLate} onDrop={onDropLate}
+                      className={`border-2 border-dashed rounded-2xl p-6 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer min-h-[160px] ${isDraggingLate ? 'border-amber-500 bg-amber-50' : 'border-border hover:border-amber-500/50'}`}
+                      onClick={() => document.getElementById('late-qr-upload-input')?.click()}
+                    >
+                      <input id="late-qr-upload-input" type="file" className="hidden" accept="image/*" onChange={(e) => { if (e.target.files && e.target.files.length > 0) handleFileChange(e.target.files[0], true); }} />
+                      {!lateFeePreviewUrl ? (
+                        <><span className="material-symbols-outlined text-4xl text-muted mb-2">cloud_upload</span><p className="text-sm font-bold text-text">Arrastrá el QR con Mora acá</p><p className="text-xs text-muted mt-1">o hacé clic para seleccionar un archivo</p></>
+                      ) : (
+                        <div className="w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                          <img src={lateFeePreviewUrl} alt="Vista previa del nuevo QR Mora" className="h-36 w-36 object-contain bg-white p-2 rounded-xl border border-border mb-3 shadow-md" />
+                          <div className="max-w-[240px] truncate text-xs font-bold text-text">{selectedLateFeeFile?.name}</div>
+                          <button type="button" onClick={() => handleRemovePreview(true)} className="mt-3 flex items-center gap-1 text-xs font-bold text-danger hover:text-red-700"><span className="material-symbols-outlined text-sm">delete</span>Cancelar reemplazo</button>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                </div>
+              </div>
 
               <button type="submit" disabled={paymentSaving} className="w-full bg-gradient-to-r from-primary to-accent text-white font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none">
                 {paymentSaving ? <><div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin" /><span>Guardando...</span></> : <><span className="material-symbols-outlined text-lg">save</span><span>Guardar Datos de Pago</span></>}

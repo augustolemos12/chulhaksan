@@ -10,7 +10,7 @@ import {
   UseGuards,
   ParseIntPipe,
   UseInterceptors,
-  UploadedFile,
+  UploadedFiles,
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
@@ -26,7 +26,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Role } from '@prisma/client';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 
 @ApiTags('Teachers')
@@ -48,7 +48,15 @@ export class TeachersController {
 
   @Patch(':id/payment-info')
   @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('qrCode', { storage: memoryStorage() }))
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'qrCode', maxCount: 1 },
+        { name: 'lateFeeQrCode', maxCount: 1 },
+      ],
+      { storage: memoryStorage() },
+    ),
+  )
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -59,10 +67,20 @@ export class TeachersController {
           description: 'URL de redirección a la billetera virtual',
           example: 'https://link.mercadopago.com.ar/ejemplo',
         },
+        lateFeeWalletUrl: {
+          type: 'string',
+          description: 'URL de redirección a la billetera virtual para mora',
+          example: 'https://link.mercadopago.com.ar/mora',
+        },
         qrCode: {
           type: 'string',
           format: 'binary',
           description: 'Imagen del código QR (jpg, jpeg, png o webp — máx. 5 MB)',
+        },
+        lateFeeQrCode: {
+          type: 'string',
+          format: 'binary',
+          description: 'Imagen del código QR para mora (jpg, jpeg, png o webp — máx. 5 MB)',
         },
       },
     },
@@ -70,17 +88,13 @@ export class TeachersController {
   async updatePaymentDetails(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTeacherPaymentDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        fileIsRequired: false,
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
-          new FileTypeValidator({ fileType: /^image\/(jpeg|png|webp)$/ }),
-        ],
-      }),
-    ) file?: Express.Multer.File,
+    @UploadedFiles()
+    files?: {
+      qrCode?: Express.Multer.File[];
+      lateFeeQrCode?: Express.Multer.File[];
+    },
   ) {
-    return this.teachersService.updatePaymentDetails(id, dto, file);
+    return this.teachersService.updatePaymentDetails(id, dto, files);
   }
 
   // ==========================================
