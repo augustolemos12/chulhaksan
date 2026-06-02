@@ -41,7 +41,7 @@ export function ProfileAvatar({ fullName, gymName }: { fullName: string; gymName
 export function InfoRow({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
     <div className="flex items-center gap-4 px-4 min-h-[72px] py-2 border-b border-border">
-      <div className="text-text flex items-center justify-center rounded-lg bg-gray-100 dark:bg-border/50 shrink-0 size-12">
+      <div className="text-text dark:text-primary flex items-center justify-center rounded-lg bg-gray-100 dark:bg-red-950/40 border border-transparent dark:border-red-900/30 shrink-0 size-12">
         <span className="material-symbols-outlined">{icon}</span>
       </div>
       <div className="flex flex-col justify-center">

@@ -48,7 +48,7 @@ export function AdminGymsView() {
 
         <div className="flex flex-col gap-3">
           {filteredGyms.map((gym) => (
-            <div key={gym.id} className="flex items-center gap-3 bg-surface p-3 rounded-xl justify-between shadow-soft border border-border">
+            <div key={gym.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-surface p-4 sm:p-3 rounded-xl justify-between shadow-soft border border-border">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-12 w-12 shrink-0">
                   <span className="material-symbols-outlined">folder</span>
@@ -57,10 +57,10 @@ export function AdminGymsView() {
                   <p className="text-text text-base font-semibold leading-tight truncate">{gym.name}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <Link className="rounded-lg border border-border text-xs font-semibold px-3 py-2" to={`/admin/alumnos?gymId=${encodeURIComponent(gym.id)}`}>Ver alumnos</Link>
-                <button className="rounded-lg border border-border text-xs font-semibold px-3 py-2" type="button" onClick={() => handleRename(gym)}>Renombrar</button>
-                <button className="rounded-lg border border-red-200 text-red-600 text-xs font-semibold px-3 py-2" type="button" onClick={() => openDeleteModal(gym)}>Eliminar</button>
+              <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0 w-full sm:w-auto">
+                <Link className="flex-1 sm:flex-none text-center rounded-lg border border-border text-xs font-semibold px-3 py-2" to={`/admin/alumnos?gymId=${encodeURIComponent(gym.id)}`}>Ver alumnos</Link>
+                <button className="flex-1 sm:flex-none rounded-lg border border-border text-xs font-semibold px-3 py-2" type="button" onClick={() => handleRename(gym)}>Renombrar</button>
+                <button className="flex-1 sm:flex-none rounded-lg border border-red-200 text-red-600 text-xs font-semibold px-3 py-2" type="button" onClick={() => openDeleteModal(gym)}>Eliminar</button>
               </div>
             </div>
           ))}

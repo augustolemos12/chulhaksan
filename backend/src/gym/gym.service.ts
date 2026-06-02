@@ -79,8 +79,17 @@ export class GymService {
       this.prisma.gym.count({ where }),
     ]);
 
+    const itemsWithCount = await Promise.all(
+      items.map(async (gym) => {
+        const studentsCount = await this.prisma.student.count({
+          where: { gymId: gym.id, deletedAt: null },
+        });
+        return { ...gym, studentsCount };
+      })
+    );
+
     return {
-      items: items.map((gym) => this.mapGymResponse(gym)),
+      items: itemsWithCount.map((gym) => this.mapGymResponse(gym)),
       meta: {
         total,
         page,

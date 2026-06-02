@@ -99,7 +99,7 @@ export function StudentDetailsView() {
         {fees.map((fee) => {
           const monthLabel = monthNames[fee.month - 1] ?? `Mes ${fee.month}`;
           const isPaid = fee.status === 'PAID';
-          const amountLabel = Number(fee.amount).toLocaleString('es-AR');
+          const amountLabel = Number(fee.totalAmount).toLocaleString('es-AR');
           return (
             <div key={fee.id} className="bg-surface border border-border rounded-xl p-4 shadow-soft space-y-3">
               <div className="flex items-center justify-between">

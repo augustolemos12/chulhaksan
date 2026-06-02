@@ -39,10 +39,13 @@ import { MyPaymentsView } from '../modules/student/views/MyPaymentsView';
 
 // Shared
 import { FormsManagerView } from '../modules/forms/views/FormsManagerView';
+import { PublicFooter } from '../shared/components/PublicFooter';
 
 export function AppRoutes() {
     return (
-        <Routes>
+        <div className="flex flex-col min-h-screen bg-background text-text transition-colors duration-300">
+            <div className="flex-grow">
+                <Routes>
             {/* Public */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginView />} />
@@ -82,5 +85,8 @@ export function AppRoutes() {
             <Route path="/alumno/:dni" element={<ProtectedRoute allowedRoles={['STUDENT', 'TEACHER', 'ADMIN']}><StudentDetailsView /></ProtectedRoute>} />
             <Route path="/admin/formas" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER', 'STUDENT']}><FormsManagerView /></ProtectedRoute>} />
         </Routes>
+            </div>
+            <PublicFooter />
+        </div>
     );
 }

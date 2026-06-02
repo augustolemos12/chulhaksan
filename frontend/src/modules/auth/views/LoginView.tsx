@@ -110,20 +110,22 @@ export function LoginView() {
 
       {/* Columna Evento (Desktop) */}
       {event && (
-        <div className="flex-1 relative hidden md:block overflow-hidden bg-surface border-l border-border">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent z-10 pointer-events-none"></div>
-          <img 
-            src={event.imageUrl} 
-            alt={event.title} 
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute bottom-0 left-0 p-10 z-20 w-full">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-primary text-white rounded-full text-xs font-bold mb-3 uppercase tracking-wider shadow-glow">
-              Evento del Mes
-            </span>
-            <h2 className="font-display text-4xl lg:text-5xl font-black text-white leading-tight drop-shadow-lg">
-              {event.title}
-            </h2>
+        <div className="flex-1 hidden md:flex items-center justify-center bg-surface/50 border-l border-border p-8 lg:p-12 xl:p-16">
+          <div className="relative w-full max-w-lg max-h-[75vh] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-border group">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent z-10 pointer-events-none transition-opacity duration-300 group-hover:from-black"></div>
+            <img 
+              src={event.imageUrl} 
+              alt={event.title} 
+              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
+            />
+            <div className="absolute bottom-0 left-0 p-8 lg:p-10 z-20 w-full">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-primary text-white rounded-full text-xs font-bold mb-3 uppercase tracking-wider shadow-glow">
+                Evento del Mes
+              </span>
+              <h2 className="font-display text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-lg">
+                {event.title}
+              </h2>
+            </div>
           </div>
         </div>
       )}

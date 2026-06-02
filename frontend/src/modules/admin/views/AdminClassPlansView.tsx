@@ -125,7 +125,7 @@ export function AdminClassPlansView() {
                     Prof: <span className="font-medium text-text">{cp.classGroup?.teacher?.firstName} {cp.classGroup?.teacher?.lastName}</span>
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="inline-flex items-center justify-center bg-gray-100 text-text text-[11px] font-bold px-2 py-1 rounded-md">
+                    <span className="inline-flex items-center justify-center bg-gray-100 dark:bg-border/60 text-text text-[11px] font-bold px-2 py-1 rounded-md">
                       {cp.totalClasses} CLASES ESPERADAS
                     </span>
                   </div>

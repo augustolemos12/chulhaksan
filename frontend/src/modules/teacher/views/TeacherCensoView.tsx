@@ -47,7 +47,7 @@ export function TeacherCensoView() {
               <div className="flex-1 min-w-0">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Gimnasio</p>
                 <select className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={gymFilter} onChange={(e) => setGymFilter(e.target.value)}>
-                  <option value="">Todos los gimnasios</option>
+                  <option value="">Todos</option>
                   {gyms.map(g => <option key={g.id} value={g.id}>{g.name}{g.isArchived ? ' (Archivado)' : ''}</option>)}
                 </select>
               </div>
@@ -62,7 +62,7 @@ export function TeacherCensoView() {
               <div className="flex-1 min-w-0">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Categoría</p>
                 <select className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value as any)}>
-                  <option value="">Todas las categorías</option>
+                  <option value="">Todas</option>
                   <option value="CHILD">Infantil</option>
                   <option value="ADULT">Adulto</option>
                 </select>
@@ -78,7 +78,7 @@ export function TeacherCensoView() {
               <div className="flex-1 min-w-0">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Cinturones</p>
                 <select className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={beltGroupFilter} onChange={(e) => setBeltGroupFilter(e.target.value as any)}>
-                  <option value="">Todos los cinturones</option>
+                  <option value="">Todos</option>
                   <option value="group1">Blancos y puntas amarillas</option>
                   <option value="group2">Amarillo a punta azul</option>
                   <option value="group3">Azul a punta negra</option>

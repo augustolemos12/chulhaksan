@@ -18,7 +18,7 @@ export type StudentData = {
   currentBelt?: string;
 };
 
-export type FeeItem = { id: string; month: number; year: number; amount: number | string; status: 'PENDING' | 'PAID'; dueDate: string; paidAt?: string | null; lateFeeApplied?: boolean };
+export type FeeItem = { id: string; month: number; year: number; totalAmount: number | string; status: 'PENDING' | 'PAID'; dueDate: string; paidAt?: string | null; lateFeeApplied?: boolean };
 
 export function useStudentDetails() {
   const { dni } = useParams();
