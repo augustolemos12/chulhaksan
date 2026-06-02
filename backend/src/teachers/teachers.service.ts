@@ -192,13 +192,13 @@ export class TeachersService {
     return this.mapTeacherResponse(teacher);
   }
 
-  async updateOwnPaymentDetails(
-    userId: number,
+  async updatePaymentDetails(
+    teacherId: number,
     dto: UpdateTeacherPaymentDto,
     file?: Express.Multer.File,
   ) {
     const teacher = await this.prisma.teacher.findUnique({
-      where: { userId },
+      where: { id: teacherId },
     });
 
     if (!teacher || teacher.deletedAt !== null) {

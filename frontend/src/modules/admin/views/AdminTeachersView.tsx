@@ -1,13 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useAdminTeachers } from '../hooks/useAdminTeachers';
-import { EditTeacherModal, CreateTeacherModal } from '../components/AdminTeacherModals';
+import { CreateTeacherModal } from '../components/AdminTeacherModals';
 
 export function AdminTeachersView() {
   const {
     teachers, loading, error, query, setQuery, page, setPage, total, pageSize,
-    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit,
-    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
-    handleDelete, handleResetPassword, resetInfo, setResetInfo, resetting
+    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate
   } = useAdminTeachers();
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -57,20 +55,19 @@ export function AdminTeachersView() {
 
         <div className="flex flex-col gap-3">
           {teachers.map((teacher) => (
-            <div key={teacher.id} className="flex items-center gap-4 bg-surface p-3 rounded-xl justify-between shadow-soft">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-12 w-12">
+            <div key={teacher.id} className="flex items-center gap-4 bg-surface p-3 rounded-xl justify-between shadow-soft hover:bg-surface/80 transition-colors">
+              <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/admin/profesores/${teacher.id}`}>
+                <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-12 w-12 shrink-0">
                   <span className="material-symbols-outlined">badge</span>
                 </div>
-                <div className="flex flex-col justify-center">
-                  <p className="text-text text-base font-semibold leading-tight">{teacher.firstName} {teacher.lastName}</p>
+                <div className="flex flex-col justify-center truncate">
+                  <p className="text-text text-base font-semibold leading-tight truncate">{teacher.firstName} {teacher.lastName}</p>
                   {teacher.user?.dni && <p className="text-[#9a4c4c] text-xs font-medium mt-1">DNI: {teacher.user.dni}</p>}
-                  {teacher.email && <p className="text-[11px] text-muted mt-1">{teacher.email}</p>}
+                  {teacher.email && <p className="text-[11px] text-muted mt-1 truncate">{teacher.email}</p>}
                 </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <button className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2" type="button" onClick={() => openEdit(teacher)}>Editar</button>
-                <button className="rounded-lg border border-red-200 text-red-600 text-xs font-semibold px-3 py-2" type="button" onClick={() => handleDelete(teacher)}>Eliminar</button>
+              </Link>
+              <div className="flex flex-col gap-2 shrink-0">
+                <Link className="rounded-lg border border-primary text-primary text-xs font-semibold px-3 py-2 hover:bg-primary hover:text-white transition-colors" to={`/admin/profesores/${teacher.id}`}>Ver detalles</Link>
               </div>
             </div>
           ))}
@@ -88,14 +85,6 @@ export function AdminTeachersView() {
           </div>
         )}
       </main>
-
-      {editing && (
-        <EditTeacherModal
-          editing={editing} setEditing={setEditing} form={form} setForm={setForm}
-          handleSave={handleSave} saving={saving} editError={editError}
-          handleResetPassword={handleResetPassword} resetInfo={resetInfo} setResetInfo={setResetInfo} resetting={resetting}
-        />
-      )}
 
       <CreateTeacherModal
         createOpen={createOpen} setCreateOpen={setCreateOpen} createForm={createForm} setCreateForm={setCreateForm}

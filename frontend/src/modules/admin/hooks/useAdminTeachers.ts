@@ -22,18 +22,10 @@ export function useAdminTeachers() {
   const [total, setTotal] = useState(0);
   const pageSize = 5;
 
-  const [editing, setEditing] = useState<AdminTeacher | null>(null);
-  const [form, setForm] = useState<TeacherForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-  const [editError, setEditError] = useState('');
-
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState<CreateTeacherForm>(emptyCreateForm);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
-
-  const [resetInfo, setResetInfo] = useState('');
-  const [resetting, setResetting] = useState(false);
 
   const loadTeachers = async () => {
     setLoading(true); setError('');
@@ -58,35 +50,6 @@ export function useAdminTeachers() {
   useEffect(() => { loadTeachers(); }, [page, query]);
   useEffect(() => { setPage(1); }, [query]);
 
-  const openEdit = (teacher: AdminTeacher) => {
-    setEditing(teacher);
-    setResetInfo('');
-    setForm({
-      firstName: teacher.firstName ?? '', lastName: teacher.lastName ?? '', email: teacher.email ?? '',
-      phone: teacher.phone ?? ''
-    });
-  };
-
-  const handleSave = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!editing) return;
-    setSaving(true); setError(''); setEditError('');
-    try {
-      const payload = {
-        firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email.trim() || null,
-        phone: form.phone.trim() || null,
-      };
-      const res = await httpClient.request(`/teachers/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar el profesor.');
-      setEditing(null); setForm(emptyForm); setResetInfo('');
-      await loadTeachers();
-    } catch (err) {
-      setEditError(err instanceof Error ? err.message : 'No se pudo guardar el profesor.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault();
     setCreating(true); setError(''); setCreateError('');
@@ -107,39 +70,8 @@ export function useAdminTeachers() {
     }
   };
 
-  const handleDelete = async (teacher: AdminTeacher) => {
-    if (!confirm(`Eliminar profesor ${teacher.firstName} ${teacher.lastName}?`)) return;
-    setError('');
-    try {
-      const res = await httpClient.request(`/teachers/${teacher.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo eliminar el profesor.');
-      await loadTeachers();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo eliminar el profesor.');
-    }
-  };
-
-  const handleResetPassword = async () => {
-    if (!editing?.user?.id) return setEditError('No se pudo identificar el usuario.');
-    if (!confirm('¿Querés resetear la contraseña de este profesor?')) return;
-    setResetting(true); setEditError('');
-    try {
-      const res = await httpClient.request(`/auth/admin/users/${editing.user.id}/reset-password`, { method: 'POST' });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo resetear la contraseña.');
-      const data = await res.json() as { temporaryPassword?: string };
-      if (!data?.temporaryPassword) throw new Error('No se recibió la contraseña temporal.');
-      setResetInfo(data.temporaryPassword);
-    } catch (err) {
-      setEditError(err instanceof Error ? err.message : 'No se pudo resetear la contraseña.');
-    } finally {
-      setResetting(false);
-    }
-  };
-
   return {
     teachers, loading, error, query, setQuery, page, setPage, total, pageSize,
-    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit,
-    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
-    handleDelete, handleResetPassword, resetInfo, setResetInfo, resetting
+    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate
   };
 }

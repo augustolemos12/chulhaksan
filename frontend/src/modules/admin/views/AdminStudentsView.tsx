@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useAdminStudents } from '../hooks/useAdminStudents';
-import { EditStudentModal, CreateStudentModal } from '../components/AdminStudentModals';
+import { CreateStudentModal } from '../components/AdminStudentModals';
 
 export function AdminStudentsView() {
   const {
     students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
     page, setPage, pageSize, gyms, classGroups, activeTeachers, searchParams, setSearchParams,
-    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit,
-    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
-    handleDelete, handleResetPassword, resetInfo, setResetInfo, resetting
+    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate
   } = useAdminStudents();
 
   const categoryLabel = (val?: 'ADULT' | 'CHILD') => val === 'CHILD' ? 'Infantil' : 'Adulto';
@@ -101,21 +99,20 @@ export function AdminStudentsView() {
 
         <div className="flex flex-col gap-3">
           {students.map((student) => (
-            <div key={student.dni} className="flex items-center gap-4 bg-surface p-3 rounded-xl justify-between shadow-soft">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-12 w-12">
+            <div key={student.dni} className="flex items-center gap-4 bg-surface p-3 rounded-xl justify-between shadow-soft hover:bg-surface/80 transition-colors">
+              <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/alumno/${student.dni}`}>
+                <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-12 w-12 shrink-0">
                   <span className="material-symbols-outlined">person</span>
                 </div>
-                <div className="flex flex-col justify-center">
-                  <p className="text-text text-base font-semibold leading-tight">{student.firstName} {student.lastName}</p>
+                <div className="flex flex-col justify-center truncate">
+                  <p className="text-text text-base font-semibold leading-tight truncate">{student.firstName} {student.lastName}</p>
                   <p className="text-[#9a4c4c] text-xs font-medium mt-1">DNI: {student.dni}</p>
-                  {student.gym?.name && <p className="text-[11px] text-muted mt-1">Gimnasio: {student.gym.name}</p>}
+                  {student.gym?.name && <p className="text-[11px] text-muted mt-1 truncate">Gimnasio: {student.gym.name}</p>}
                   <p className="text-[11px] text-muted mt-1">Tipo: {categoryLabel(student.category)}</p>
                 </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <button className="rounded-lg bg-primary text-white text-xs font-semibold px-3 py-2" type="button" onClick={() => openEdit(student)}>Editar</button>
-                <button className="rounded-lg border border-red-200 text-red-600 text-xs font-semibold px-3 py-2" type="button" onClick={() => handleDelete(student)}>Eliminar</button>
+              </Link>
+              <div className="flex flex-col gap-2 shrink-0">
+                <Link className="rounded-lg border border-primary text-primary text-xs font-semibold px-3 py-2 hover:bg-primary hover:text-white transition-colors" to={`/alumno/${student.dni}`}>Ver detalles</Link>
               </div>
             </div>
           ))}
@@ -133,14 +130,6 @@ export function AdminStudentsView() {
           </div>
         )}
       </main>
-
-      {editing && (
-        <EditStudentModal
-          editing={editing} setEditing={setEditing} form={form} setForm={setForm}
-          classGroups={classGroups} gyms={gyms} teachers={activeTeachers} handleSave={handleSave} saving={saving} editError={editError}
-          handleResetPassword={handleResetPassword} resetInfo={resetInfo} setResetInfo={setResetInfo} resetting={resetting}
-        />
-      )}
 
       <CreateStudentModal
         createOpen={createOpen} setCreateOpen={setCreateOpen} createForm={createForm} setCreateForm={setCreateForm}

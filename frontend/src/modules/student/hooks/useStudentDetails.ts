@@ -6,6 +6,7 @@ import { httpClient } from '../../../core/api/httpClient';
 export type StudentData = {
   id: number;
   dni: string;
+  userId?: number;
   gymId?: string | null;
   firstName: string;
   lastName: string;
@@ -130,12 +131,24 @@ export function useStudentDetails() {
 
 
 
+  const studentName = useMemo(() => student ? `${student.firstName} ${student.lastName}` : 'Alumno', [student]);
+
+  const isAdmin = profile?.role === 'ADMIN';
+  const canManage = isTeacher || isAdmin;
+
   const resetPassword = async () => {
     if (!dni || !confirm('¿Quieres resetear la contraseña de este alumno?')) return;
     setIsResettingPass(true);
     setErrorMsg('');
     try {
-      const data = await httpClient.post<{ temporaryPassword?: string }>(`/teachers/me/students/${dni}/reset-password`, {});
+      let data;
+      if (isTeacher) {
+        data = await httpClient.post<{ temporaryPassword?: string }>(`/teachers/me/students/${dni}/reset-password`, {});
+      } else if (isAdmin && student?.userId) {
+        data = await httpClient.post<{ temporaryPassword?: string }>(`/auth/admin/users/${student.userId}/reset-password`, {});
+      } else {
+        throw new Error('No tienes permisos para resetear la contraseña o falta el usuario.');
+      }
       if (!data.temporaryPassword) throw new Error('No se recibio la contraseña temporal.');
       setResetPassTemp(data.temporaryPassword);
     } catch (err) {
@@ -183,14 +196,12 @@ export function useStudentDetails() {
     }
   };
 
-  const studentName = useMemo(() => student ? `${student.firstName} ${student.lastName}` : 'Alumno', [student]);
-
   return {
     student, studentName, fees,
     isLoading, errorMsg, isEditing, isSaving, editForm, updateEditForm, toggleEditMode, saveProfile,
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
     actionLoading, unassignStudent, deleteStudent,
     markingFee, markFeeAsPaid,
-    returnTo, isTeacher
+    returnTo, isTeacher, isAdmin, canManage
   };
 }

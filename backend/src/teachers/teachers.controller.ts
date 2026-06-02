@@ -46,8 +46,8 @@ export class TeachersController {
     return this.teachersService.findOwnProfile(user.id);
   }
 
-  @Patch('me/payment-info')
-  @Roles(Role.TEACHER)
+  @Patch(':id/payment-info')
+  @Roles(Role.ADMIN)
   @UseInterceptors(FileInterceptor('qrCode', { storage: memoryStorage() }))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -67,8 +67,8 @@ export class TeachersController {
       },
     },
   })
-  async updateOwnPaymentDetails(
-    @CurrentUser() user: any,
+  async updatePaymentDetails(
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTeacherPaymentDto,
     @UploadedFile(
       new ParseFilePipe({
@@ -80,7 +80,7 @@ export class TeachersController {
       }),
     ) file?: Express.Multer.File,
   ) {
-    return this.teachersService.updateOwnPaymentDetails(user.id, dto, file);
+    return this.teachersService.updatePaymentDetails(id, dto, file);
   }
 
   // ==========================================

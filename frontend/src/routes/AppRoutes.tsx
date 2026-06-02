@@ -14,6 +14,7 @@ import { DashboardView } from '../modules/dashboard/views/DashboardView';
 // Admin
 import { AdminStudentsView } from '../modules/admin/views/AdminStudentsView';
 import { AdminTeachersView } from '../modules/admin/views/AdminTeachersView';
+import { AdminTeacherDetailsView } from '../modules/admin/views/AdminTeacherDetailsView';
 import { AdminGymsView } from '../modules/admin/views/AdminGymsView';
 import { AdminEventView } from '../modules/admin/views/AdminEventView';
 import { AdminFeeConfigView } from '../modules/admin/views/AdminFeeConfigView';
@@ -60,6 +61,7 @@ export function AppRoutes() {
             <Route path="/admin/alumnos" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminStudentsView /></ProtectedRoute>} />
             <Route path="/admin/censo" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminCensoView /></ProtectedRoute>} />
             <Route path="/admin/profesores" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminTeachersView /></ProtectedRoute>} />
+            <Route path="/admin/profesores/:id" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminTeacherDetailsView /></ProtectedRoute>} />
             <Route path="/admin/gimnasios" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminGymsView /></ProtectedRoute>} />
             <Route path="/admin/eventos" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminEventView /></ProtectedRoute>} />
             <Route path="/admin/cuota-global" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminFeeConfigView /></ProtectedRoute>} />

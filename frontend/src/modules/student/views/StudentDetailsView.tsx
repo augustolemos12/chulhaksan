@@ -8,7 +8,7 @@ export function StudentDetailsView() {
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
     actionLoading, unassignStudent, deleteStudent,
     markingFee, markFeeAsPaid,
-    returnTo, isTeacher
+    returnTo, isTeacher, canManage
   } = useStudentDetails();
 
   const categoryLabel = (val?: 'ADULT' | 'CHILD') => val === 'CHILD' ? 'Infantil' : 'Adulto';
@@ -51,10 +51,10 @@ export function StudentDetailsView() {
       <InfoRow icon="sports_martial_arts" label="Cinturón actual" value={beltLabel(student?.currentBelt)} />
       <InfoRow icon="class" label="Clase" value={student?.classGroup?.name ?? '-'} />
 
-      {isTeacher && (
+      {canManage && (
         <div className="px-4 pt-4">
           <div className="bg-surface border border-border rounded-xl p-4 shadow-soft space-y-3">
-            <p className="text-sm font-semibold">Acciones del profesor</p>
+            <p className="text-sm font-semibold">Acciones de gestión</p>
             {isEditing && (
               <EditProfileForm editForm={editForm} updateEditForm={updateEditForm} gyms={[]} onSave={saveProfile} isSaving={isSaving} />
             )}
@@ -66,10 +66,12 @@ export function StudentDetailsView() {
                 <span className="material-symbols-outlined text-base">edit</span>
                 {isEditing ? 'Cerrar edicion' : 'Editar datos'}
               </button>
-              <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text disabled:opacity-70" onClick={unassignStudent} disabled={actionLoading !== null}>
-                <span className="material-symbols-outlined text-base">link_off</span>
-                {actionLoading === 'unassign' ? 'Desasignando...' : 'Desasignar alumno'}
-              </button>
+              {isTeacher && (
+                <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text disabled:opacity-70" onClick={unassignStudent} disabled={actionLoading !== null}>
+                  <span className="material-symbols-outlined text-base">link_off</span>
+                  {actionLoading === 'unassign' ? 'Desasignando...' : 'Desasignar alumno'}
+                </button>
+              )}
               <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text disabled:opacity-70" onClick={resetPassword} disabled={isResettingPass}>
                 <span className="material-symbols-outlined text-base">key</span>
                 {isResettingPass ? 'Reseteando...' : 'Resetear contraseña'}

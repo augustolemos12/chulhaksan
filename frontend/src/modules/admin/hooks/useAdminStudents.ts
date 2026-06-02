@@ -35,18 +35,12 @@ export function useAdminStudents() {
   const [total, setTotal] = useState(0);
   const pageSize = 10;
 
-  const [editing, setEditing] = useState<AdminStudent | null>(null);
-  const [form, setForm] = useState<StudentForm>(emptyForm);
-  const [saving, setSaving] = useState(false);
-  const [editError, setEditError] = useState('');
+
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState<CreateStudentForm>(emptyCreateForm);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
-
-  const [resetInfo, setResetInfo] = useState('');
-  const [resetting, setResetting] = useState(false);
 
   const loadStudents = async () => {
     setLoading(true);
@@ -108,42 +102,6 @@ export function useAdminStudents() {
 
   const activeTeachers = useMemo(() => teachers.filter(t => !t.user?.status || t.user.status === 'ACTIVE'), [teachers]);
 
-  const openEdit = (student: AdminStudent) => {
-    setEditing(student);
-    setForm({
-      gymId: student.gymId ? String(student.gymId) : '',
-      teacherId: student.teacherId ? String(student.teacherId) : '',
-      firstName: student.firstName ?? '', lastName: student.lastName ?? '', email: student.email ?? '',
-      phone: student.phone ?? '', classGroupId: student.classGroup ? String(student.classGroup.id) : '',
-      category: student.category ?? 'ADULT', address: student.address ?? '',
-    });
-    setResetInfo('');
-  };
-
-  const handleSave = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!editing) return;
-    setSaving(true);
-    setError(''); setEditError('');
-    try {
-      const payload = {
-        firstName: form.firstName.trim() || null, lastName: form.lastName.trim() || null,
-        email: form.email.trim() || null, phone: form.phone.trim() || null,
-        classGroupId: form.classGroupId ? Number(form.classGroupId) : null,
-        category: form.category, address: form.address.trim() || null,
-      };
-      const res = await httpClient.request(`/students/${editing.id}`, { method: 'PATCH', json: true, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo guardar el alumno.');
-      
-      setEditing(null); setForm(emptyForm); setResetInfo('');
-      await loadStudents();
-    } catch (err) {
-      setEditError(err instanceof Error ? err.message : 'No se pudo guardar el alumno.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleCreate = async (event: React.FormEvent) => {
     event.preventDefault();
     setCreating(true); setError(''); setCreateError('');
@@ -171,41 +129,9 @@ export function useAdminStudents() {
       setCreating(false);
     }
   };
-
-  const handleDelete = async (student: AdminStudent) => {
-    if (!confirm(`Eliminar alumno ${student.firstName} ${student.lastName}?`)) return;
-    setError('');
-    try {
-      const res = await httpClient.request(`/students/${student.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo eliminar el alumno.');
-      await loadStudents();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo eliminar el alumno.');
-    }
-  };
-
-  const handleResetPassword = async () => {
-    if (!editing?.user?.id) return setEditError('No se pudo identificar el usuario.');
-    if (!confirm('¿Querés resetear la contraseña de este alumno?')) return;
-    setResetting(true); setEditError('');
-    try {
-      const res = await httpClient.request(`/auth/admin/users/${editing.user.id}/reset-password`, { method: 'POST' });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? 'No se pudo resetear la contraseña.');
-      const data = await res.json() as { temporaryPassword?: string };
-      if (!data?.temporaryPassword) throw new Error('No se recibió la contraseña temporal.');
-      setResetInfo(data.temporaryPassword);
-    } catch (err) {
-      setEditError(err instanceof Error ? err.message : 'No se pudo resetear la contraseña.');
-    } finally {
-      setResetting(false);
-    }
-  };
-
   return {
     students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
     page, setPage, pageSize, gyms, classGroups, activeTeachers, searchParams, setSearchParams,
-    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit,
-    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate,
-    handleDelete, handleResetPassword, resetInfo, setResetInfo, resetting
+    createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate
   };
 }
