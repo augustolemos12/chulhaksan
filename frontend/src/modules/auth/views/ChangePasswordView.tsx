@@ -38,7 +38,7 @@ export function ChangePasswordView() {
             required
           />
           <button
-            className="absolute right-4 top-[38px] text-slate-400 hover:text-text transition-colors"
+            className="absolute right-4 top-[38px] text-muted hover:text-text transition-colors"
             type="button"
             aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             onClick={togglePassword}

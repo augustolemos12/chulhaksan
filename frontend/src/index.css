@@ -12,11 +12,11 @@
   }
 
   .dark {
-    --color-background: #0f172a; /* Slate 900 */
-    --color-surface: #1e293b;    /* Slate 800 */
-    --color-text: #f8fafc;       /* Slate 50 */
-    --color-muted: #94a3b8;      /* Slate 400 */
-    --color-border: #334155;     /* Slate 700 */
+    --color-background: #18181b; /* Zinc 900 - Gris oscuro premium */
+    --color-surface: #27272a;    /* Zinc 800 - Superficie de tarjetas */
+    --color-text: #fafafa;       /* Zinc 50 - Texto de alto contraste */
+    --color-muted: #a1a1aa;      /* Zinc 400 - Texto secundario/atenuado */
+    --color-border: #3f3f46;     /* Zinc 700 - Bordes sutiles */
   }
 
   body {
