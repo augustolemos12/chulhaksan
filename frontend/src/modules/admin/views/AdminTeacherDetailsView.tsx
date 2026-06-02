@@ -41,9 +41,9 @@ export function AdminTeacherDetailsView() {
   };
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] sm:max-w-[640px] md:max-w-[800px] mx-auto overflow-x-hidden border-x border-gray-200 bg-background text-[#1b0d0d]">
+    <div className="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] sm:max-w-[640px] md:max-w-[800px] mx-auto overflow-x-hidden border-x border-gray-200 bg-background text-text">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur-md">
-        <Link className="flex items-center gap-2 text-sm font-semibold text-[#1b0d0d] transition-opacity hover:opacity-70" to={returnTo}>
+        <Link className="flex items-center gap-2 text-sm font-semibold text-text transition-opacity hover:opacity-70" to={returnTo}>
           <span className="material-symbols-outlined text-lg">arrow_back</span>
           Atrás
         </Link>
@@ -61,7 +61,7 @@ export function AdminTeacherDetailsView() {
             <h2 className="text-2xl font-bold tracking-tight">{teacher.firstName} {teacher.lastName}</h2>
           </div>
 
-          <h3 className="text-[#1b0d0d] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-2">
+          <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-2">
             Información Personal
           </h3>
           <div className="px-4 space-y-1">
@@ -80,11 +80,11 @@ export function AdminTeacherDetailsView() {
           </div>
 
           <div className="px-4 pt-4">
-            <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm space-y-3">
+            <div className="bg-surface border border-border rounded-xl p-4 shadow-sm space-y-3">
               <p className="text-sm font-semibold">Acciones del administrador</p>
               
               {isEditing && (
-                <form onSubmit={handleSave} className="space-y-3 border-b border-gray-100 pb-3 mb-3">
+                <form onSubmit={handleSave} className="space-y-3 border-b border-border pb-3 mb-3">
                   {editError && <div className="text-xs text-red-600 font-medium p-2 bg-red-50 rounded-lg">{editError}</div>}
                   <div className="grid grid-cols-2 gap-3">
                     <label className="flex flex-col"><span className="text-xs font-semibold mb-1">Nombre</span><input required className="rounded-lg border px-3 py-2 text-sm" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} /></label>
@@ -94,20 +94,20 @@ export function AdminTeacherDetailsView() {
                   <label className="flex flex-col"><span className="text-xs font-semibold mb-1">Correo electrónico</span><input type="email" className="rounded-lg border px-3 py-2 text-sm" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>
                   <div className="flex gap-2">
                     <button type="submit" disabled={saving} className="flex-1 rounded-lg bg-primary text-white py-2 text-sm font-bold disabled:opacity-70">{saving ? 'Guardando...' : 'Guardar Cambios'}</button>
-                    <button type="button" onClick={closeEdit} className="flex-1 rounded-lg border border-gray-200 bg-white py-2 text-sm font-bold">Cancelar</button>
+                    <button type="button" onClick={closeEdit} className="flex-1 rounded-lg border border-border bg-surface text-text py-2 text-sm font-bold">Cancelar</button>
                   </div>
                 </form>
               )}
 
               <div className="flex flex-wrap items-center gap-2">
                 <button
-                  className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold disabled:opacity-70 ${isEditing ? 'border-primary bg-primary/10 text-primary' : 'border-gray-200 bg-white text-[#1b0d0d]'}`}
+                  className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold disabled:opacity-70 ${isEditing ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface text-text'}`}
                   onClick={openEdit} disabled={saving}
                 >
                   <span className="material-symbols-outlined text-base">edit</span>
                   Editar datos
                 </button>
-                <button className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-[#1b0d0d] disabled:opacity-70" onClick={handleResetPassword} disabled={resetting}>
+                <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text disabled:opacity-70" onClick={handleResetPassword} disabled={resetting}>
                   <span className="material-symbols-outlined text-base">key</span>
                   {resetting ? 'Reseteando...' : 'Resetear contraseña'}
                 </button>
@@ -128,7 +128,7 @@ export function AdminTeacherDetailsView() {
             </div>
           </div>
 
-          <h3 className="text-[#1b0d0d] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Configuración de Pagos</h3>
+          <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Configuración de Pagos</h3>
           <div className="px-4 pb-24">
             {paymentError && <div className="mb-4 bg-danger/10 border border-danger/20 text-danger rounded-2xl p-4 flex items-start gap-3"><span className="material-symbols-outlined shrink-0">error</span><p className="text-sm font-semibold">{paymentError}</p></div>}
             {paymentSuccess && <div className="mb-4 bg-success/10 border border-success/20 text-success rounded-2xl p-4 flex items-start gap-3"><span className="material-symbols-outlined shrink-0 text-success">check_circle</span><p className="text-sm font-semibold">{paymentSuccess}</p></div>}
