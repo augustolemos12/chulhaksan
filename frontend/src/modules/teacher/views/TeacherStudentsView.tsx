@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+ import { Link } from 'react-router-dom';
 import { useTeacherStudents } from '../hooks/useTeacherStudents';
 import { CreateTeacherStudentModal, EditTeacherStudentModal } from '../components/TeacherStudentModals';
 
@@ -26,7 +26,7 @@ export function TeacherStudentsView() {
           <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">
             Mis Alumnos
           </h1>
-          <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-soft" type="button" onClick={() => setCreateOpen(true)} aria-label="Crear alumno">
+          <button className="flex items-center gap-2 rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2 hover:bg-primary/90 transition-colors shadow-sm" type="button" onClick={() => setCreateOpen(true)} aria-label="Crear alumno">
             <span className="material-symbols-outlined text-[18px]">person_add</span>
             Crear Alumno
           </button>
@@ -113,7 +113,7 @@ export function TeacherStudentsView() {
                 </div>
               </Link>
               <div className="flex flex-col items-end gap-2 shrink-0">
-                <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${student.status === 'OK' ? 'bg-green-100 text-green-700' : student.status === 'DEBT' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-muted'}`}>
+                <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${student.status === 'OK' ? 'bg-green-100 text-green-700' : student.status === 'DEBT' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-500'}`}>
                   {student.status === 'OK' ? 'Al día' : student.status === 'DEBT' ? 'Deuda' : 'Sin estado'}
                 </span>
                 <button className="rounded-lg border border-primary text-primary text-xs font-semibold px-3 py-1 hover:bg-primary hover:text-white transition-colors" type="button" onClick={() => openEdit(student)}>Editar</button>

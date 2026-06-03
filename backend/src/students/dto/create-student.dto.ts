@@ -28,10 +28,11 @@ export class CreateStudentDto {
   @Transform(({ value }) => value?.trim())
   lastName: string;
 
-  @ApiProperty({ description: 'ID del Gimnasio al que pertenece', example: 1 })
+  @ApiPropertyOptional({ description: 'ID del Gimnasio al que pertenece', example: 1 })
+  @IsOptional()
   @IsInt()
   @IsPositive()
-  gymId: number;
+  gymId?: number;
 
   @ApiProperty({ description: 'ID de la clase', example: 1 })
   @IsInt()
