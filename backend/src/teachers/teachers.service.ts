@@ -240,8 +240,8 @@ export class TeachersService {
     const updatedTeacher = await this.prisma.teacher.update({
       where: { id: teacher.id },
       data: {
-        walletUrl: dto.walletUrl || null,
-        lateFeeWalletUrl: dto.lateFeeWalletUrl || null,
+        walletUrl: dto.walletUrl === undefined ? teacher.walletUrl : (dto.walletUrl || null),
+        lateFeeWalletUrl: dto.lateFeeWalletUrl === undefined ? teacher.lateFeeWalletUrl : (dto.lateFeeWalletUrl || null),
         qrCodeUrl,
         lateFeeQrCodeUrl,
       },
