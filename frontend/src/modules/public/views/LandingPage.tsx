@@ -79,7 +79,7 @@ function VisionMissionSection() {
             <h2 className="text-lg font-bold">Nuestra Visión</h2>
           </div>
           <p className="text-sm text-muted leading-relaxed font-medium">
-            • Ser la organizacion N°1 del mundo en la enseñanza de Taekwon-do a todas las personas, sin distinción de sexo, raza, credo, religión y cultura. Mejorando la calidad de vida y elevando el potencial humano, en un espacio cordial, ético y confiable.
+            Ser la organizacion N°1 del mundo en la enseñanza de Taekwon-do a todas las personas, sin distinción de sexo, raza, credo, religión y cultura. Mejorando la calidad de vida y elevando el potencial humano, en un espacio cordial, ético y confiable.
           </p>
         </div>
         <div className="bg-surface p-6 rounded-2xl border border-border shadow-soft">
@@ -90,7 +90,7 @@ function VisionMissionSection() {
           <p className="text-sm text-muted leading-relaxed font-medium">
             • Facultar lideres capaces de trascender y hacer trascender a su gente.
             <br />
-            • Forjar un equipo de trabajo sólido y edicaz basado en la confiabilidad.
+            • Forjar un equipo de trabajo sólido y eficaz basado en la confiabilidad.
           </p>
         </div>
       </div>

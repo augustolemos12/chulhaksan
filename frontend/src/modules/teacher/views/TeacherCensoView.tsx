@@ -101,19 +101,19 @@ export function TeacherCensoView() {
                 <div>
                   <div className="flex justify-between items-end mb-1">
                     <span className="text-sm font-semibold text-text">Infantil ({data.byCategory.CHILD.count})</span>
-                    <span className="text-sm font-bold text-primary">{data.byCategory.CHILD.percentage}%</span>
+                    <span className="text-sm font-bold text-red-500">{data.byCategory.CHILD.percentage}%</span>
                   </div>
                   <div className="w-full bg-background rounded-full h-2.5">
-                    <div className="bg-primary h-2.5 rounded-full" style={{ width: `${data.byCategory.CHILD.percentage}%` }}></div>
+                    <div className="bg-gradient-to-r from-red-600 to-rose-500 h-2.5 rounded-full" style={{ width: `${data.byCategory.CHILD.percentage}%` }}></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-end mb-1">
                     <span className="text-sm font-semibold text-text">Adulto ({data.byCategory.ADULT.count})</span>
-                    <span className="text-sm font-bold text-primary">{data.byCategory.ADULT.percentage}%</span>
+                    <span className="text-sm font-bold text-orange-500">{data.byCategory.ADULT.percentage}%</span>
                   </div>
                   <div className="w-full bg-background rounded-full h-2.5">
-                    <div className="bg-primary h-2.5 rounded-full" style={{ width: `${data.byCategory.ADULT.percentage}%` }}></div>
+                    <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full" style={{ width: `${data.byCategory.ADULT.percentage}%` }}></div>
                   </div>
                 </div>
               </div>
@@ -125,37 +125,37 @@ export function TeacherCensoView() {
                 <div>
                   <div className="flex justify-between items-end mb-1">
                     <span className="text-sm font-semibold text-text">Blancos y P. Amarillas ({data.byBeltGroup.group1.count})</span>
-                    <span className="text-sm font-bold text-primary">{data.byBeltGroup.group1.percentage}%</span>
+                    <span className="text-sm font-bold text-red-500">{data.byBeltGroup.group1.percentage}%</span>
                   </div>
                   <div className="w-full bg-background rounded-full h-2.5">
-                    <div className="bg-primary h-2.5 rounded-full" style={{ width: `${data.byBeltGroup.group1.percentage}%` }}></div>
+                    <div className="bg-gradient-to-r from-red-600 to-rose-500 h-2.5 rounded-full" style={{ width: `${data.byBeltGroup.group1.percentage}%` }}></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-end mb-1">
                     <span className="text-sm font-semibold text-text">Amarillo a P. Azul ({data.byBeltGroup.group2.count})</span>
-                    <span className="text-sm font-bold text-primary">{data.byBeltGroup.group2.percentage}%</span>
+                    <span className="text-sm font-bold text-orange-500">{data.byBeltGroup.group2.percentage}%</span>
                   </div>
                   <div className="w-full bg-background rounded-full h-2.5">
-                    <div className="bg-primary h-2.5 rounded-full" style={{ width: `${data.byBeltGroup.group2.percentage}%` }}></div>
+                    <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-2.5 rounded-full" style={{ width: `${data.byBeltGroup.group2.percentage}%` }}></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-end mb-1">
                     <span className="text-sm font-semibold text-text">Azul a P. Negra ({data.byBeltGroup.group3.count})</span>
-                    <span className="text-sm font-bold text-primary">{data.byBeltGroup.group3.percentage}%</span>
+                    <span className="text-sm font-bold text-amber-500">{data.byBeltGroup.group3.percentage}%</span>
                   </div>
                   <div className="w-full bg-background rounded-full h-2.5">
-                    <div className="bg-primary h-2.5 rounded-full" style={{ width: `${data.byBeltGroup.group3.percentage}%` }}></div>
+                    <div className="bg-gradient-to-r from-amber-500 to-yellow-400 h-2.5 rounded-full" style={{ width: `${data.byBeltGroup.group3.percentage}%` }}></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-end mb-1">
                     <span className="text-sm font-semibold text-text">Danes ({data.byBeltGroup.group4.count})</span>
-                    <span className="text-sm font-bold text-primary">{data.byBeltGroup.group4.percentage}%</span>
+                    <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400">{data.byBeltGroup.group4.percentage}%</span>
                   </div>
                   <div className="w-full bg-background rounded-full h-2.5">
-                    <div className="bg-primary h-2.5 rounded-full" style={{ width: `${data.byBeltGroup.group4.percentage}%` }}></div>
+                    <div className="bg-gradient-to-r from-zinc-700 to-zinc-900 h-2.5 rounded-full border border-zinc-650/20" style={{ width: `${data.byBeltGroup.group4.percentage}%` }}></div>
                   </div>
                 </div>
               </div>

@@ -32,10 +32,10 @@
     @apply transition-all duration-300;
   }
 
-  input,
+  input:not([type="checkbox"]):not([type="radio"]),
   textarea,
   select {
-    @apply outline-none;
+    @apply outline-none bg-surface text-text;
   }
 }
 
