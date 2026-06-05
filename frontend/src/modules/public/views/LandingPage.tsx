@@ -104,11 +104,11 @@ function TenetsSection() {
       <div className="text-center mb-10 relative z-10">
         <h2 className="text-2xl font-extrabold mb-2 tracking-tight">Principios del Taekwon-Do</h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto relative z-10">
+      <div className="grid grid-cols-2 gap-4 w-full max-w-md sm:max-w-lg md:max-w-2xl mx-auto relative z-10">
         {TENETS.map((tenet, idx) => (
           <div
             key={idx}
-            className={`${tenet.colSpan ? 'col-span-2' : ''} bg-surface p-5 rounded-2xl border border-primary/40 shadow-soft transition-all duration-300 flex flex-col items-center text-center hover:border-primary/70 hover:shadow-glow/10`}
+            className={`${tenet.colSpan ? 'col-span-2' : ''} bg-surface p-4 sm:p-5 rounded-2xl border border-primary/40 shadow-soft transition-all duration-300 flex flex-col items-center text-center hover:border-primary/70 hover:shadow-glow/10`}
           >
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
               <span className="material-symbols-outlined text-primary text-2xl">{tenet.icon}</span>
