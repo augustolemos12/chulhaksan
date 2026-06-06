@@ -146,4 +146,11 @@ export class StudentsController {
   findTeacherStudentsAlternative(@Query() query: StudentQueryDto, @CurrentUser() user: any) {
     return this.studentsService.findByTeacher(user.id, query);
   }
+
+  //TEACHER - Resetear contraseña de alumno
+  @Post('teachers/me/students/:dni/reset-password')
+  @Roles(Role.TEACHER)
+  resetStudentPasswordTeacher(@Param('dni') dni: string, @CurrentUser() user: any) {
+    return this.studentsService.resetStudentPasswordByTeacher(user.id, dni);
+  }
 }

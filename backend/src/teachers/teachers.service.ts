@@ -34,7 +34,7 @@ export class TeachersService {
       throw new ConflictException('Ya existe un usuario con ese DNI');
     }
 
-    const rawPassword = password || Math.random().toString(36).slice(-8);
+    const rawPassword = password || '123456';
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
     const result = await this.prisma.$transaction(async (tx) => {

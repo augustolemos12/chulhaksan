@@ -81,7 +81,8 @@ export class StudentsService {
       throw new ConflictException('Ya existe un usuario con este DNI');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const rawPassword = password || '123456';
+    const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
     try {
       const result = await this.prisma.$transaction(async (tx) => {
@@ -495,5 +496,29 @@ export class StudentsService {
       qrCodeUrl: student.teacher.qrCodeUrl,
       walletUrl: student.teacher.walletUrl,
     };
+  }
+
+  async resetStudentPasswordByTeacher(teacherUserId: number, dni: string) {
+    const teacher = await this.prisma.teacher.findUnique({ where: { userId: teacherUserId } });
+    if (!teacher) throw new NotFoundException('Profesor no encontrado');
+
+    const student = await this.prisma.student.findFirst({
+      where: { user: { dni }, teacherId: teacher.id, deletedAt: null },
+      include: { user: true },
+    });
+
+    if (!student || !student.userId) {
+      throw new NotFoundException('Alumno no encontrado o no te pertenece');
+    }
+
+    const temporaryPassword = '123456';
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id: student.userId },
+      data: { password: hashedPassword, mustChangePassword: true },
+    });
+
+    return { temporaryPassword };
   }
 }

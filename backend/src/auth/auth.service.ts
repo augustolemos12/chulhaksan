@@ -69,7 +69,7 @@ export class AuthService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    const temporaryPassword = `Temp${Math.floor(1000 + Math.random() * 9000)}!`;
+    const temporaryPassword = '123456';
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
 
     await this.prisma.user.update({
