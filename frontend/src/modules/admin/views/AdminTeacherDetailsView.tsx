@@ -67,7 +67,7 @@ export function AdminTeacherDetailsView() {
           <div className="px-4 space-y-1">
             <div className="flex justify-between border-b border-gray-100 py-3">
               <div className="flex items-center gap-3"><span className="material-symbols-outlined text-gray-400">fingerprint</span><p className="text-sm font-medium">DNI</p></div>
-              <p className="text-sm font-semibold">{teacher.user?.dni ?? '-'}</p>
+              <p className="text-sm font-semibold">{teacher.dni ?? '-'}</p>
             </div>
             <div className="flex justify-between border-b border-gray-100 py-3">
               <div className="flex items-center gap-3"><span className="material-symbols-outlined text-gray-400">phone</span><p className="text-sm font-medium">Teléfono</p></div>

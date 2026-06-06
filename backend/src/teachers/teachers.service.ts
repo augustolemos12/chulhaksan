@@ -20,6 +20,7 @@ export class TeachersService {
     const { user, ...teacherData } = teacher;
     return {
       ...teacherData,
+      userId: user?.id,
       dni: user?.dni,
       status: user?.status,
       mustChangePassword: user?.mustChangePassword,
