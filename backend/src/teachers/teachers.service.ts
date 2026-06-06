@@ -153,6 +153,7 @@ export class TeachersService {
   async remove(id: number) {
     const teacherData = await this.prisma.teacher.findFirst({
       where: { id, deletedAt: null },
+      include: { user: true },
     });
 
     if (!teacherData) {
@@ -167,7 +168,11 @@ export class TeachersService {
 
       await tx.user.update({
         where: { id: teacherData.userId },
-        data: { status: 'BLOCKED' },
+        data: { 
+          status: 'BLOCKED',
+          deletedAt: new Date(),
+          dni: `${teacherData.user.dni}_del_${Date.now()}`
+        },
       });
     });
 

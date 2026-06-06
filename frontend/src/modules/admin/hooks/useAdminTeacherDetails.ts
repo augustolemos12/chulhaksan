@@ -121,12 +121,12 @@ export function useAdminTeacherDetails() {
   };
 
   const handleResetPassword = async () => {
-    if (!teacher?.userId) return alert('Usuario no encontrado.');
+    if (!teacher?.user?.id) return alert('Usuario no encontrado.');
     if (!confirm('¿Querés resetear la contraseña de este profesor?')) return;
     setResetting(true);
     setResetInfo('');
     try {
-      const res = await httpClient.request(`/auth/admin/users/${teacher.userId}/reset-password`, { method: 'POST' });
+      const res = await httpClient.request(`/auth/admin/users/${teacher.user?.id}/reset-password`, { method: 'POST' });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message || 'Error al resetear.');
       const data = await res.json();
       if (!data.temporaryPassword) throw new Error('No se recibió contraseña.');

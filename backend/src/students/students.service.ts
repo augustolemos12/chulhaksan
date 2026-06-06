@@ -401,6 +401,7 @@ export class StudentsService {
   async remove(id: number, teacherUserId: number | null) {
     const student = await this.prisma.student.findFirst({
       where: { id, deletedAt: null },
+      include: { user: true },
     });
 
     if (!student) {
@@ -427,6 +428,7 @@ export class StudentsService {
         data: { 
           status: UserStatus.BLOCKED,
           deletedAt: new Date(), 
+          dni: `${student.user.dni}_del_${Date.now()}`,
         },
       });
     });
