@@ -62,7 +62,7 @@ export function AdminTeachersView() {
                 </div>
                 <div className="flex flex-col justify-center truncate">
                   <p className="text-text text-base font-semibold leading-tight truncate">{teacher.firstName} {teacher.lastName}</p>
-                  {teacher.user?.dni && <p className="text-[#9a4c4c] text-xs font-medium mt-1">DNI: {teacher.user.dni}</p>}
+                  {teacher.dni && <p className="text-[#9a4c4c] text-xs font-medium mt-1">DNI: {teacher.dni}</p>}
                   {teacher.email && <p className="text-[11px] text-muted mt-1 truncate">{teacher.email}</p>}
                 </div>
               </Link>
