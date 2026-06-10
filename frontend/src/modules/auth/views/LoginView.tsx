@@ -5,7 +5,7 @@ import { BaseInput } from '../../../shared/components/BaseInput';
 import { BaseButton } from '../../../shared/components/BaseButton';
 import { httpClient } from '../../../core/api/httpClient';
 
-import logoColor from '../../../assets/logo-color.png';
+import logoColor from '../../../assets/logo-fotor-2026052717752.png';
 
 interface MonthEvent {
   id: number;
@@ -51,7 +51,7 @@ export function LoginView() {
 
           <div className="rounded-3xl bg-surface p-10 shadow-soft border border-border">
             <div className="flex justify-center mb-8">
-              <img src={logoColor} alt="Logo" className="h-28 object-contain" />
+              <img src={logoColor} alt="Logo" className="h-28 object-contain rounded-full" />
             </div>
 
             <div className="text-center mb-8">

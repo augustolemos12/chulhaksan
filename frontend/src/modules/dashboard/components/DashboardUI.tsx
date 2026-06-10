@@ -103,7 +103,7 @@ export function QuickAction({
   variant?: 'grid' | 'row';
 }) {
   const content = variant === 'row' ? (
-    <div className="group bg-surface rounded-2xl border border-transparent hover:border-primary/20 shadow-soft hover:shadow-md p-4 px-5 flex items-center justify-between transition-all duration-300 cursor-pointer w-full">
+    <div className="group bg-surface rounded-2xl border border-transparent hover:bg-primary/5 dark:hover:bg-zinc-700 hover:border-primary/30 shadow-soft hover:shadow-md p-4 px-5 flex items-center justify-between transition-all duration-300 cursor-pointer w-full">
       <div className="flex items-center gap-4">
         <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 group-hover:bg-primary group-hover:text-white transition-all duration-300 shrink-0">
           <span className="material-symbols-outlined text-[22px]">{icon}</span>
@@ -119,7 +119,7 @@ export function QuickAction({
       </div>
     </div>
   ) : (
-    <div className="group bg-surface rounded-2xl border border-transparent hover:border-primary/20 shadow-soft hover:shadow-md p-6 flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer h-full">
+    <div className="group bg-surface rounded-2xl border border-transparent hover:bg-primary/5 dark:hover:bg-zinc-700 hover:border-primary/30 shadow-soft hover:shadow-md p-6 flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer h-full">
       <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
         <span className="material-symbols-outlined text-[28px]">{icon}</span>
       </div>
