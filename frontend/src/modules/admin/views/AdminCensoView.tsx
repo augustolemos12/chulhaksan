@@ -7,7 +7,9 @@ export function AdminCensoView() {
   const {
     data, loading, error,
     categoryFilter, setCategoryFilter,
-    beltGroupFilter, setBeltGroupFilter
+    beltGroupFilter, setBeltGroupFilter,
+    teacherFilter, setTeacherFilter,
+    activeTeachers
   } = useAdminCenso();
 
   return (
@@ -37,7 +39,26 @@ export function AdminCensoView() {
           gradientClass="from-red-600 to-rose-500" 
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined">school</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Profesor</p>
+                <select className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={teacherFilter} onChange={(e) => setTeacherFilter(e.target.value)}>
+                  <option value="">Todos</option>
+                  {activeTeachers.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.firstName} {t.lastName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">

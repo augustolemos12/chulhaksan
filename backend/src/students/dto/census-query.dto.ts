@@ -18,6 +18,13 @@ export class CensusQueryDto {
   @IsPositive()
   gymId?: number;
 
+  @ApiPropertyOptional({ description: 'Filtrar por profesor', example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  teacherId?: number;
+
   @ApiPropertyOptional({ description: 'Filtrar por categoría', enum: StudentCategory })
   @IsOptional()
   @IsEnum(StudentCategory)
@@ -28,3 +35,4 @@ export class CensusQueryDto {
   @IsEnum(BeltGroup)
   beltGroup?: BeltGroup;
 }
+
