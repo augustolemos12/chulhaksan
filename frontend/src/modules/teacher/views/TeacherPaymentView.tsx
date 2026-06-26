@@ -113,7 +113,7 @@ export function TeacherPaymentView() {
                         href={walletUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="shrink-0 flex items-center gap-2 rounded-xl bg-primary/10 text-primary px-4 py-2 font-bold text-sm hover:bg-primary hover:text-white transition-colors"
+                        className="shrink-0 flex items-center gap-2 rounded-xl bg-primary/10 text-primary px-4 py-2 font-bold text-sm hover:bg-primary/20 transition-colors"
                       >
                         <span>Abrir enlace</span>
                         <span className="material-symbols-outlined text-[18px]">open_in_new</span>
@@ -181,7 +181,7 @@ export function TeacherPaymentView() {
                         href={(teacher as any)?.lateFeeWalletUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="shrink-0 flex items-center gap-2 rounded-xl bg-amber-500/10 text-amber-600 px-4 py-2 font-bold text-sm hover:bg-amber-500 hover:text-white transition-colors"
+                        className="shrink-0 flex items-center gap-2 rounded-xl bg-amber-500/10 text-amber-600 px-4 py-2 font-bold text-sm hover:bg-amber-500/20 transition-colors"
                       >
                         <span>Abrir enlace</span>
                         <span className="material-symbols-outlined text-[18px]">open_in_new</span>

@@ -62,13 +62,13 @@ export function AdminTeachersView() {
                 </div>
                 <div className="flex flex-col justify-center truncate">
                   <p className="text-text text-base font-semibold leading-tight truncate">{teacher.firstName} {teacher.lastName}</p>
-                  {teacher.user?.dni && <p className="text-[#9a4c4c] text-xs font-medium mt-1">DNI: {teacher.user.dni}</p>}
+                  {teacher.dni && <p className="text-[#9a4c4c] text-xs font-medium mt-1">DNI: {teacher.dni}</p>}
                   {teacher.email && <p className="text-[11px] text-muted mt-1 truncate">{teacher.email}</p>}
                   <p className="text-[11px] text-muted mt-1">Alumnos: {teacher.studentCount ?? 0}</p>
                 </div>
               </Link>
               <div className="flex flex-col gap-2 shrink-0">
-                <Link className="rounded-lg border border-primary text-primary text-xs font-semibold px-3 py-2 hover:bg-primary hover:text-white transition-colors" to={`/admin/profesores/${teacher.id}`}>Ver detalles</Link>
+                <Link className="rounded-lg border border-primary bg-primary/5 text-primary text-xs font-semibold px-3 py-2 hover:bg-primary/15 transition-colors" to={`/admin/profesores/${teacher.id}`}>Ver detalles</Link>
               </div>
             </div>
           ))}

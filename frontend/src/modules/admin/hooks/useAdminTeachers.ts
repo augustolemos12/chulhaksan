@@ -4,7 +4,10 @@ import { httpClient } from '../../../core/api/httpClient';
 export type AdminTeacher = {
   id: string; firstName: string; lastName: string;
   email?: string | null; phone?: string | null;
-  user?: { id: string; dni?: string; status: string; };
+  userId?: string;
+  dni?: string;
+  status?: string;
+  mustChangePassword?: boolean;
   studentCount?: number;
   students?: Array<{
     dni: string;

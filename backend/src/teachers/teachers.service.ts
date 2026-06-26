@@ -20,6 +20,7 @@ export class TeachersService {
     const { user, ...teacherData } = teacher;
     return {
       ...teacherData,
+      userId: user?.id,
       dni: user?.dni,
       status: user?.status,
       mustChangePassword: user?.mustChangePassword,
@@ -35,7 +36,7 @@ export class TeachersService {
       throw new ConflictException('Ya existe un usuario con ese DNI');
     }
 
-    const rawPassword = password || Math.random().toString(36).slice(-8);
+    const rawPassword = password || '123456';
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
     const result = await this.prisma.$transaction(async (tx) => {
@@ -171,6 +172,7 @@ export class TeachersService {
   async remove(id: number) {
     const teacherData = await this.prisma.teacher.findFirst({
       where: { id, deletedAt: null },
+      include: { user: true },
     });
 
     if (!teacherData) {
@@ -185,7 +187,11 @@ export class TeachersService {
 
       await tx.user.update({
         where: { id: teacherData.userId },
-        data: { status: 'BLOCKED' },
+        data: { 
+          status: 'BLOCKED',
+          deletedAt: new Date(),
+          dni: `${teacherData.user.dni}_del_${Date.now()}`
+        },
       });
     });
 

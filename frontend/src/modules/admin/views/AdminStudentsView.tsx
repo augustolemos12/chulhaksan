@@ -112,7 +112,7 @@ export function AdminStudentsView() {
                 </div>
               </Link>
               <div className="flex flex-col gap-2 shrink-0">
-                <Link className="rounded-lg border border-primary text-primary text-xs font-semibold px-3 py-2 hover:bg-primary hover:text-white transition-colors" to={`/alumno/${student.dni}`}>Ver detalles</Link>
+                <Link className="rounded-lg border border-primary bg-primary/5 text-primary text-xs font-semibold px-3 py-2 hover:bg-primary/15 transition-colors" to={`/alumno/${student.dni}`}>Ver detalles</Link>
               </div>
             </div>
           ))}

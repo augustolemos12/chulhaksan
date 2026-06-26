@@ -116,7 +116,7 @@ export function TeacherStudentsView() {
                 <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${student.status === 'OK' ? 'bg-green-100 text-green-700' : student.status === 'DEBT' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-500'}`}>
                   {student.status === 'OK' ? 'Al día' : student.status === 'DEBT' ? 'Deuda' : 'Sin estado'}
                 </span>
-                <button className="rounded-lg border border-primary text-primary text-xs font-semibold px-3 py-1 hover:bg-primary hover:text-white transition-colors" type="button" onClick={() => openEdit(student)}>Editar</button>
+                <button className="rounded-lg border border-primary bg-primary/5 text-primary text-xs font-semibold px-3 py-1 hover:bg-primary/15 transition-colors" type="button" onClick={() => openEdit(student)}>Editar</button>
               </div>
             </div>
           ))}
