@@ -4,7 +4,7 @@ import { CreateStudentModal } from '../components/AdminStudentModals';
 
 export function AdminStudentsView() {
   const {
-    students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
+    students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter, teacherFilter, setTeacherFilter,
     page, setPage, pageSize, gyms, classGroups, activeTeachers, searchParams, setSearchParams,
     createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate
   } = useAdminStudents();
@@ -88,6 +88,26 @@ export function AdminStudentsView() {
                 <option value="">Todos</option>
                 <option value="ADULT">Adultos</option>
                 <option value="CHILD">Infantiles</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+              <span className="material-symbols-outlined">badge</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Profesor</p>
+              <select className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={teacherFilter} onChange={(e) => {
+                const next = e.target.value; setTeacherFilter(next);
+                const nextParams = new URLSearchParams(searchParams);
+                if (next) nextParams.set('teacherId', next); else nextParams.delete('teacherId');
+                setSearchParams(nextParams, { replace: true });
+              }}>
+                <option value="">Todos los profesores</option>
+                {activeTeachers.map((t) => <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>)}
               </select>
             </div>
           </div>

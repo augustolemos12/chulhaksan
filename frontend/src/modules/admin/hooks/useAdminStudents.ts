@@ -31,6 +31,7 @@ export function useAdminStudents() {
   const [query, setQuery] = useState('');
   const [gymFilter, setGymFilter] = useState(searchParams.get('gymId') ?? '');
   const [categoryFilter, setCategoryFilter] = useState((searchParams.get('category') as 'ADULT' | 'CHILD' | null) ?? '');
+  const [teacherFilter, setTeacherFilter] = useState(searchParams.get('teacherId') ?? '');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const pageSize = 10;
@@ -50,6 +51,7 @@ export function useAdminStudents() {
       if (query.trim()) params.set('search', query.trim());
       if (gymFilter) params.set('gymId', gymFilter);
       if (categoryFilter) params.set('category', categoryFilter);
+      if (teacherFilter) params.set('teacherId', teacherFilter);
 
       const response = await httpClient.request(`/students?${params.toString()}`, { cache: 'no-store' });
       if (!response.ok) throw new Error((await response.json().catch(() => ({}))).message ?? 'No se pudo cargar el listado.');
@@ -90,14 +92,16 @@ export function useAdminStudents() {
     initData();
   }, []);
 
-  useEffect(() => { loadStudents(); }, [page, query, gymFilter, categoryFilter]);
-  useEffect(() => { setPage(1); }, [query, gymFilter, categoryFilter]);
-
+  useEffect(() => { loadStudents(); }, [page, query, gymFilter, categoryFilter, teacherFilter]);
+  useEffect(() => { setPage(1); }, [query, gymFilter, categoryFilter, teacherFilter]);
+ 
   useEffect(() => {
     const gymId = searchParams.get('gymId') ?? '';
     if (gymId !== gymFilter) setGymFilter(gymId);
     const category = (searchParams.get('category') as 'ADULT' | 'CHILD' | null) ?? '';
     if (category !== categoryFilter) setCategoryFilter(category);
+    const teacherId = searchParams.get('teacherId') ?? '';
+    if (teacherId !== teacherFilter) setTeacherFilter(teacherId);
   }, [searchParams]);
 
   const activeTeachers = useMemo(() => teachers.filter(t => !t.user?.status || t.user.status === 'ACTIVE'), [teachers]);
@@ -130,7 +134,7 @@ export function useAdminStudents() {
     }
   };
   return {
-    students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
+    students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter, teacherFilter, setTeacherFilter,
     page, setPage, pageSize, gyms, classGroups, activeTeachers, searchParams, setSearchParams,
     createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate
   };

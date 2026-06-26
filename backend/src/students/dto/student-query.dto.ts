@@ -49,6 +49,13 @@ export class StudentQueryDto {
   @IsEnum(Belt)
   belt?: Belt;
 
+  @ApiPropertyOptional({ description: 'Filtrar por profesor', example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  teacherId?: number;
+
   @ApiPropertyOptional({ description: 'Incluir registros eliminados (soft delete)', example: false })
   @IsOptional()
   @Transform(({ value }) => {

@@ -170,13 +170,15 @@ export class StudentsService {
   }
 
   async findAll(query: StudentQueryDto, internalTeacherId?: number) {
-    const { search, gymId, classGroupId, category, belt, includeDeleted, page = 1, limit = 10 } = query;
+    const { search, gymId, classGroupId, category, belt, includeDeleted, page = 1, limit = 10, teacherId } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.StudentWhereInput = {};
 
     if (internalTeacherId) {
       where.teacherId = internalTeacherId;
+    } else if (teacherId) {
+      where.teacherId = teacherId;
     }
 
     if (!includeDeleted) {
