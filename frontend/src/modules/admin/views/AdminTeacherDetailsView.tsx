@@ -128,6 +128,37 @@ export function AdminTeacherDetailsView() {
             </div>
           </div>
 
+          <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">
+            Alumnos Asignados ({teacher.students?.length ?? 0})
+          </h3>
+          <div className="px-4 space-y-3">
+            {(!teacher.students || teacher.students.length === 0) ? (
+              <p className="text-sm text-muted px-2">No hay alumnos asignados a este profesor.</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {teacher.students.map((student: any) => (
+                  <div key={student.dni} className="flex items-center justify-between bg-surface border border-border p-3 rounded-xl shadow-soft">
+                    <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname)}`}>
+                      <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-10 w-10 shrink-0">
+                        <span className="material-symbols-outlined text-xl">person</span>
+                      </div>
+                      <div className="flex flex-col justify-center truncate">
+                        <p className="text-text text-sm font-semibold leading-tight truncate">{student.firstName} {student.lastName}</p>
+                        <p className="text-[#9a4c4c] text-[11px] font-medium mt-0.5">DNI: {student.dni}</p>
+                        {student.classGroup?.name && (
+                          <p className="text-[10px] text-muted mt-0.5 truncate">Clase: {student.classGroup.name}</p>
+                        )}
+                      </div>
+                    </Link>
+                    <Link className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-1.5 hover:bg-primary hover:text-white transition-colors shrink-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname)}`}>
+                      Ver ficha
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Configuración de Pagos</h3>
           <div className="px-4 pb-24">
             {paymentError && <div className="mb-4 bg-danger/10 border border-danger/20 text-danger rounded-2xl p-4 flex items-start gap-3"><span className="material-symbols-outlined shrink-0">error</span><p className="text-sm font-semibold">{paymentError}</p></div>}

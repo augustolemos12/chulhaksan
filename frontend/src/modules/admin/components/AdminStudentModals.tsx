@@ -268,9 +268,9 @@ export function CreateStudentModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs text-muted">Contraseña</label>
+              <label className="text-xs text-muted">Contraseña (opcional)</label>
               <div className="relative">
-                <input type={showPassword ? 'text' : 'password'} className="w-full rounded-lg border border-border px-3 py-2 text-sm pr-10" placeholder="Mínimo 6 caracteres" value={createForm.password} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, password: e.target.value }))} required />
+                <input type={showPassword ? 'text' : 'password'} className="w-full rounded-lg border border-border px-3 py-2 text-sm pr-10" placeholder="Si se omite, se generará una temporal" value={createForm.password} onChange={(e) => setCreateForm((prev: any) => ({ ...prev, password: e.target.value }))} />
                 <button className="absolute inset-y-0 right-3 flex items-center text-gray-400" type="button" onClick={() => setShowPassword(!showPassword)}>
                   <span className="material-symbols-outlined text-lg">{showPassword ? 'visibility_off' : 'visibility'}</span>
                 </button>

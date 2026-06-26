@@ -5,6 +5,14 @@ export type AdminTeacher = {
   id: string; firstName: string; lastName: string;
   email?: string | null; phone?: string | null;
   user?: { id: string; dni?: string; status: string; };
+  studentCount?: number;
+  students?: Array<{
+    dni: string;
+    firstName: string;
+    lastName: string;
+    classGroup?: { id: number; name: string } | null;
+    gym?: { id: number; name: string } | null;
+  }>;
 };
 
 export type TeacherForm = { firstName: string; lastName: string; email: string; phone: string; };
@@ -20,7 +28,7 @@ export function useAdminTeachers() {
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const pageSize = 5;
+  const pageSize = 10;
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState<CreateTeacherForm>(emptyCreateForm);

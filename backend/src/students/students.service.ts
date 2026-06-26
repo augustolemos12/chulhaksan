@@ -5,7 +5,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { StudentQueryDto } from './dto/student-query.dto';
 import { CensusQueryDto, BeltGroup } from './dto/census-query.dto';
 import { UpdateOwnStudentProfileDto } from './dto/update-own-student-profile.dto';
-import { Prisma, Role, UserStatus, StudentCategory, Belt } from '@prisma/client';
+import { Prisma, Role, UserStatus, StudentCategory, Belt, FeeStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -81,7 +81,8 @@ export class StudentsService {
       throw new ConflictException('Ya existe un usuario con este DNI');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const rawPassword = password || Math.random().toString(36).slice(-8);
+    const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
     try {
       const result = await this.prisma.$transaction(async (tx) => {
@@ -120,10 +121,46 @@ export class StudentsService {
           },
         });
 
+        // Buscar configuración de cuotas activa al momento de la creación
+        const latestConfig = await tx.feeConfig.findFirst({
+          orderBy: { validFrom: 'desc' },
+          where: {
+            validFrom: {
+              lte: new Date(),
+            },
+          },
+        });
+
+        if (!latestConfig) {
+          throw new NotFoundException('No se encontró una configuración de cuota activa. Por favor, configure el monto de la cuota primero.');
+        }
+
+        // Crear automáticamente la cuota pendiente del mes corriente para el alumno
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1; // 1-12
+        const currentYear = now.getFullYear();
+        const dueDate = new Date(currentYear, currentMonth - 1, 10);
+
+        await tx.fee.create({
+          data: {
+            studentId: newStudent.id,
+            month: currentMonth,
+            year: currentYear,
+            baseAmount: latestConfig.baseAmount,
+            totalAmount: latestConfig.baseAmount,
+            dueDate,
+            status: FeeStatus.PENDING,
+            paidAmount: 0,
+          },
+        });
+
         return newStudent;
       });
 
-      return this.mapStudentResponse(result);
+      return {
+        ...this.mapStudentResponse(result),
+        temporalPassword: password ? undefined : rawPassword,
+      };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Ocurrió un error de concurrencia. Ya existe un usuario con este DNI.');

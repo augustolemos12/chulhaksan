@@ -23,6 +23,7 @@ export class TeachersService {
       dni: user?.dni,
       status: user?.status,
       mustChangePassword: user?.mustChangePassword,
+      studentCount: teacherData.students ? teacherData.students.length : 0,
     };
   }
 
@@ -98,8 +99,11 @@ export class TeachersService {
           user: true,
           classGroups: {
             where: { isActive: true }
+          },
+          students: {
+            where: { deletedAt: null }
           }
-        },
+        }
       }),
       this.prisma.teacher.count({ where }),
     ]);
@@ -122,6 +126,13 @@ export class TeachersService {
         user: true,
         classGroups: {
           where: { isActive: true }
+        },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            classGroup: true,
+            gym: true
+          }
         }
       },
     });
@@ -143,6 +154,13 @@ export class TeachersService {
         user: true,
         classGroups: {
           where: { isActive: true }
+        },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            classGroup: true,
+            gym: true
+          }
         }
       },
     });
@@ -250,6 +268,13 @@ export class TeachersService {
         classGroups: {
           where: { isActive: true },
         },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            classGroup: true,
+            gym: true
+          }
+        }
       },
     });
 

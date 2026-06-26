@@ -10,11 +10,11 @@ export class CreateStudentDto {
   @Transform(({ value }) => value?.trim())
   dni: string;
 
-  @ApiProperty({ description: 'Contraseña temporal inicial', example: 'Temporal123!' })
+  @ApiPropertyOptional({ description: 'Contraseña temporal (opcional, si no se envía se autogenera)', example: 'Temporal123!' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MinLength(6)
-  password: string;
+  password?: string;
 
   @ApiProperty({ description: 'Nombre', example: 'Juan' })
   @IsString()

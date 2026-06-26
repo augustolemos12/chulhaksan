@@ -175,7 +175,7 @@ export function useTeacherStudents() {
     try {
       const res = await httpClient.request('/teacher/students', {
         method: 'POST', json: true, body: JSON.stringify({
-          dni: createForm.dni.replace(/\D/g, ''), password: createForm.password,
+          dni: createForm.dni.replace(/\D/g, ''), password: createForm.password.trim() || undefined,
           firstName: createForm.firstName.trim() || null, lastName: createForm.lastName.trim() || null,
           email: createForm.email.trim() || null, phone: createForm.phone.trim() || null,
           classGroupId: createForm.classGroupId ? Number(createForm.classGroupId) : null,

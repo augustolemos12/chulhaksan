@@ -108,7 +108,7 @@ export function useAdminStudents() {
     try {
       const res = await httpClient.request('/students', {
         method: 'POST', json: true, body: JSON.stringify({
-          dni: createForm.dni.trim(), password: createForm.password.trim(),
+          dni: createForm.dni.trim(), password: createForm.password.trim() || undefined,
           firstName: createForm.firstName.trim() || null, lastName: createForm.lastName.trim() || null,
           category: createForm.category || null, email: createForm.email.trim() || null,
           phone: createForm.phone.trim() || null,
