@@ -80,7 +80,7 @@ export function useTeacherStudents() {
 
       const payload = await res.json();
       const data = Array.isArray(payload) ? payload : payload?.items ?? payload?.data ?? [];
-      const total = Array.isArray(payload) ? data.length : payload?.total ?? data.length;
+      const total = Array.isArray(payload) ? data.length : payload?.meta?.total ?? payload?.total ?? data.length;
 
       const baseAssigned = (data ?? []).map((s: any) => ({ ...s, status: 'UNKNOWN' as const }));
       setAssigned(baseAssigned);

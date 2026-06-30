@@ -62,7 +62,7 @@ export function useStudentProfile() {
           if (sRes.ok) {
             const payload = await sRes.json() as any;
             if (Array.isArray(payload)) setTeacherStudentCount(payload.length);
-            else setTeacherStudentCount(payload?.total ?? payload?.data?.length ?? 0);
+            else setTeacherStudentCount(payload?.meta?.total ?? payload?.total ?? payload?.data?.length ?? 0);
           } else {
             setTeacherStudentCount(null);
           }
