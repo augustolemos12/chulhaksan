@@ -10,7 +10,14 @@ export function AdminTeacherDetailsView() {
     paymentSaving, paymentError, paymentSuccess, walletUrl, setWalletUrl, qrCodeUrl, previewUrl, selectedFile,
     lateFeeWalletUrl, setLateFeeWalletUrl, lateFeeQrCodeUrl, lateFeePreviewUrl, selectedLateFeeFile,
     handleFileChange, handleRemovePreview, handlePaymentSubmit,
+    studentPage, setStudentPage, studentPageSize,
   } = useAdminTeacherDetails();
+
+  const totalStudents = teacher?.students?.length || 0;
+  const totalPages = Math.max(1, Math.ceil(totalStudents / studentPageSize));
+  const pageStart = Math.max(1, Math.min(studentPage - 2, totalPages - 4));
+  const pageEnd = Math.min(totalPages, pageStart + 4);
+  const paginatedStudents = teacher?.students?.slice((studentPage - 1) * studentPageSize, studentPage * studentPageSize) || [];
 
   const [copiedReset, setCopiedReset] = useState(false);
   const copyResetPassword = () => {
@@ -136,9 +143,9 @@ export function AdminTeacherDetailsView() {
               <p className="text-sm text-muted px-2">No hay alumnos asignados a este profesor.</p>
             ) : (
               <div className="flex flex-col gap-3">
-                {teacher.students.map((student: any) => (
+                {paginatedStudents.map((student: any) => (
                   <div key={student.dni} className="flex items-center justify-between bg-surface border border-border p-3 rounded-xl shadow-soft">
-                    <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname)}`}>
+                    <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
                       <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-10 w-10 shrink-0">
                         <span className="material-symbols-outlined text-xl">person</span>
                       </div>
@@ -150,11 +157,23 @@ export function AdminTeacherDetailsView() {
                         )}
                       </div>
                     </Link>
-                    <Link className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-1.5 hover:bg-primary hover:text-white transition-colors shrink-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname)}`}>
+                    <Link className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-1.5 hover:bg-primary hover:text-white transition-colors shrink-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
                       Ver ficha
                     </Link>
                   </div>
                 ))}
+                
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    <button className="h-9 px-3 rounded-full border border-border text-xs font-semibold text-text disabled:opacity-40" onClick={() => setStudentPage(c => Math.max(1, c - 1))} disabled={studentPage === 1}>Anterior</button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: pageEnd - pageStart + 1 }, (_, i) => pageStart + i).map((num) => (
+                        <button key={num} className={`h-9 w-9 rounded-full text-xs font-semibold ${studentPage === num ? 'bg-primary text-white' : 'border border-border text-text'}`} onClick={() => setStudentPage(num)}>{num}</button>
+                      ))}
+                    </div>
+                    <button className="h-9 px-3 rounded-full border border-border text-xs font-semibold text-text disabled:opacity-40" onClick={() => setStudentPage(c => Math.min(totalPages, c + 1))} disabled={studentPage === totalPages}>Siguiente</button>
+                  </div>
+                )}
               </div>
             )}
           </div>

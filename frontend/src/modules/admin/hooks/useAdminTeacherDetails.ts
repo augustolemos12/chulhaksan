@@ -7,8 +7,22 @@ import { emptyForm } from './useAdminTeachers';
 export function useAdminTeacherDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const returnTo = searchParams.get('returnTo') || '/admin/profesores';
+
+  const [studentPage, setStudentPage] = useState(Math.max(1, Number(searchParams.get('page') ?? '1')));
+  const studentPageSize = 10;
+
+  useEffect(() => {
+    const pageParam = Math.max(1, Number(searchParams.get('page') ?? '1'));
+    if (!Number.isNaN(pageParam) && pageParam !== studentPage) setStudentPage(pageParam);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (studentPage > 1) nextParams.set('page', String(studentPage)); else nextParams.delete('page');
+    if (nextParams.toString() !== searchParams.toString()) setSearchParams(nextParams, { replace: true });
+  }, [studentPage]);
 
   const [teacher, setTeacher] = useState<AdminTeacher | null>(null);
   const [loading, setLoading] = useState(true);
@@ -230,5 +244,6 @@ export function useAdminTeacherDetails() {
     walletUrl, setWalletUrl, qrCodeUrl, previewUrl, selectedFile,
     lateFeeWalletUrl, setLateFeeWalletUrl, lateFeeQrCodeUrl, lateFeePreviewUrl, selectedLateFeeFile,
     handleFileChange, handleRemovePreview, handlePaymentSubmit,
+    studentPage, setStudentPage, studentPageSize,
   };
 }
