@@ -243,19 +243,6 @@ export function useStudentDetails() {
     }
   };
 
-  const unassignStudent = async () => {
-    if (!student?.id || !confirm('¿Quieres desasignar este alumno?')) return;
-    setActionLoading('unassign');
-    try {
-      await httpClient.post(`/teacher/students/${student.id}/unassign`, {});
-      navigate(returnTo);
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Error al desasignar.');
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
   const deleteStudent = async () => {
     if (!student?.id || !confirm('¿Quieres eliminar este alumno? Esta acción no se puede deshacer.')) return;
     setActionLoading('delete');
@@ -274,7 +261,7 @@ export function useStudentDetails() {
     student, studentName, fees,
     isLoading, errorMsg, isEditing, isSaving, editForm, updateEditForm, toggleEditMode, saveProfile,
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
-    actionLoading, unassignStudent, deleteStudent,
+    actionLoading, deleteStudent,
     
     processingFees,
     payYearStudent, setPayYearStudent, handlePayFullYear,

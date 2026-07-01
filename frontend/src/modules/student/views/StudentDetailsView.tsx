@@ -7,7 +7,7 @@ export function StudentDetailsView() {
     student, studentName, fees,
     isLoading, errorMsg, isEditing, isSaving, editForm, updateEditForm, toggleEditMode, saveProfile,
     isResettingPass, resetPassTemp, copiedReset, resetPassword, copyResetPassword,
-    actionLoading, unassignStudent, deleteStudent,
+    actionLoading, deleteStudent,
     processingFees, payYearStudent, setPayYearStudent, handlePayFullYear,
     directPaymentFee, setDirectPaymentFee, handleDirectPayment,
     reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
@@ -83,12 +83,7 @@ export function StudentDetailsView() {
                 <span className="material-symbols-outlined text-base">edit</span>
                 {isEditing ? 'Cerrar edicion' : 'Editar datos'}
               </button>
-              {isTeacher && (
-                <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text disabled:opacity-70" onClick={unassignStudent} disabled={actionLoading !== null}>
-                  <span className="material-symbols-outlined text-base">link_off</span>
-                  {actionLoading === 'unassign' ? 'Desasignando...' : 'Desasignar alumno'}
-                </button>
-              )}
+
               <button className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text disabled:opacity-70" onClick={resetPassword} disabled={isResettingPass}>
                 <span className="material-symbols-outlined text-base">key</span>
                 {isResettingPass ? 'Reseteando...' : 'Resetear contraseña'}
