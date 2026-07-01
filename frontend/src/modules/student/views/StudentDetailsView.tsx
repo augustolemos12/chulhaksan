@@ -12,7 +12,7 @@ export function StudentDetailsView() {
     directPaymentFee, setDirectPaymentFee, handleDirectPayment,
     reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
     viewReceiptsFee, setViewReceiptsFee,
-    returnTo, isTeacher, canManage, classGroups
+    returnTo, canManage, classGroups
   } = useStudentDetails();
 
   const categoryLabel = (val?: 'ADULT' | 'CHILD') => val === 'CHILD' ? 'Infantil' : 'Adulto';
