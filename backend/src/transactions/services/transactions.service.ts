@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { FeesService } from '../../fees/services/fees.service';
 import { PaymentMethod, PaymentStatus } from '@prisma/client';
@@ -21,7 +25,9 @@ export class TransactionsService {
     }
 
     if (data.method === PaymentMethod.TRANSFER && !data.proofImageUrl) {
-      throw new BadRequestException('Se requiere comprobante para pagos por transferencia');
+      throw new BadRequestException(
+        'Se requiere comprobante para pagos por transferencia',
+      );
     }
 
     return this.prisma.transaction.create({
@@ -60,9 +66,12 @@ export class TransactionsService {
   }
 
   async approveTransaction(transactionId: number, amount?: number) {
-    const transaction = await this.prisma.transaction.findUnique({ where: { id: transactionId } });
-    if (!transaction) throw new NotFoundException(`Transaction ${transactionId} no encontrada`);
-    
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+    if (!transaction)
+      throw new NotFoundException(`Transaction ${transactionId} no encontrada`);
+
     if (transaction.status === PaymentStatus.APPROVED) {
       return transaction; // Already approved
     }
@@ -88,15 +97,18 @@ export class TransactionsService {
   }
 
   async rejectTransaction(transactionId: number) {
-    const transaction = await this.prisma.transaction.findUnique({ where: { id: transactionId } });
-    if (!transaction) throw new NotFoundException(`Transaction ${transactionId} no encontrada`);
-    
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+    if (!transaction)
+      throw new NotFoundException(`Transaction ${transactionId} no encontrada`);
+
     // Si estaba APPROVED y la rechazamos, tenemos que revertir el pago de la cuota.
     const wasApproved = transaction.status === PaymentStatus.APPROVED;
 
     await this.prisma.transaction.update({
       where: { id: transactionId },
-      data: { 
+      data: {
         status: PaymentStatus.REJECTED,
         reviewedAt: new Date(),
       },
@@ -117,8 +129,8 @@ export class TransactionsService {
         fee: {
           include: {
             student: true,
-          }
-        }
+          },
+        },
       },
       orderBy: { createdAt: 'asc' },
     });

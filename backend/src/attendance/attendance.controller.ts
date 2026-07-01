@@ -1,4 +1,12 @@
-import { Controller, Post, Get, Body, Query, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Query,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 import { RecordAttendanceDto } from './dto/record-attendance.dto';
 import { AttendanceQueryDto } from './dto/attendance-query.dto';
@@ -18,11 +26,16 @@ export class AttendanceController {
 
   @Post('bulk')
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Registrar asistencia de forma masiva para una clase y fecha' })
+  @ApiOperation({
+    summary: 'Registrar asistencia de forma masiva para una clase y fecha',
+  })
   recordAttendance(@Req() req, @Body() recordDto: RecordAttendanceDto) {
-    return this.attendanceService.recordAttendance(req.user.id, req.user.role, recordDto);
+    return this.attendanceService.recordAttendance(
+      req.user.id,
+      req.user.role,
+      recordDto,
+    );
   }
-
 
   @Get()
   @Roles(Role.ADMIN, Role.TEACHER, Role.STUDENT)
@@ -33,9 +46,13 @@ export class AttendanceController {
 
   @Get('class-date')
   @Roles(Role.ADMIN, Role.TEACHER)
-  @ApiOperation({ summary: 'Obtener asistencia de una clase en una fecha específica' })
+  @ApiOperation({
+    summary: 'Obtener asistencia de una clase en una fecha específica',
+  })
   getAttendanceByClassAndDate(@Query() queryDto: GetAttendanceByClassDateDto) {
-    return this.attendanceService.getAttendanceByClassAndDate(queryDto.classGroupId, queryDto.date);
+    return this.attendanceService.getAttendanceByClassAndDate(
+      queryDto.classGroupId,
+      queryDto.date,
+    );
   }
 }
-

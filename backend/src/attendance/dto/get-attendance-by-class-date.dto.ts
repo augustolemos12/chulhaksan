@@ -9,7 +9,10 @@ export class GetAttendanceByClassDateDto {
   @IsPositive()
   classGroupId: number;
 
-  @ApiProperty({ description: 'Fecha de la clase (YYYY-MM-DD)', example: '2026-05-16' })
+  @ApiProperty({
+    description: 'Fecha de la clase (YYYY-MM-DD)',
+    example: '2026-05-16',
+  })
   @IsDateString()
   date: string;
 }

@@ -1,5 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsInt, IsPositive, IsDateString, Min, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsInt,
+  IsPositive,
+  IsDateString,
+  Min,
+  Max,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class AttendanceQueryDto {
@@ -17,17 +24,26 @@ export class AttendanceQueryDto {
   @Type(() => Number)
   studentId?: number;
 
-  @ApiPropertyOptional({ description: 'Filtrar por fecha exacta (YYYY-MM-DD)', example: '2026-05-16' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por fecha exacta (YYYY-MM-DD)',
+    example: '2026-05-16',
+  })
   @IsOptional()
   @IsDateString()
   date?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar desde esta fecha (YYYY-MM-DD)', example: '2026-05-01' })
+  @ApiPropertyOptional({
+    description: 'Filtrar desde esta fecha (YYYY-MM-DD)',
+    example: '2026-05-01',
+  })
   @IsOptional()
   @IsDateString()
   startDate?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar hasta esta fecha (YYYY-MM-DD)', example: '2026-05-31' })
+  @ApiPropertyOptional({
+    description: 'Filtrar hasta esta fecha (YYYY-MM-DD)',
+    example: '2026-05-31',
+  })
   @IsOptional()
   @IsDateString()
   endDate?: string;

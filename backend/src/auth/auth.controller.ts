@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Res, Get, UseGuards, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Get,
+  UseGuards,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -13,9 +22,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) response: Response) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const { token, expiresIn, user } = await this.authService.login(loginDto);
-    
+
     response.cookie('Authentication', token, {
       httpOnly: true,
       path: '/',
@@ -61,7 +73,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     const { token, expiresIn } = await this.authService.refreshToken(user.id);
-    
+
     response.cookie('Authentication', token, {
       httpOnly: true,
       path: '/',

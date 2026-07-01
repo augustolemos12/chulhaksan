@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClassGroupDto } from './dto/create-class-group.dto';
 import { UpdateClassGroupDto } from './dto/update-class-group.dto';
@@ -31,7 +37,9 @@ export class ClassGroupsService {
       throw new BadRequestException('El formato de hora debe ser HH:mm');
     }
     if (startTime >= endTime) {
-      throw new BadRequestException('La hora de inicio debe ser menor a la hora de fin');
+      throw new BadRequestException(
+        'La hora de inicio debe ser menor a la hora de fin',
+      );
     }
   }
 
@@ -52,7 +60,7 @@ export class ClassGroupsService {
       endTime,
       isActive: true,
     };
-    
+
     if (excludeId) {
       whereClause.id = { not: excludeId };
     }
@@ -63,15 +71,31 @@ export class ClassGroupsService {
 
     for (const group of existingGroups) {
       // Verificar si hay intersección de días
-      const hasOverlappingDays = group.daysOfWeek.some((day: any) => daysOfWeek.includes(day));
+      const hasOverlappingDays = group.daysOfWeek.some((day: any) =>
+        daysOfWeek.includes(day),
+      );
       if (hasOverlappingDays) {
-        throw new ConflictException('Ya existe una clase activa con estas características en el mismo horario y días');
+        throw new ConflictException(
+          'Ya existe una clase activa con estas características en el mismo horario y días',
+        );
       }
     }
   }
 
-  async create(actorUserId: number, isAdmin: boolean, createClassGroupDto: CreateClassGroupDto) {
-    const { teacherId: dtoTeacherId, gymId, daysOfWeek, startTime, endTime, category, ...rest } = createClassGroupDto;
+  async create(
+    actorUserId: number,
+    isAdmin: boolean,
+    createClassGroupDto: CreateClassGroupDto,
+  ) {
+    const {
+      teacherId: dtoTeacherId,
+      gymId,
+      daysOfWeek,
+      startTime,
+      endTime,
+      category,
+      ...rest
+    } = createClassGroupDto;
 
     this.validateTimeRange(startTime, endTime);
 
@@ -79,15 +103,21 @@ export class ClassGroupsService {
 
     if (isAdmin) {
       if (!dtoTeacherId) {
-        throw new ForbiddenException('Un administrador debe especificar el teacherId al crear una clase');
+        throw new ForbiddenException(
+          'Un administrador debe especificar el teacherId al crear una clase',
+        );
       }
-      const teacher = await this.prisma.teacher.findUnique({ where: { id: dtoTeacherId } });
+      const teacher = await this.prisma.teacher.findUnique({
+        where: { id: dtoTeacherId },
+      });
       if (!teacher) {
         throw new NotFoundException('El profesor asignado no existe');
       }
       teacherIdToUse = teacher.id;
     } else {
-      const teacher = await this.prisma.teacher.findUnique({ where: { userId: actorUserId } });
+      const teacher = await this.prisma.teacher.findUnique({
+        where: { userId: actorUserId },
+      });
       if (!teacher) {
         throw new ForbiddenException('Perfil de profesor no encontrado');
       }
@@ -102,7 +132,14 @@ export class ClassGroupsService {
       throw new NotFoundException('El gimnasio no existe o está eliminado');
     }
 
-    await this.checkForConflicts(teacherIdToUse, gymId, daysOfWeek, startTime, endTime, category);
+    await this.checkForConflicts(
+      teacherIdToUse,
+      gymId,
+      daysOfWeek,
+      startTime,
+      endTime,
+      category,
+    );
 
     const newClassGroup = await this.prisma.classGroup.create({
       data: {
@@ -149,7 +186,9 @@ export class ClassGroupsService {
     });
 
     if (!teacher) {
-      throw new NotFoundException('Perfil de profesor no encontrado para este usuario');
+      throw new NotFoundException(
+        'Perfil de profesor no encontrado para este usuario',
+      );
     }
 
     return this.findAll(query, teacher.id);
@@ -177,7 +216,11 @@ export class ClassGroupsService {
     return classGroup;
   }
 
-  async update(id: number, teacherUserId: number | null, updateClassGroupDto: UpdateClassGroupDto) {
+  async update(
+    id: number,
+    teacherUserId: number | null,
+    updateClassGroupDto: UpdateClassGroupDto,
+  ) {
     const classGroup = await this.prisma.classGroup.findUnique({
       where: { id },
     });
@@ -192,15 +235,18 @@ export class ClassGroupsService {
         where: { userId: teacherUserId },
       });
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para modificar esta clase');
+        throw new ForbiddenException(
+          'No tienes permiso para modificar esta clase',
+        );
       }
     }
 
-    const { daysOfWeek, startTime, endTime, category, gymId, ...rest } = updateClassGroupDto;
+    const { daysOfWeek, startTime, endTime, category, gymId, ...rest } =
+      updateClassGroupDto;
 
     const newStartTime = startTime ?? classGroup.startTime;
     const newEndTime = endTime ?? classGroup.endTime;
-    
+
     if (startTime || endTime) {
       this.validateTimeRange(newStartTime, newEndTime);
     }
@@ -227,7 +273,7 @@ export class ClassGroupsService {
         newStartTime,
         newEndTime,
         finalCategory,
-        id
+        id,
       );
     }
 
@@ -270,7 +316,9 @@ export class ClassGroupsService {
         where: { userId: teacherUserId },
       });
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para eliminar esta clase');
+        throw new ForbiddenException(
+          'No tienes permiso para eliminar esta clase',
+        );
       }
     }
 

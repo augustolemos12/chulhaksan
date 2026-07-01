@@ -33,17 +33,22 @@ export class FeesService {
       }
 
       // 2. Sumar montos de transacciones aprobadas
-      const paidAmount = fee.payments.reduce((sum, payment) => sum + payment.amount, 0);
+      const paidAmount = fee.payments.reduce(
+        (sum, payment) => sum + payment.amount,
+        0,
+      );
 
       // Invariante: paidAmount nunca debe ser negativo
       if (paidAmount < 0) {
-        this.logger.error(`Violación de invariante: paidAmount calculado es negativo para Fee ${feeId}`);
+        this.logger.error(
+          `Violación de invariante: paidAmount calculado es negativo para Fee ${feeId}`,
+        );
         throw new Error('El monto pagado no puede ser negativo.');
       }
 
       // 3. Determinar nuevo status
       let status: FeeStatus = FeeStatus.PENDING;
-      
+
       // Asumimos que totalAmount siempre está actualizado y representa baseAmount + surchargeAmount
       if (paidAmount >= fee.totalAmount) {
         status = FeeStatus.PAID;
@@ -60,7 +65,9 @@ export class FeesService {
         },
       });
 
-      this.logger.log(`Fee ${feeId} recalculada: paidAmount=${paidAmount}, status=${status}`);
+      this.logger.log(
+        `Fee ${feeId} recalculada: paidAmount=${paidAmount}, status=${status}`,
+      );
       return updatedFee;
     });
   }
@@ -134,7 +141,9 @@ export class FeesService {
           createdCount++;
         }
       } catch (err: any) {
-        this.logger.error(`Error generando cuota para estudiante ${student.id}: ${err.message}`);
+        this.logger.error(
+          `Error generando cuota para estudiante ${student.id}: ${err.message}`,
+        );
         errors.push({ studentId: student.id, error: err.message });
       }
     }
@@ -149,10 +158,7 @@ export class FeesService {
   async getFeesForStudent(studentId: number) {
     return this.prisma.fee.findMany({
       where: { studentId },
-      orderBy: [
-        { year: 'desc' },
-        { month: 'desc' },
-      ],
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
       include: {
         payments: true,
       },
@@ -168,14 +174,20 @@ export class FeesService {
     return fee;
   }
 
-  async getAllFees(filters: { month?: number; year?: number; status?: FeeStatus; studentId?: number; teacherId?: number }) {
+  async getAllFees(filters: {
+    month?: number;
+    year?: number;
+    status?: FeeStatus;
+    studentId?: number;
+    teacherId?: number;
+  }) {
     const { month, year, status, studentId, teacherId } = filters;
     const where: any = {};
     if (month !== undefined) where.month = month;
     if (year !== undefined) where.year = year;
     if (status) where.status = status;
     if (studentId !== undefined) where.studentId = studentId;
-    
+
     if (teacherId !== undefined) {
       where.student = {
         ...where.student,
@@ -192,18 +204,23 @@ export class FeesService {
       orderBy: [
         { year: 'desc' },
         { month: 'desc' },
-        { student: { lastName: 'asc' } }
+        { student: { lastName: 'asc' } },
       ],
     });
   }
 
-  async payFullYear(studentId: number, year: number, method: PaymentMethod = PaymentMethod.CASH, proofImageUrl?: string) {
+  async payFullYear(
+    studentId: number,
+    year: number,
+    method: PaymentMethod = PaymentMethod.CASH,
+    proofImageUrl?: string,
+  ) {
     const currentMonth = new Date().getMonth() + 1; // 1-12
     const currentYear = new Date().getFullYear();
-    
+
     // Si el año a pagar es el actual, empezamos desde el mes actual. Si es un año futuro, desde enero.
     const startMonth = year === currentYear ? currentMonth : 1;
-    
+
     const latestConfig = await this.feeConfigService.getLatestFeeConfig();
 
     for (let month = startMonth; month <= 12; month++) {
@@ -255,6 +272,9 @@ export class FeesService {
       }
     }
 
-    return { success: true, message: `Año ${year} marcado como pagado para el alumno ${studentId}` };
+    return {
+      success: true,
+      message: `Año ${year} marcado como pagado para el alumno ${studentId}`,
+    };
   }
 }

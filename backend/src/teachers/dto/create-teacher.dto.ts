@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateTeacherDto {
@@ -27,13 +33,19 @@ export class CreateTeacherDto {
   @Transform(({ value }) => value?.trim())
   phone?: string;
 
-  @ApiPropertyOptional({ description: 'Email', example: 'juan.perez@example.com' })
+  @ApiPropertyOptional({
+    description: 'Email',
+    example: 'juan.perez@example.com',
+  })
   @IsOptional()
   @IsEmail()
   @Transform(({ value }) => value?.trim())
   email?: string;
 
-  @ApiPropertyOptional({ description: 'Contraseña temporal (opcional, si no se envía se autogenera)', example: 'Temporal123!' })
+  @ApiPropertyOptional({
+    description: 'Contraseña temporal (opcional, si no se envía se autogenera)',
+    example: 'Temporal123!',
+  })
   @IsOptional()
   @IsString()
   @MinLength(6)

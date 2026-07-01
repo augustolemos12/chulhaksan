@@ -27,7 +27,9 @@ export class FeesCronService {
     try {
       const latestConfig = await this.feeConfigService.getLatestFeeConfig();
       if (!latestConfig) {
-        this.logger.error('No se encontró configuración de cuotas. Cancelando proceso.');
+        this.logger.error(
+          'No se encontró configuración de cuotas. Cancelando proceso.',
+        );
         return;
       }
 
@@ -42,7 +44,9 @@ export class FeesCronService {
       });
 
       if (overdueFees.length === 0) {
-        this.logger.log('No se encontraron nuevas cuotas vencidas para aplicar mora.');
+        this.logger.log(
+          'No se encontraron nuevas cuotas vencidas para aplicar mora.',
+        );
         return;
       }
 
@@ -51,15 +55,21 @@ export class FeesCronService {
       for (const fee of overdueFees) {
         try {
           await this.feesService.applyLateFee(fee.id, lateFeeAmount);
-          this.logger.log(`Mora de $${lateFeeAmount} aplicada exitosamente a la cuota ID ${fee.id}.`);
+          this.logger.log(
+            `Mora de $${lateFeeAmount} aplicada exitosamente a la cuota ID ${fee.id}.`,
+          );
         } catch (error: any) {
-          this.logger.error(`Error al aplicar mora a la cuota ID ${fee.id}: ${error.message}`);
+          this.logger.error(
+            `Error al aplicar mora a la cuota ID ${fee.id}: ${error.message}`,
+          );
         }
       }
 
       this.logger.log('Proceso de cobro de mora finalizado.');
     } catch (error: any) {
-      this.logger.error(`Error general en el proceso de mora: ${error.message}`);
+      this.logger.error(
+        `Error general en el proceso de mora: ${error.message}`,
+      );
     }
   }
 }

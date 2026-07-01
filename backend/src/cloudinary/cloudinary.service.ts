@@ -31,16 +31,17 @@ export class CloudinaryService {
             {
               width: 1200,
               aspect_ratio: '16:9',
-              crop: 'fill',     // Recorta para cubrir exactamente el área 16:9
-              gravity: 'auto',  // El SDK detecta el sujeto principal (cara, objeto, etc.)
-              quality: 'auto',  // Cloudinary elige la calidad óptima por sí mismo
+              crop: 'fill', // Recorta para cubrir exactamente el área 16:9
+              gravity: 'auto', // El SDK detecta el sujeto principal (cara, objeto, etc.)
+              quality: 'auto', // Cloudinary elige la calidad óptima por sí mismo
               fetch_format: 'auto', // Sirve WebP, AVIF, etc. según el navegador del cliente
             },
           ],
         },
         (error, result) => {
           if (error) return reject(error);
-          if (!result) return reject(new Error('Cloudinary no devolvió resultado'));
+          if (!result)
+            return reject(new Error('Cloudinary no devolvió resultado'));
           resolve(result);
         },
       );
@@ -64,7 +65,7 @@ export class CloudinaryService {
             {
               width: 600,
               height: 600,
-              crop: 'limit',     // Límite de tamaño para no deformar o recortar el código
+              crop: 'limit', // Límite de tamaño para no deformar o recortar el código
               quality: 'auto',
               fetch_format: 'auto',
             },
@@ -72,7 +73,8 @@ export class CloudinaryService {
         },
         (error, result) => {
           if (error) return reject(error);
-          if (!result) return reject(new Error('Cloudinary no devolvió resultado'));
+          if (!result)
+            return reject(new Error('Cloudinary no devolvió resultado'));
           resolve(result);
         },
       );
@@ -95,7 +97,7 @@ export class CloudinaryService {
           transformation: [
             {
               width: 1200,
-              crop: 'limit',     // Límite de tamaño para no recortar ni deformar, solo achica si es excesivamente grande
+              crop: 'limit', // Límite de tamaño para no recortar ni deformar, solo achica si es excesivamente grande
               quality: 'auto',
               fetch_format: 'auto',
             },
@@ -103,7 +105,8 @@ export class CloudinaryService {
         },
         (error, result) => {
           if (error) return reject(error);
-          if (!result) return reject(new Error('Cloudinary no devolvió resultado'));
+          if (!result)
+            return reject(new Error('Cloudinary no devolvió resultado'));
           resolve(result);
         },
       );

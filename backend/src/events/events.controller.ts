@@ -61,7 +61,9 @@ export class EventsController {
   @Roles(Role.ADMIN)
   @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Crear o actualizar el evento del mes (requiere imagen)' })
+  @ApiOperation({
+    summary: 'Crear o actualizar el evento del mes (requiere imagen)',
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -106,7 +108,9 @@ export class EventsController {
   @Delete()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Eliminar el evento del mes y su imagen en Cloudinary' })
+  @ApiOperation({
+    summary: 'Eliminar el evento del mes y su imagen en Cloudinary',
+  })
   remove() {
     return this.eventsService.removeEvent();
   }

@@ -12,7 +12,7 @@ export function StudentDetailsView() {
     directPaymentFee, setDirectPaymentFee, handleDirectPayment,
     reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
     viewReceiptsFee, setViewReceiptsFee,
-    returnTo, isTeacher, canManage
+    returnTo, isTeacher, canManage, classGroups
   } = useStudentDetails();
 
   const categoryLabel = (val?: 'ADULT' | 'CHILD') => val === 'CHILD' ? 'Infantil' : 'Adulto';
@@ -73,7 +73,7 @@ export function StudentDetailsView() {
           <div className="bg-surface border border-border rounded-xl p-4 shadow-soft space-y-3">
             <p className="text-sm font-semibold">Acciones de gestión</p>
             {isEditing && (
-              <EditProfileForm editForm={editForm} updateEditForm={updateEditForm} gyms={[]} onSave={saveProfile} isSaving={isSaving} />
+              <EditProfileForm editForm={editForm} updateEditForm={updateEditForm} classGroups={classGroups} onSave={saveProfile} isSaving={isSaving} />
             )}
             <div className="flex flex-wrap items-center gap-2">
               <button

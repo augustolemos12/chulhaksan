@@ -1,12 +1,11 @@
  import { Link } from 'react-router-dom';
 import { useTeacherStudents } from '../hooks/useTeacherStudents';
-import { CreateTeacherStudentModal, EditTeacherStudentModal } from '../components/TeacherStudentModals';
+import { CreateTeacherStudentModal } from '../components/TeacherStudentModals';
 
 export function TeacherStudentsView() {
   const {
     students, total, loading, error, query, setQuery, gymFilter, setGymFilter, categoryFilter, setCategoryFilter,
     page, setPage, pageSize, gyms, classGroups, searchParams, setSearchParams,
-    editing, setEditing, form, setForm, saving, editError, handleSave, openEdit,
     createOpen, setCreateOpen, createForm, setCreateForm, creating, createError, handleCreate
   } = useTeacherStudents();
 
@@ -116,7 +115,7 @@ export function TeacherStudentsView() {
                 <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${student.status === 'OK' ? 'bg-green-100 text-green-700' : student.status === 'DEBT' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-500'}`}>
                   {student.status === 'OK' ? 'Al día' : student.status === 'DEBT' ? 'Deuda' : 'Sin estado'}
                 </span>
-                <button className="rounded-lg border border-primary bg-primary/5 text-primary text-xs font-semibold px-3 py-1 hover:bg-primary/15 transition-colors" type="button" onClick={() => openEdit(student)}>Editar</button>
+                <Link className="rounded-lg border border-primary bg-primary/5 text-primary text-xs font-semibold px-3 py-1 hover:bg-primary/15 transition-colors" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(`/profesor/alumnos?${searchParams.toString()}`)}`}>Ver detalles</Link>
               </div>
             </div>
           ))}
@@ -135,12 +134,7 @@ export function TeacherStudentsView() {
         )}
       </main>
 
-      {editing && (
-        <EditTeacherStudentModal
-          editing={editing!} setEditing={setEditing} form={form} setForm={setForm}
-          classGroups={classGroups} handleSave={handleSave} saving={saving} editError={editError}
-        />
-      )}
+
 
       <CreateTeacherStudentModal
         createOpen={createOpen} setCreateOpen={setCreateOpen} createForm={createForm} setCreateForm={setCreateForm}

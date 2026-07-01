@@ -21,7 +21,10 @@ export class CreateClassPlanDto {
   @IsNotEmpty()
   year: number;
 
-  @ApiProperty({ description: 'Cantidad total de clases esperadas', example: 8 })
+  @ApiProperty({
+    description: 'Cantidad total de clases esperadas',
+    example: 8,
+  })
   @IsInt()
   @Min(1)
   @IsNotEmpty()

@@ -3,7 +3,10 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class GenerateFeesDto {
-  @ApiProperty({ description: 'Mes para el cual generar las cuotas', example: 5 })
+  @ApiProperty({
+    description: 'Mes para el cual generar las cuotas',
+    example: 5,
+  })
   @IsInt()
   @Min(1)
   @Max(12)

@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -26,10 +37,13 @@ export class StudentsController {
   //ADMIN - Crear un alumno
   @Post('students')
   @Roles(Role.ADMIN)
-  createAdmin(@Body() createStudentDto: CreateStudentDto, @CurrentUser() user: any) {
+  createAdmin(
+    @Body() createStudentDto: CreateStudentDto,
+    @CurrentUser() user: any,
+  ) {
     return this.studentsService.create(user.id, true, createStudentDto);
   }
-  
+
   //ADMIN - Obtener todos los alumnos
   @Get('students')
   @Roles(Role.ADMIN)
@@ -75,10 +89,13 @@ export class StudentsController {
   //ADMIN - Actualizar un alumno
   @Patch('students/:id')
   @Roles(Role.ADMIN)
-  updateAdmin(@Param('id', ParseIntPipe) id: number, @Body() updateStudentDto: UpdateStudentDto) {
+  updateAdmin(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateStudentDto: UpdateStudentDto,
+  ) {
     return this.studentsService.update(id, null, updateStudentDto);
   }
-  
+
   //ADMIN - Eliminar un alumno
   @Delete('students/:id')
   @Roles(Role.ADMIN)
@@ -93,7 +110,10 @@ export class StudentsController {
   //TEACHER - Obtener todos los alumnos
   @Get('teacher/students')
   @Roles(Role.TEACHER)
-  findTeacherStudents(@Query() query: StudentQueryDto, @CurrentUser() user: any) {
+  findTeacherStudents(
+    @Query() query: StudentQueryDto,
+    @CurrentUser() user: any,
+  ) {
     return this.studentsService.findByTeacher(user.id, query);
   }
 
@@ -107,7 +127,10 @@ export class StudentsController {
   //TEACHER - Crear un alumno
   @Post('teacher/students')
   @Roles(Role.TEACHER)
-  createTeacherStudent(@Body() createStudentDto: CreateStudentDto, @CurrentUser() user: any) {
+  createTeacherStudent(
+    @Body() createStudentDto: CreateStudentDto,
+    @CurrentUser() user: any,
+  ) {
     return this.studentsService.create(user.id, false, createStudentDto);
   }
 
@@ -120,6 +143,16 @@ export class StudentsController {
     @CurrentUser() user: any,
   ) {
     return this.studentsService.update(id, user.id, updateStudentDto);
+  }
+
+  //TEACHER - Eliminar un alumno
+  @Delete('teacher/students/:id')
+  @Roles(Role.TEACHER)
+  removeTeacherStudent(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+  ) {
+    return this.studentsService.remove(id, user.id);
   }
 
   // ==========================================
@@ -136,21 +169,30 @@ export class StudentsController {
   //STUDENT - Actualizar su propio perfil
   @Patch('me/student')
   @Roles(Role.STUDENT)
-  updateOwnProfile(@Body() updateOwnProfileDto: UpdateOwnStudentProfileDto, @CurrentUser() user: any) {
+  updateOwnProfile(
+    @Body() updateOwnProfileDto: UpdateOwnStudentProfileDto,
+    @CurrentUser() user: any,
+  ) {
     return this.studentsService.updateOwnProfile(user.id, updateOwnProfileDto);
   }
 
   //TEACHER - Obtener todos los alumnos (ruta esperada por frontend)
   @Get('teachers/me/students')
   @Roles(Role.TEACHER)
-  findTeacherStudentsAlternative(@Query() query: StudentQueryDto, @CurrentUser() user: any) {
+  findTeacherStudentsAlternative(
+    @Query() query: StudentQueryDto,
+    @CurrentUser() user: any,
+  ) {
     return this.studentsService.findByTeacher(user.id, query);
   }
 
   //TEACHER - Resetear contraseña de alumno
   @Post('teachers/me/students/:dni/reset-password')
   @Roles(Role.TEACHER)
-  resetStudentPasswordTeacher(@Param('dni') dni: string, @CurrentUser() user: any) {
+  resetStudentPasswordTeacher(
+    @Param('dni') dni: string,
+    @CurrentUser() user: any,
+  ) {
     return this.studentsService.resetStudentPasswordByTeacher(user.id, dni);
   }
 }

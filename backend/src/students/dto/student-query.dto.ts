@@ -1,7 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Belt, StudentCategory } from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class StudentQueryDto {
   @ApiPropertyOptional({ description: 'Página', default: 1 })
@@ -39,7 +48,10 @@ export class StudentQueryDto {
   @IsPositive()
   classGroupId?: number;
 
-  @ApiPropertyOptional({ description: 'Filtrar por categoría', enum: StudentCategory })
+  @ApiPropertyOptional({
+    description: 'Filtrar por categoría',
+    enum: StudentCategory,
+  })
   @IsOptional()
   @IsEnum(StudentCategory)
   category?: StudentCategory;
@@ -56,7 +68,10 @@ export class StudentQueryDto {
   @IsPositive()
   teacherId?: number;
 
-  @ApiPropertyOptional({ description: 'Incluir registros eliminados (soft delete)', example: false })
+  @ApiPropertyOptional({
+    description: 'Incluir registros eliminados (soft delete)',
+    example: false,
+  })
   @IsOptional()
   @Transform(({ value }) => {
     if (value === 'true') return true;

@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsPositive, IsDateString, IsArray, ValidateNested, IsBoolean } from 'class-validator';
+import {
+  IsInt,
+  IsPositive,
+  IsDateString,
+  IsArray,
+  ValidateNested,
+  IsBoolean,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class AttendanceRecordDto {
@@ -19,11 +26,17 @@ export class RecordAttendanceDto {
   @IsPositive()
   classGroupId: number;
 
-  @ApiProperty({ description: 'Fecha de la clase (YYYY-MM-DD)', example: '2026-05-16' })
+  @ApiProperty({
+    description: 'Fecha de la clase (YYYY-MM-DD)',
+    example: '2026-05-16',
+  })
   @IsDateString()
   date: string;
 
-  @ApiProperty({ description: 'Registros de asistencia', type: [AttendanceRecordDto] })
+  @ApiProperty({
+    description: 'Registros de asistencia',
+    type: [AttendanceRecordDto],
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => AttendanceRecordDto)

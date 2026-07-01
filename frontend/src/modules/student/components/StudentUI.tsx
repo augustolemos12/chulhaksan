@@ -53,9 +53,9 @@ export function InfoRow({ icon, label, value }: { icon: string; label: string; v
 }
 
 export function EditProfileForm({
-  editForm, updateEditForm, onSave, isSaving
+  editForm, updateEditForm, classGroups, onSave, isSaving
 }: {
-  editForm: any; updateEditForm: (f: any, v: string) => void; gyms?: any[]; onSave: () => void; isSaving: boolean;
+  editForm: any; updateEditForm: (f: any, v: string) => void; classGroups?: any[]; onSave: () => void; isSaving: boolean;
 }) {
   return (
     <div className="space-y-3 rounded-xl border border-border bg-background p-3">
@@ -75,16 +75,15 @@ export function EditProfileForm({
           <input type="email" className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={editForm.email} onChange={(e) => updateEditForm('email', e.target.value)} />
         </label>
         <label className="space-y-1">
-          <span className="text-xs text-muted">Telefono (opcional)</span>
+          <span className="text-xs text-muted">Teléfono (opcional)</span>
           <input className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={editForm.phone} onChange={(e) => updateEditForm('phone', e.target.value)} />
         </label>
       </div>
       <label className="space-y-1 block mb-2">
-        <span className="text-xs text-muted">Direccion (opcional)</span>
+        <span className="text-xs text-muted">Dirección (opcional)</span>
         <input className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={editForm.address} onChange={(e) => updateEditForm('address', e.target.value)} />
       </label>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <div />
         <label className="space-y-1">
           <span className="text-xs text-muted">Tipo</span>
           <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={editForm.category} onChange={(e) => updateEditForm('category', e.target.value)}>
@@ -92,8 +91,35 @@ export function EditProfileForm({
             <option value="CHILD">Infantil</option>
           </select>
         </label>
+        <label className="space-y-1">
+          <span className="text-xs text-muted">Clase</span>
+          <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={editForm.classGroupId} onChange={(e) => updateEditForm('classGroupId', e.target.value)}>
+            <option value="">Selecciona una clase</option>
+            {classGroups?.filter((c) => c.isActive).map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </label>
       </div>
-      <div className="flex justify-end">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <label className="space-y-1">
+          <span className="text-xs text-muted">Cinturón actual</span>
+          <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm" value={editForm.currentBelt} onChange={(e) => updateEditForm('currentBelt', e.target.value)}>
+            <option value="WHITE">Blanco</option>
+            <option value="WHITE_YELLOW">Blanco Punta Amarilla</option>
+            <option value="YELLOW">Amarillo</option>
+            <option value="GREEN_STRIPE">Amarillo Punta Verde</option>
+            <option value="GREEN">Verde</option>
+            <option value="BLUE_STRIPE">Verde Punta Azul</option>
+            <option value="BLUE">Azul</option>
+            <option value="RED_STRIPE">Azul Punta Roja</option>
+            <option value="RED">Rojo</option>
+            <option value="BLACK_STRIPE">Rojo Punta Negra</option>
+            <option value="DAN">Dan (Negro)</option>
+          </select>
+        </label>
+      </div>
+      <div className="flex justify-end mt-2">
         <button className="rounded-lg bg-primary text-white text-sm font-semibold px-4 py-2.5 disabled:opacity-70" type="button" onClick={onSave} disabled={isSaving}>
           {isSaving ? 'Guardando...' : 'Guardar cambios'}
         </button>

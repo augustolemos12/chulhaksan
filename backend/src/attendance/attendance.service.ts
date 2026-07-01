@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RecordAttendanceDto } from './dto/record-attendance.dto';
 import { AttendanceQueryDto } from './dto/attendance-query.dto';
@@ -24,7 +29,11 @@ export class AttendanceService {
     return d;
   }
 
-  async recordAttendance(actorUserId: number, role: Role, recordDto: RecordAttendanceDto) {
+  async recordAttendance(
+    actorUserId: number,
+    role: Role,
+    recordDto: RecordAttendanceDto,
+  ) {
     const { classGroupId, date, records } = recordDto;
 
     // Validar duplicados en el payload
@@ -40,7 +49,9 @@ export class AttendanceService {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     if (attendanceDate > today) {
-      throw new BadRequestException('No se puede registrar asistencia en una fecha futura');
+      throw new BadRequestException(
+        'No se puede registrar asistencia en una fecha futura',
+      );
     }
 
     // Verificar si la clase existe
@@ -55,25 +66,29 @@ export class AttendanceService {
 
     // Validar que la clase esté activa
     if (!classGroup.isActive) {
-      throw new BadRequestException('No se puede registrar asistencia en una clase inactiva');
+      throw new BadRequestException(
+        'No se puede registrar asistencia en una clase inactiva',
+      );
     }
 
     // Validar que exista un plan de clases para este mes y año
     const month = attendanceDate.getUTCMonth() + 1;
     const year = attendanceDate.getUTCFullYear();
-    
+
     const classPlan = await this.prisma.classPlan.findUnique({
       where: {
         classGroupId_month_year: {
           classGroupId,
           month,
           year,
-        }
-      }
+        },
+      },
     });
 
     if (!classPlan) {
-      throw new BadRequestException('Debe crear un Plan de Clases para este mes antes de tomar asistencia');
+      throw new BadRequestException(
+        'Debe crear un Plan de Clases para este mes antes de tomar asistencia',
+      );
     }
 
     // Verificar permisos explícitos
@@ -83,7 +98,9 @@ export class AttendanceService {
       });
 
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para registrar asistencia en esta clase');
+        throw new ForbiddenException(
+          'No tienes permiso para registrar asistencia en esta clase',
+        );
       }
     }
 
@@ -97,7 +114,9 @@ export class AttendanceService {
     });
 
     if (validStudents.length !== studentIds.length) {
-      throw new BadRequestException('Uno o más alumnos no pertenecen a esta clase o no existen');
+      throw new BadRequestException(
+        'Uno o más alumnos no pertenecen a esta clase o no existen',
+      );
     }
 
     // Registrar asistencia (usando upsert para cada registro en una transacción)
@@ -132,11 +151,14 @@ export class AttendanceService {
   }
 
   async findAll(query: AttendanceQueryDto, actorUserId?: number, role?: Role) {
-    const { classGroupId, studentId, date, startDate, endDate, month, year } = query;
+    const { classGroupId, studentId, date, startDate, endDate, month, year } =
+      query;
 
     // Validación estricta de mes/año
     if (month !== undefined && year === undefined) {
-      throw new BadRequestException('El filtro por mes requiere que también se especifique el año');
+      throw new BadRequestException(
+        'El filtro por mes requiere que también se especifique el año',
+      );
     }
 
     const where: Prisma.AttendanceWhereInput = {};
@@ -231,4 +253,3 @@ export class AttendanceService {
     });
   }
 }
-

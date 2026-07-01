@@ -1,5 +1,19 @@
-import { Controller, Get, Post, Body, UseGuards, Delete, Param, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Delete,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { FeeConfigService } from '../services/fee-config.service';
 import { CreateFeeConfigDto } from '../dto/create-fee-config.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -17,7 +31,10 @@ export class FeeConfigController {
 
   @Post()
   @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Crear una nueva configuración de cuota (actualiza el precio vigente)' })
+  @ApiOperation({
+    summary:
+      'Crear una nueva configuración de cuota (actualiza el precio vigente)',
+  })
   async create(@Body() createDto: CreateFeeConfigDto) {
     return this.feeConfigService.createFeeConfig(createDto);
   }

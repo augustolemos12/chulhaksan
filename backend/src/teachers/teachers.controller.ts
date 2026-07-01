@@ -75,12 +75,14 @@ export class TeachersController {
         qrCode: {
           type: 'string',
           format: 'binary',
-          description: 'Imagen del código QR (jpg, jpeg, png o webp — máx. 5 MB)',
+          description:
+            'Imagen del código QR (jpg, jpeg, png o webp — máx. 5 MB)',
         },
         lateFeeQrCode: {
           type: 'string',
           format: 'binary',
-          description: 'Imagen del código QR para mora (jpg, jpeg, png o webp — máx. 5 MB)',
+          description:
+            'Imagen del código QR para mora (jpg, jpeg, png o webp — máx. 5 MB)',
         },
       },
     },
@@ -134,5 +136,3 @@ export class TeachersController {
     return this.teachersService.remove(id);
   }
 }
-
-

@@ -33,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         role: true,
         status: true,
         mustChangePassword: true,
-      }
+      },
     });
 
     if (!user || user.status === 'BLOCKED') {

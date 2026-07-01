@@ -1,10 +1,20 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsOptional, IsString, Max, Min, IsPositive } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  IsPositive,
+} from 'class-validator';
 
 export class GymQueryDto {
-  @ApiPropertyOptional({ description: 'Filtrar por estado activo', example: true })
-
+  @ApiPropertyOptional({
+    description: 'Filtrar por estado activo',
+    example: true,
+  })
   @IsOptional()
   @Transform(({ value }) => {
     if (value === 'true') return true;
@@ -14,7 +24,10 @@ export class GymQueryDto {
   @IsBoolean()
   isActive?: boolean;
 
-  @ApiPropertyOptional({ description: 'Búsqueda por nombre', example: 'central' })
+  @ApiPropertyOptional({
+    description: 'Búsqueda por nombre',
+    example: 'central',
+  })
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value?.trim())
@@ -34,4 +47,4 @@ export class GymQueryDto {
   @Min(1)
   @Max(100)
   limit?: number = 10;
-}
+}

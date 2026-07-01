@@ -37,6 +37,7 @@ export function useStudentDetails() {
 
   const [student, setStudent] = useState<StudentData | null>(null);
   const [fees, setFees] = useState<Fee[]>([]);
+  const [classGroups, setClassGroups] = useState<{ id: number; name: string; isActive: boolean }[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
@@ -45,7 +46,7 @@ export function useStudentDetails() {
   const [isSaving, setIsSaving] = useState(false);
   const [editForm, setEditForm] = useState({
     firstName: '', lastName: '', category: 'ADULT' as 'ADULT' | 'CHILD',
-    email: '', phone: '', address: '',
+    email: '', phone: '', address: '', classGroupId: '', currentBelt: 'WHITE',
   });
 
   const [isResettingPass, setIsResettingPass] = useState(false);
@@ -87,9 +88,22 @@ export function useStudentDetails() {
           firstName: studentRes.firstName ?? '', lastName: studentRes.lastName ?? '',
           category: studentRes.category ?? 'ADULT', email: studentRes.email ?? '',
           phone: studentRes.phone ?? '', address: studentRes.address ?? '',
+          classGroupId: studentRes.classGroup?.id?.toString() ?? '',
+          currentBelt: studentRes.currentBelt ?? 'WHITE',
         });
 
         await fetchFees(studentRes.id);
+        
+        if (canManage) {
+          const endpoint = isAdmin ? '/class-groups' : '/teacher/class-groups';
+          try {
+            const cgRes = await httpClient.get<{items: any[]} | any[]>(endpoint);
+            const items = Array.isArray(cgRes) ? cgRes : (cgRes?.items ?? []);
+            setClassGroups(items);
+          } catch (e) {
+            console.error('Error fetching class groups', e);
+          }
+        }
       } catch (err) {
         setErrorMsg(err instanceof Error ? err.message : 'No se pudo cargar el alumno.');
       } finally {
@@ -169,6 +183,8 @@ export function useStudentDetails() {
         firstName: editForm.firstName.trim() || null, lastName: editForm.lastName.trim() || null,
         category: editForm.category, email: editForm.email.trim() || null,
         phone: editForm.phone.trim() || null, address: editForm.address.trim() || null,
+        classGroupId: editForm.classGroupId ? Number(editForm.classGroupId) : undefined,
+        currentBelt: editForm.currentBelt || undefined,
       };
       
       const endpoint = isTeacher ? `/teacher/students/${student.id}` : `/students/${student.id}`;
@@ -266,6 +282,6 @@ export function useStudentDetails() {
     reviewPaymentTx, setReviewPaymentTx, handleApproveTransaction, handleRejectTransaction,
     viewReceiptsFee, setViewReceiptsFee,
     
-    returnTo, isTeacher, isAdmin, canManage
+    returnTo, isTeacher, isAdmin, canManage, classGroups
   };
 }
