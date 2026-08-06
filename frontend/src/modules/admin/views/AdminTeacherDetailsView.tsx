@@ -125,22 +125,25 @@ export function AdminTeacherDetailsView() {
               <div className="rounded-2xl border border-border bg-surface p-4 text-center text-xs text-muted">Este profesor no tiene alumnos asignados.</div>
             ) : (
               <div className="flex flex-col gap-3">
-                {paginatedStudents.map((student: any) => (
-                  <div key={student.id || student.dni} className="flex items-center justify-between bg-surface border border-border p-3 rounded-xl shadow-soft">
-                    <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
-                      <div className="bg-primary/10 text-primary font-bold flex items-center justify-center rounded-full h-9 w-9 shrink-0 text-sm">
-                        {student.firstName[0]}{student.lastName[0]}
-                      </div>
-                      <div className="truncate">
-                        <p className="text-sm font-bold text-text truncate">{student.firstName} {student.lastName}</p>
-                        <p className="text-[11px] text-muted truncate">DNI: {student.user?.dni || student.dni || 'S/D'} • {student.gym?.name || 'Sin Sede'}</p>
-                      </div>
-                    </Link>
-                    <Link className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-1.5 hover:bg-primary hover:text-white transition-colors shrink-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
-                      Ver ficha
-                    </Link>
-                  </div>
-                ))}
+                {paginatedStudents.map((student: any) => {
+                  const studentDni = student.user?.dni || student.dni || '';
+                  return (
+                    <div key={student.id || studentDni} className="flex items-center justify-between bg-surface border border-border p-3 rounded-xl shadow-soft">
+                      <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/alumno/${studentDni}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
+                        <div className="bg-primary/10 text-primary font-bold flex items-center justify-center rounded-full h-9 w-9 shrink-0 text-sm">
+                          {student.firstName[0]}{student.lastName[0]}
+                        </div>
+                        <div className="truncate">
+                          <p className="text-sm font-bold text-text truncate">{student.firstName} {student.lastName}</p>
+                          <p className="text-[11px] text-muted truncate">DNI: {studentDni || 'S/D'} • {student.gym?.name || 'Sin Sede'}</p>
+                        </div>
+                      </Link>
+                      <Link className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-1.5 hover:bg-primary hover:text-white transition-colors shrink-0" to={`/alumno/${studentDni}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
+                        Ver ficha
+                      </Link>
+                    </div>
+                  );
+                })}
                 
                 {totalPages > 1 && (
                   <div className="flex items-center justify-center gap-2 pt-2">

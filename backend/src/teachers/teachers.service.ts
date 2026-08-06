@@ -108,6 +108,11 @@ export class TeachersService {
           },
           students: {
             where: { deletedAt: null },
+            include: {
+              user: true,
+              classGroup: true,
+              gym: true,
+            },
           },
         },
       }),
@@ -136,6 +141,7 @@ export class TeachersService {
         students: {
           where: { deletedAt: null },
           include: {
+            user: true,
             classGroup: true,
             gym: true,
           },
@@ -164,6 +170,7 @@ export class TeachersService {
         students: {
           where: { deletedAt: null },
           include: {
+            user: true,
             classGroup: true,
             gym: true,
           },
@@ -247,6 +254,7 @@ export class TeachersService {
         students: {
           where: { deletedAt: null },
           include: {
+            user: true,
             classGroup: true,
             gym: true,
           },
