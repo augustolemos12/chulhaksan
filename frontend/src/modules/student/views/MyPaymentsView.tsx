@@ -188,6 +188,14 @@ export function MyPaymentsView() {
   const teacherName = teacher ? `Prof. ${teacher.firstName} ${teacher.lastName}` : 'tu Instructor';
   const hasLateFee = !!currentFee?.lateFeeApplied;
 
+  const [copiedAlias, setCopiedAlias] = useState(false);
+
+  const copyAliasToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedAlias(true);
+    setTimeout(() => setCopiedAlias(false), 2000);
+  };
+
   // Determine what to show
   const missingLateFeeInfo = hasLateFee && !teacher?.lateFeeWalletUrl;
   const targetWallet = hasLateFee && teacher?.lateFeeWalletUrl ? teacher.lateFeeWalletUrl : teacher?.walletUrl;
@@ -301,15 +309,15 @@ export function MyPaymentsView() {
 
             {!missingLateFeeInfo && (
               <>
-                {/* Teacher Payment Link Section */}
+                {/* Teacher Payment Alias Section */}
                 <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined">link</span>
+                      <span className="material-symbols-outlined">badge</span>
                     </div>
                     <div>
-                      <h3 className="text-base font-bold">Medio de Pago {hasLateFee && '(Mora)'}</h3>
-                      <p className="text-xs text-muted">Aboná tu cuota a {teacherName}</p>
+                      <h3 className="text-base font-bold">Datos de Transferencia {hasLateFee && '(Mora)'}</h3>
+                      <p className="text-xs text-muted">Transferí el monto a {teacherName}</p>
                       {hasLateFee && <p className="text-[10px] text-danger font-bold uppercase mt-1">Monto con recargo incluido</p>}
                     </div>
                   </div>
@@ -317,38 +325,32 @@ export function MyPaymentsView() {
                   {loadingTeacher ? (
                     <div className="p-6 flex flex-col items-center justify-center gap-2">
                       <div className="h-8 w-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                      <span className="text-xs text-muted">Cargando medio de pago...</span>
+                      <span className="text-xs text-muted">Cargando datos de pago...</span>
                     </div>
                   ) : targetWallet ? (
                     <div className="space-y-3">
-                      <div className="bg-background rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                      <div className="bg-background rounded-2xl border border-border p-4 flex items-center justify-between gap-3">
                         <div className="truncate flex-1">
-                          <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Enlace de pago</p>
-                          <a 
-                            href={targetWallet} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline font-medium text-sm truncate block"
-                          >
-                            {targetWallet}
-                          </a>
+                          <p className="text-[10px] text-muted font-bold uppercase tracking-wider mb-0.5">Alias / CBU</p>
+                          <p className="text-text font-black text-lg select-all truncate">{targetWallet}</p>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => copyAliasToClipboard(targetWallet)}
+                          className={`shrink-0 flex items-center gap-1.5 rounded-xl px-4 py-2.5 font-bold text-xs shadow-sm transition-all active:scale-95 ${copiedAlias ? 'bg-success text-white' : 'bg-primary text-white hover:bg-accent'}`}
+                        >
+                          <span className="material-symbols-outlined text-base">{copiedAlias ? 'check' : 'content_copy'}</span>
+                          <span>{copiedAlias ? '¡Copiado!' : 'Copiar'}</span>
+                        </button>
                       </div>
-
-                      <a
-                        href={targetWallet}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-full ${hasLateFee ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-gradient-to-r from-primary to-accent'} hover:shadow-glow text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 hover:scale-[1.01]`}
-                      >
-                        <span className="material-symbols-outlined text-lg">open_in_new</span>
-                        <span>Pagar con Billetera Virtual (Redirección)</span>
-                      </a>
+                      <p className="text-[11px] text-muted text-center">
+                        Una vez realizada la transferencia, subí el comprobante debajo para que el profesor confirme tu pago.
+                      </p>
                     </div>
                   ) : (
                     <div className="p-4 bg-background rounded-2xl border border-border text-center">
-                      <p className="text-xs font-semibold text-text">Tu profesor aún no ha registrado su link de billetera virtual.</p>
-                      <p className="text-[11px] text-muted mt-1">Contactate con {teacherName} para consultar sus datos de transferencia.</p>
+                      <p className="text-xs font-semibold text-text">Tu profesor aún no ha registrado su Alias o CBU.</p>
+                      <p className="text-[11px] text-muted mt-1">Contactate directamente con {teacherName} para solicitar sus datos de pago.</p>
                     </div>
                   )}
                 </section>

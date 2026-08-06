@@ -1,16 +1,14 @@
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateTeacherPaymentDto {
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'El alias debe ser un texto válido' })
   @Transform(({ value }) => (value === '' ? null : value))
-  @IsUrl({}, { message: 'El enlace de la billetera debe ser una URL válida' })
   walletUrl?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'El alias de mora debe ser un texto válido' })
   @Transform(({ value }) => (value === '' ? null : value))
-  @IsUrl({}, { message: 'El enlace de mora debe ser una URL válida' })
   lateFeeWalletUrl?: string;
 }

@@ -150,18 +150,6 @@ export function useAdminTeacherDetails() {
     setPaymentError(null);
     setPaymentSuccess(null);
 
-    if (walletUrl.trim() && !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(walletUrl.trim())) {
-      setPaymentError('El enlace normal debe ser una URL válida.');
-      setPaymentSaving(false);
-      return;
-    }
-
-    if (lateFeeWalletUrl.trim() && !/^https?:\/\/[^\s$.?#].[^\s]*$/i.test(lateFeeWalletUrl.trim())) {
-      setPaymentError('El enlace de mora debe ser una URL válida.');
-      setPaymentSaving(false);
-      return;
-    }
-
     try {
       const payload = {
         walletUrl: walletUrl.trim(),

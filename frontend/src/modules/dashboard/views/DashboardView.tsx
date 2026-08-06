@@ -97,7 +97,7 @@ export function DashboardView() {
               <QuickAction to="/profesor/censo" icon="pie_chart" title="Censo de Alumnos" subtitle="Métricas y estadísticas" variant="row" />
               <QuickAction to="/profesor/clases" icon="class" title="Mis Clases" subtitle="Horarios y alumnos" variant="row" />
               <QuickAction to="/profesor/planes" icon="calendar_month" title="Planes de Clases" subtitle="Clases esperadas por mes" variant="row" />
-              <QuickAction to="/profesor/datos-de-pago" icon="link" title="Datos de Pago" subtitle="Cargar billetera virtual" variant="row" />
+              <QuickAction to="/profesor/datos-de-pago" icon="badge" title="Datos de Pago" subtitle="Cargar Alias o CBU" variant="row" />
               <QuickAction to="/profesor/cuotas" icon="receipt_long" title="Cuotas" subtitle="Administrar pagos de alumnos" variant="row" />
               <QuickAction to="/admin/formas" icon="link" title="Formas" subtitle="Links y desbloqueos" variant="row" />
             </div>

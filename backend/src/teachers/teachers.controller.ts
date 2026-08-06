@@ -47,13 +47,13 @@ export class TeachersController {
       properties: {
         walletUrl: {
           type: 'string',
-          description: 'URL de redirección a la billetera virtual',
-          example: 'https://link.mercadopago.com.ar/ejemplo',
+          description: 'Alias o CBU para pago normal',
+          example: 'chulhaksan.mp',
         },
         lateFeeWalletUrl: {
           type: 'string',
-          description: 'URL de redirección a la billetera virtual para mora',
-          example: 'https://link.mercadopago.com.ar/mora',
+          description: 'Alias o CBU para pago con mora',
+          example: 'chulhaksan.mora.mp',
         },
       },
     },

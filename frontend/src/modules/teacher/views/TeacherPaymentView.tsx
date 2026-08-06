@@ -13,6 +13,21 @@ export function TeacherPaymentView() {
   const [walletUrl, setWalletUrl] = useState<string>('');
   const [teacher, setTeacher] = useState<any>(null);
 
+  // Copy state
+  const [copiedNormal, setCopiedNormal] = useState(false);
+  const [copiedLateFee, setCopiedLateFee] = useState(false);
+
+  const copyToClipboard = (text: string, isLateFee: boolean) => {
+    navigator.clipboard.writeText(text);
+    if (isLateFee) {
+      setCopiedLateFee(true);
+      setTimeout(() => setCopiedLateFee(false), 2000);
+    } else {
+      setCopiedNormal(true);
+      setTimeout(() => setCopiedNormal(false), 2000);
+    }
+  };
+
   // Fetch existing details
   useEffect(() => {
     const fetchPaymentDetails = async () => {
@@ -76,98 +91,82 @@ export function TeacherPaymentView() {
               <div className="bg-surface border border-border rounded-3xl p-8 shadow-soft flex flex-col items-center text-center">
                 <span className="material-symbols-outlined text-4xl text-muted mb-3">account_balance_wallet</span>
                 <p className="text-base font-bold text-text">No tienes medios de pago configurados</p>
-                <p className="text-sm text-muted mt-2">Comunícate con el administrador para registrar tu link de cobro.</p>
+                <p className="text-sm text-muted mt-2">Comunícate con el administrador para registrar tu Alias o CBU.</p>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-5">
                 <h2 className="font-bold text-text mb-2 px-2 border-l-4 border-primary">Pago Normal</h2>
-                {/* Wallet URL Card */}
+                {/* Wallet Alias Card */}
                 {walletUrl ? (
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined">link</span>
+                        <span className="material-symbols-outlined">badge</span>
                       </div>
                       <div>
-                        <h3 className="text-base font-bold">Enlace de Billetera Virtual</h3>
-                        <p className="text-xs text-muted">Redireccioná a tus alumnos a tu link de pago directo</p>
+                        <h3 className="text-base font-bold">Alias / CBU Normal</h3>
+                        <p className="text-xs text-muted">Tus alumnos utilizarán este datos para transferirte</p>
                       </div>
                     </div>
 
-                    <div className="bg-background rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                    <div className="bg-background rounded-2xl border border-border p-4 flex items-center justify-between gap-3">
                       <div className="truncate flex-1">
-                        <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Tu enlace actual</p>
-                        <a 
-                          href={walletUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline font-medium text-sm truncate block"
-                        >
-                          {walletUrl}
-                        </a>
+                        <p className="text-[10px] text-muted font-bold uppercase tracking-wider mb-0.5">Alias / CBU</p>
+                        <p className="text-text font-bold text-base select-all truncate">{walletUrl}</p>
                       </div>
-                      <a 
-                        href={walletUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="shrink-0 flex items-center gap-2 rounded-xl bg-primary/10 text-primary px-4 py-2 font-bold text-sm hover:bg-primary/20 transition-colors"
+                      <button 
+                        type="button"
+                        onClick={() => copyToClipboard(walletUrl, false)}
+                        className={`shrink-0 flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-bold text-xs transition-all active:scale-95 ${copiedNormal ? 'bg-success text-white' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
                       >
-                        <span>Abrir enlace</span>
-                        <span className="material-symbols-outlined text-[18px]">open_in_new</span>
-                      </a>
+                        <span className="material-symbols-outlined text-sm">{copiedNormal ? 'check' : 'content_copy'}</span>
+                        <span>{copiedNormal ? '¡Copiado!' : 'Copiar'}</span>
+                      </button>
                     </div>
                   </section>
                 ) : (
                   <div className="bg-surface border border-border rounded-3xl p-6 shadow-soft text-center opacity-70">
-                    <p className="text-xs text-muted">Sin enlace de pago normal configurado</p>
+                    <p className="text-xs text-muted">Sin Alias o CBU normal configurado</p>
                   </div>
                 )}
               </div>
 
               <div className="space-y-5">
                 <h2 className="font-bold text-text mb-2 px-2 border-l-4 border-amber-500">Pago Fuera de Término (Mora)</h2>
-                {/* Late Fee Wallet URL Card */}
+                {/* Late Fee Wallet Alias Card */}
                 {(teacher as any)?.lateFeeWalletUrl ? (
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined">link</span>
+                        <span className="material-symbols-outlined">badge</span>
                       </div>
                       <div>
-                        <h3 className="text-base font-bold">Enlace de Billetera (Mora)</h3>
-                        <p className="text-xs text-muted">Redireccioná a tus alumnos a tu link de cobro con mora incluida</p>
+                        <h3 className="text-base font-bold">Alias / CBU (Mora)</h3>
+                        <p className="text-xs text-muted">Datos de cobro para cuotas fuera de término</p>
                       </div>
                     </div>
 
-                    <div className="bg-background rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                    <div className="bg-background rounded-2xl border border-border p-4 flex items-center justify-between gap-3">
                       <div className="truncate flex-1">
-                        <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Tu enlace actual</p>
-                        <a 
-                          href={(teacher as any)?.lateFeeWalletUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-amber-600 hover:underline font-medium text-sm truncate block"
-                        >
-                          {(teacher as any)?.lateFeeWalletUrl}
-                        </a>
+                        <p className="text-[10px] text-muted font-bold uppercase tracking-wider mb-0.5">Alias / CBU Mora</p>
+                        <p className="text-text font-bold text-base select-all truncate">{(teacher as any)?.lateFeeWalletUrl}</p>
                       </div>
-                      <a 
-                        href={(teacher as any)?.lateFeeWalletUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="shrink-0 flex items-center gap-2 rounded-xl bg-amber-500/10 text-amber-600 px-4 py-2 font-bold text-sm hover:bg-amber-500/20 transition-colors"
+                      <button 
+                        type="button"
+                        onClick={() => copyToClipboard((teacher as any)?.lateFeeWalletUrl, true)}
+                        className={`shrink-0 flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-bold text-xs transition-all active:scale-95 ${copiedLateFee ? 'bg-success text-white' : 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'}`}
                       >
-                        <span>Abrir enlace</span>
-                        <span className="material-symbols-outlined text-[18px]">open_in_new</span>
-                      </a>
+                        <span className="material-symbols-outlined text-sm">{copiedLateFee ? 'check' : 'content_copy'}</span>
+                        <span>{copiedLateFee ? '¡Copiado!' : 'Copiar'}</span>
+                      </button>
                     </div>
                   </section>
                 ) : (
                   <div className="bg-surface border border-border rounded-3xl p-6 shadow-soft flex flex-col items-center text-center opacity-70">
                     <span className="material-symbols-outlined text-3xl text-muted mb-2">warning</span>
                     <p className="text-sm font-bold text-text">Sin configuración para mora</p>
-                    <p className="text-xs text-muted mt-1">Si deseas usar un link diferenciado para mora, contáctate con el administrador.</p>
+                    <p className="text-xs text-muted mt-1">Si deseas usar un Alias o CBU diferente para mora, contáctate con el administrador.</p>
                   </div>
                 )}
               </div>

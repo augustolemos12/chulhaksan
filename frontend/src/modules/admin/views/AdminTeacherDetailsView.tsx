@@ -168,12 +168,12 @@ export function AdminTeacherDetailsView() {
                   <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-primary">Pago en Término (Normal)</h4>
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">link</span></div>
-                      <div><h3 className="text-base font-bold">Enlace de Billetera</h3><p className="text-xs text-muted">URL directa de cobro normal</p></div>
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">badge</span></div>
+                      <div><h3 className="text-base font-bold">Alias / CBU de Billetera</h3><p className="text-xs text-muted">Alias o CBU para transferencias normales</p></div>
                     </div>
                     <div className="relative">
                       <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
-                      <input id="wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias" value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
+                      <input id="wallet-url" type="text" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="ej: mi.alias.mp o 00000031000..." value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
                     </div>
                   </section>
                 </div>
@@ -182,12 +182,12 @@ export function AdminTeacherDetailsView() {
                   <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-amber-500">Pago Fuera de Término (Mora)</h4>
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">link</span></div>
-                      <div><h3 className="text-base font-bold">Enlace de Billetera (Mora)</h3><p className="text-xs text-muted">URL directa de cobro con mora incluida</p></div>
+                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">badge</span></div>
+                      <div><h3 className="text-base font-bold">Alias / CBU (Mora)</h3><p className="text-xs text-muted">Alias o CBU diferenciado para cuotas con mora</p></div>
                     </div>
                     <div className="relative">
                       <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
-                      <input id="late-wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-amber-500 focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias-mora" value={lateFeeWalletUrl} onChange={(e) => setLateFeeWalletUrl(e.target.value)} />
+                      <input id="late-wallet-url" type="text" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-amber-500 focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="ej: mi.alias.mora.mp o CBU" value={lateFeeWalletUrl} onChange={(e) => setLateFeeWalletUrl(e.target.value)} />
                     </div>
                   </section>
                 </div>
