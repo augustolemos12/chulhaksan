@@ -34,7 +34,7 @@ export function AdminTeacherDetailsView() {
         </Link>
         <div className="text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Administración</p>
-          <h1 className="text-base font-bold text-text">Detalle del Profesor</h1>
+          <h1 className="text-base font-bold text-text">Detalle del profesor</h1>
         </div>
         <div className="size-9" />
       </header>
@@ -52,7 +52,7 @@ export function AdminTeacherDetailsView() {
           </div>
 
           <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-2">
-            Información Personal
+            Información personal
           </h3>
           <div className="px-4 space-y-1">
             <div className="flex justify-between border-b border-gray-100 py-3">
@@ -83,7 +83,7 @@ export function AdminTeacherDetailsView() {
                   <label className="flex flex-col"><span className="text-xs font-semibold mb-1">Teléfono</span><input className="rounded-lg border px-3 py-2 text-sm" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label>
                   <label className="flex flex-col"><span className="text-xs font-semibold mb-1">Correo electrónico</span><input type="email" className="rounded-lg border px-3 py-2 text-sm" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></label>
                   <div className="flex gap-2">
-                    <button type="submit" disabled={saving} className="flex-1 rounded-lg bg-primary text-white py-2 text-sm font-bold disabled:opacity-70">{saving ? 'Guardando...' : 'Guardar Cambios'}</button>
+                    <button type="submit" disabled={saving} className="flex-1 rounded-lg bg-primary text-white py-2 text-sm font-bold disabled:opacity-70">{saving ? 'Guardando...' : 'Guardar cambios'}</button>
                     <button type="button" onClick={closeEdit} className="flex-1 rounded-lg border border-border bg-surface text-text py-2 text-sm font-bold">Cancelar</button>
                   </div>
                 </form>
@@ -119,7 +119,7 @@ export function AdminTeacherDetailsView() {
           </div>
 
           <div className="px-4 pt-2">
-            <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] pb-2">Alumnos Asignados ({teacher.students ? teacher.students.length : 0})</h3>
+            <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] pb-2">Alumnos asignados ({teacher.students ? teacher.students.length : 0})</h3>
             {!teacher.students || teacher.students.length === 0 ? (
               <div className="rounded-2xl border border-border bg-surface p-4 text-center text-xs text-muted">Este profesor no tiene alumnos asignados.</div>
             ) : (
@@ -159,7 +159,7 @@ export function AdminTeacherDetailsView() {
             )}
           </div>
 
-          <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Configuración de Pagos</h3>
+          <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Configuración de pagos</h3>
           <div className="px-4 pb-24">
             {paymentError && <div className="mb-4 bg-danger/10 border border-danger/20 text-danger rounded-2xl p-4 flex items-start gap-3"><span className="material-symbols-outlined shrink-0">error</span><p className="text-sm font-semibold">{paymentError}</p></div>}
             {paymentSuccess && <div className="mb-4 bg-success/10 border border-success/20 text-success rounded-2xl p-4 flex items-start gap-3"><span className="material-symbols-outlined shrink-0 text-success">check_circle</span><p className="text-sm font-semibold">{paymentSuccess}</p></div>}
@@ -168,7 +168,7 @@ export function AdminTeacherDetailsView() {
               <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">badge</span></div>
-                  <div><h3 className="text-base font-bold">Alias / CBU de Billetera Virtual</h3><p className="text-xs text-muted">Alias o CBU para transferencias de cuotas</p></div>
+                  <div><h3 className="text-base font-bold">Alias / CBU de billetera virtual</h3><p className="text-xs text-muted">Alias o CBU para transferencias de cuotas</p></div>
                 </div>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
@@ -177,7 +177,7 @@ export function AdminTeacherDetailsView() {
               </section>
 
               <button type="submit" disabled={paymentSaving} className="w-full bg-gradient-to-r from-primary to-accent text-white font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none">
-                {paymentSaving ? <><div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin" /><span>Guardando...</span></> : <><span className="material-symbols-outlined text-lg">save</span><span>Guardar Datos de Pago</span></>}
+                {paymentSaving ? <><div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin" /><span>Guardando...</span></> : <><span className="material-symbols-outlined text-lg">save</span><span>Guardar datos de pago</span></>}
               </button>
             </form>
           </div>

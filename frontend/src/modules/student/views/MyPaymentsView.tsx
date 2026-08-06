@@ -214,7 +214,7 @@ export function MyPaymentsView() {
           </button>
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Cuota Mensual</p>
-            <h1 className="text-lg font-bold leading-tight">Realizar Pago</h1>
+            <h1 className="text-lg font-bold leading-tight">Realizar pago</h1>
           </div>
           <div className="w-10" />
         </div>
@@ -253,7 +253,7 @@ export function MyPaymentsView() {
               {paymentStatus === 'pending_approval' ? (
                 <span className="rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-semibold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                  Pendiente de Aprobación
+                  Pendiente de aprobación
                 </span>
               ) : (
                 <span className="rounded-full bg-danger/10 text-danger px-3 py-1 text-xs font-bold uppercase tracking-wider">
@@ -281,7 +281,7 @@ export function MyPaymentsView() {
                 to="/dashboard"
                 className="w-full bg-primary hover:bg-accent text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] text-center"
               >
-                Volver al Panel
+                Volver al panel
               </Link>
             </div>
           </section>
@@ -295,7 +295,7 @@ export function MyPaymentsView() {
                   <span className="material-symbols-outlined">badge</span>
                 </div>
                 <div>
-                  <h3 className="text-base font-bold">Datos de Transferencia {hasLateFee && '(Mora)'}</h3>
+                  <h3 className="text-base font-bold">Datos de transferencia {hasLateFee && '(Mora)'}</h3>
                   <p className="text-xs text-muted">Transferí el monto a {teacherName}</p>
                   {hasLateFee && <p className="text-[10px] text-danger font-bold uppercase mt-1">Monto con recargo incluido</p>}
                 </div>
@@ -341,7 +341,7 @@ export function MyPaymentsView() {
                   <span className="material-symbols-outlined">receipt_long</span>
                 </div>
                 <div>
-                  <h3 className="text-base font-bold">Subir Comprobante</h3>
+                  <h3 className="text-base font-bold">Subir comprobante</h3>
                   <p className="text-xs text-muted">Notificá tu pago subiendo una captura de pantalla</p>
                 </div>
               </div>

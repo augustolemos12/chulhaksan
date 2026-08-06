@@ -57,8 +57,8 @@ export function TeacherPaymentView() {
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="text-center">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Configuración de Cobro</p>
-            <h1 className="text-lg font-bold leading-tight">Mis Datos de Pago</h1>
+            <p className="text-xs uppercase tracking-[0.2em] text-primary font-bold">Configuración de cobro</p>
+            <h1 className="text-lg font-bold leading-tight">Mis datos de pago</h1>
           </div>
           <div className="w-10" />
         </div>
@@ -92,7 +92,7 @@ export function TeacherPaymentView() {
                     <span className="material-symbols-outlined">badge</span>
                   </div>
                   <div>
-                    <h3 className="text-base font-bold">Alias / CBU de Billetera Virtual</h3>
+                    <h3 className="text-base font-bold">Alias / CBU de billetera virtual</h3>
                     <p className="text-xs text-muted">Tus alumnos utilizarán estos datos para transferirte</p>
                   </div>
                 </div>
