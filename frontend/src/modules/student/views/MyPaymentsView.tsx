@@ -197,8 +197,7 @@ export function MyPaymentsView() {
   };
 
   // Determine what to show
-  const missingLateFeeInfo = hasLateFee && !teacher?.lateFeeWalletUrl;
-  const targetWallet = hasLateFee && teacher?.lateFeeWalletUrl ? teacher.lateFeeWalletUrl : teacher?.walletUrl;
+  const targetWallet = teacher?.walletUrl;
 
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-300">
@@ -287,73 +286,53 @@ export function MyPaymentsView() {
             </div>
           </section>
         ) : (
-          /* Unpaid State: Payment Link + Upload Section */
+          /* Unpaid State: Payment Alias + Upload Section */
           <>
-            {/* Si tiene mora pero el profesor no subió nada, mostramos mensaje */}
-            {missingLateFeeInfo && (
-              <section className="bg-amber-50 border border-amber-200 rounded-3xl p-6 shadow-soft space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined">warning</span>
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-amber-900">Atención: Cuota con Mora</h3>
-                    <p className="text-xs text-amber-700">El profesor no ha configurado sus medios de cobro para montos con mora.</p>
-                  </div>
+            {/* Teacher Payment Alias Section */}
+            <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined">badge</span>
                 </div>
-                <p className="text-sm font-semibold text-amber-800">
-                  Por favor, contacta directamente a {teacherName} para que te indique cómo abonar el monto exacto antes de continuar.
-                </p>
-              </section>
-            )}
+                <div>
+                  <h3 className="text-base font-bold">Datos de Transferencia {hasLateFee && '(Mora)'}</h3>
+                  <p className="text-xs text-muted">Transferí el monto a {teacherName}</p>
+                  {hasLateFee && <p className="text-[10px] text-danger font-bold uppercase mt-1">Monto con recargo incluido</p>}
+                </div>
+              </div>
 
-            {!missingLateFeeInfo && (
-              <>
-                {/* Teacher Payment Alias Section */}
-                <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined">badge</span>
+              {loadingTeacher ? (
+                <div className="p-6 flex flex-col items-center justify-center gap-2">
+                  <div className="h-8 w-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                  <span className="text-xs text-muted">Cargando datos de pago...</span>
+                </div>
+              ) : targetWallet ? (
+                <div className="space-y-3">
+                  <div className="bg-background rounded-2xl border border-border p-4 flex items-center justify-between gap-3">
+                    <div className="truncate flex-1">
+                      <p className="text-[10px] text-muted font-bold uppercase tracking-wider mb-0.5">Alias / CBU</p>
+                      <p className="text-text font-black text-lg select-all truncate">{targetWallet}</p>
                     </div>
-                    <div>
-                      <h3 className="text-base font-bold">Datos de Transferencia {hasLateFee && '(Mora)'}</h3>
-                      <p className="text-xs text-muted">Transferí el monto a {teacherName}</p>
-                      {hasLateFee && <p className="text-[10px] text-danger font-bold uppercase mt-1">Monto con recargo incluido</p>}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyAliasToClipboard(targetWallet)}
+                      className={`shrink-0 flex items-center gap-1.5 rounded-xl px-4 py-2.5 font-bold text-xs shadow-sm transition-all active:scale-95 ${copiedAlias ? 'bg-success text-white' : 'bg-primary text-white hover:bg-accent'}`}
+                    >
+                      <span className="material-symbols-outlined text-base">{copiedAlias ? 'check' : 'content_copy'}</span>
+                      <span>{copiedAlias ? '¡Copiado!' : 'Copiar'}</span>
+                    </button>
                   </div>
-
-                  {loadingTeacher ? (
-                    <div className="p-6 flex flex-col items-center justify-center gap-2">
-                      <div className="h-8 w-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                      <span className="text-xs text-muted">Cargando datos de pago...</span>
-                    </div>
-                  ) : targetWallet ? (
-                    <div className="space-y-3">
-                      <div className="bg-background rounded-2xl border border-border p-4 flex items-center justify-between gap-3">
-                        <div className="truncate flex-1">
-                          <p className="text-[10px] text-muted font-bold uppercase tracking-wider mb-0.5">Alias / CBU</p>
-                          <p className="text-text font-black text-lg select-all truncate">{targetWallet}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => copyAliasToClipboard(targetWallet)}
-                          className={`shrink-0 flex items-center gap-1.5 rounded-xl px-4 py-2.5 font-bold text-xs shadow-sm transition-all active:scale-95 ${copiedAlias ? 'bg-success text-white' : 'bg-primary text-white hover:bg-accent'}`}
-                        >
-                          <span className="material-symbols-outlined text-base">{copiedAlias ? 'check' : 'content_copy'}</span>
-                          <span>{copiedAlias ? '¡Copiado!' : 'Copiar'}</span>
-                        </button>
-                      </div>
-                      <p className="text-[11px] text-muted text-center">
-                        Una vez realizada la transferencia, subí el comprobante debajo para que el profesor confirme tu pago.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="p-4 bg-background rounded-2xl border border-border text-center">
-                      <p className="text-xs font-semibold text-text">Tu profesor aún no ha registrado su Alias o CBU.</p>
-                      <p className="text-[11px] text-muted mt-1">Contactate directamente con {teacherName} para solicitar sus datos de pago.</p>
-                    </div>
-                  )}
-                </section>
+                  <p className="text-[11px] text-muted text-center">
+                    Una vez realizada la transferencia, subí el comprobante debajo para que el profesor confirme tu pago.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-4 bg-background rounded-2xl border border-border text-center">
+                  <p className="text-xs font-semibold text-text">Tu profesor aún no ha registrado su Alias o CBU.</p>
+                  <p className="text-[11px] text-muted mt-1">Contactate directamente con {teacherName} para solicitar sus datos de pago.</p>
+                </div>
+              )}
+            </section>
 
             {/* Upload Receipt Section */}
             <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
@@ -451,9 +430,7 @@ export function MyPaymentsView() {
             </section>
           </>
         )}
-      </>
-    )}
-  </main>
+      </main>
     </div>
   );
 }

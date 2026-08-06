@@ -7,8 +7,7 @@ export function AdminTeacherDetailsView() {
     teacher, loading, error, returnTo,
     isEditing, form, setForm, saving, editError, openEdit, closeEdit, handleSave,
     handleDelete, actionLoading, handleResetPassword, resetting, resetInfo,
-    paymentSaving, paymentError, paymentSuccess, walletUrl, setWalletUrl,
-    lateFeeWalletUrl, setLateFeeWalletUrl, handlePaymentSubmit,
+    paymentSaving, paymentError, paymentSuccess, walletUrl, setWalletUrl, handlePaymentSubmit,
     studentPage, setStudentPage, studentPageSize,
   } = useAdminTeacherDetails();
 
@@ -166,35 +165,16 @@ export function AdminTeacherDetailsView() {
             {paymentSuccess && <div className="mb-4 bg-success/10 border border-success/20 text-success rounded-2xl p-4 flex items-start gap-3"><span className="material-symbols-outlined shrink-0 text-success">check_circle</span><p className="text-sm font-semibold">{paymentSuccess}</p></div>}
 
             <form onSubmit={handlePaymentSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-5">
-                  <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-primary">Pago en Término (Normal)</h4>
-                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">badge</span></div>
-                      <div><h3 className="text-base font-bold">Alias / CBU de Billetera</h3><p className="text-xs text-muted">Alias o CBU para transferencias normales</p></div>
-                    </div>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
-                      <input id="wallet-url" type="text" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="ej: mi.alias.mp o 00000031000..." value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
-                    </div>
-                  </section>
+              <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">badge</span></div>
+                  <div><h3 className="text-base font-bold">Alias / CBU de Billetera Virtual</h3><p className="text-xs text-muted">Alias o CBU para transferencias de cuotas</p></div>
                 </div>
-
-                <div className="space-y-5">
-                  <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-amber-500">Pago Fuera de Término (Mora)</h4>
-                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">badge</span></div>
-                      <div><h3 className="text-base font-bold">Alias / CBU (Mora)</h3><p className="text-xs text-muted">Alias o CBU diferenciado para cuotas con mora</p></div>
-                    </div>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
-                      <input id="late-wallet-url" type="text" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-amber-500 focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="ej: mi.alias.mora.mp o CBU" value={lateFeeWalletUrl} onChange={(e) => setLateFeeWalletUrl(e.target.value)} />
-                    </div>
-                  </section>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
+                  <input id="wallet-url" type="text" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="ej: mi.alias.mp o 00000031000..." value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
                 </div>
-              </div>
+              </section>
 
               <button type="submit" disabled={paymentSaving} className="w-full bg-gradient-to-r from-primary to-accent text-white font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none">
                 {paymentSaving ? <><div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin" /><span>Guardando...</span></> : <><span className="material-symbols-outlined text-lg">save</span><span>Guardar Datos de Pago</span></>}
