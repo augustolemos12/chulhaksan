@@ -535,8 +535,8 @@ export class StudentsService {
       lastName: student.teacher.lastName,
       phone: student.teacher.phone,
       email: student.teacher.email,
-      qrCodeUrl: student.teacher.qrCodeUrl,
       walletUrl: student.teacher.walletUrl,
+      lateFeeWalletUrl: student.teacher.lateFeeWalletUrl,
     };
   }
 

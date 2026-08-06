@@ -8,9 +8,7 @@ interface TeacherInfo {
   lastName: string;
   phone?: string;
   email?: string;
-  qrCodeUrl?: string;
   walletUrl?: string;
-  lateFeeQrCodeUrl?: string;
   lateFeeWalletUrl?: string;
 }
 
@@ -191,12 +189,8 @@ export function MyPaymentsView() {
   const hasLateFee = !!currentFee?.lateFeeApplied;
 
   // Determine what to show
-  const missingLateFeeInfo = hasLateFee && !teacher?.lateFeeQrCodeUrl && !teacher?.lateFeeWalletUrl;
-
-  const targetQr = hasLateFee && teacher?.lateFeeQrCodeUrl ? teacher.lateFeeQrCodeUrl : teacher?.qrCodeUrl;
+  const missingLateFeeInfo = hasLateFee && !teacher?.lateFeeWalletUrl;
   const targetWallet = hasLateFee && teacher?.lateFeeWalletUrl ? teacher.lateFeeWalletUrl : teacher?.walletUrl;
-
-  const qrUrl = targetQr || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Pago-CHS-Profesor-${teacher?.lastName || 'Taekwondo'}`;
 
   return (
     <div className="min-h-screen bg-background text-text transition-colors duration-300">
@@ -285,7 +279,7 @@ export function MyPaymentsView() {
             </div>
           </section>
         ) : (
-          /* Unpaid State: QR + Upload Section */
+          /* Unpaid State: Payment Link + Upload Section */
           <>
             {/* Si tiene mora pero el profesor no subió nada, mostramos mensaje */}
             {missingLateFeeInfo && (
@@ -307,61 +301,57 @@ export function MyPaymentsView() {
 
             {!missingLateFeeInfo && (
               <>
-                {/* Teacher QR Code Section */}
+                {/* Teacher Payment Link Section */}
                 <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined">qr_code_2</span>
-                </div>
-                <div>
-                  <h3 className="text-base font-bold">QR de Pago {hasLateFee && '(Mora)'}</h3>
-                  <p className="text-xs text-muted">Escaneá el código de {teacherName}</p>
-                  {hasLateFee && <p className="text-[10px] text-danger font-bold uppercase mt-1">Monto con recargo incluido</p>}
-                </div>
-              </div>
-
-              <div className="flex flex-col items-center justify-center p-4 bg-background rounded-2xl border border-dashed border-border">
-                {loadingTeacher ? (
-                  <div className="w-[200px] h-[200px] flex flex-col items-center justify-center gap-2">
-                    <div className="h-8 w-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                    <span className="text-xs text-muted">Cargando QR del profesor...</span>
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined">link</span>
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold">Medio de Pago {hasLateFee && '(Mora)'}</h3>
+                      <p className="text-xs text-muted">Aboná tu cuota a {teacherName}</p>
+                      {hasLateFee && <p className="text-[10px] text-danger font-bold uppercase mt-1">Monto con recargo incluido</p>}
+                    </div>
                   </div>
-                ) : (
-                  <div className="relative group">
-                    <img
-                      src={qrUrl}
-                      alt="QR de Pago del Profesor"
-                      className="w-[220px] h-[220px] object-contain bg-surface p-2 rounded-xl shadow-md transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl pointer-events-none" />
-                  </div>
-                )}
-                <div className="mt-4 text-center max-w-xs">
-                  <p className="text-xs font-semibold text-text">
-                    {targetQr ? (hasLateFee ? 'Paga escaneando el QR de mora de tu profesor' : 'Paga escaneando el QR oficial de tu profesor') : 'Paga mediante Mercado Pago o Transferencia'}
-                  </p>
-                  <p className="text-[10px] text-muted mt-1">
-                    {targetQr
-                      ? 'Escaneá desde la app de tu billetera virtual para realizar la transacción.'
-                      : 'Escaneá desde la app de tu banco o billetera virtual para realizar la transacción.'}
-                  </p>
-                </div>
-              </div>
 
-              {targetWallet && (
-                <div className="pt-2 animate-fadeIn">
-                  <a
-                    href={targetWallet}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-full ${hasLateFee ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-gradient-to-r from-primary to-accent'} hover:shadow-glow text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 hover:scale-[1.01]`}
-                  >
-                    <span className="material-symbols-outlined text-lg">open_in_new</span>
-                    <span>Pagar con Billetera Virtual (Redirección)</span>
-                  </a>
-                </div>
-              )}
-            </section>
+                  {loadingTeacher ? (
+                    <div className="p-6 flex flex-col items-center justify-center gap-2">
+                      <div className="h-8 w-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                      <span className="text-xs text-muted">Cargando medio de pago...</span>
+                    </div>
+                  ) : targetWallet ? (
+                    <div className="space-y-3">
+                      <div className="bg-background rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                        <div className="truncate flex-1">
+                          <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Enlace de pago</p>
+                          <a 
+                            href={targetWallet} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline font-medium text-sm truncate block"
+                          >
+                            {targetWallet}
+                          </a>
+                        </div>
+                      </div>
+
+                      <a
+                        href={targetWallet}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-full ${hasLateFee ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-gradient-to-r from-primary to-accent'} hover:shadow-glow text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 hover:scale-[1.01]`}
+                      >
+                        <span className="material-symbols-outlined text-lg">open_in_new</span>
+                        <span>Pagar con Billetera Virtual (Redirección)</span>
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-background rounded-2xl border border-border text-center">
+                      <p className="text-xs font-semibold text-text">Tu profesor aún no ha registrado su link de billetera virtual.</p>
+                      <p className="text-[11px] text-muted mt-1">Contactate con {teacherName} para consultar sus datos de transferencia.</p>
+                    </div>
+                  )}
+                </section>
 
             {/* Upload Receipt Section */}
             <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">

@@ -7,9 +7,8 @@ export function AdminTeacherDetailsView() {
     teacher, loading, error, returnTo,
     isEditing, form, setForm, saving, editError, openEdit, closeEdit, handleSave,
     handleDelete, actionLoading, handleResetPassword, resetting, resetInfo,
-    paymentSaving, paymentError, paymentSuccess, walletUrl, setWalletUrl, qrCodeUrl, previewUrl, selectedFile,
-    lateFeeWalletUrl, setLateFeeWalletUrl, lateFeeQrCodeUrl, lateFeePreviewUrl, selectedLateFeeFile,
-    handleFileChange, handleRemovePreview, handlePaymentSubmit,
+    paymentSaving, paymentError, paymentSuccess, walletUrl, setWalletUrl,
+    lateFeeWalletUrl, setLateFeeWalletUrl, handlePaymentSubmit,
   } = useAdminTeacherDetails();
 
   const [copiedReset, setCopiedReset] = useState(false);
@@ -20,26 +19,6 @@ export function AdminTeacherDetailsView() {
     setTimeout(() => setCopiedReset(false), 2000);
   };
 
-  const [isDraggingNormal, setIsDraggingNormal] = useState(false);
-  const onDragOverNormal = (e: React.DragEvent) => { e.preventDefault(); setIsDraggingNormal(true); };
-  const onDragLeaveNormal = () => setIsDraggingNormal(false);
-  const onDropNormal = (e: React.DragEvent) => {
-    e.preventDefault(); setIsDraggingNormal(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileChange(e.dataTransfer.files[0], false);
-    }
-  };
-
-  const [isDraggingLate, setIsDraggingLate] = useState(false);
-  const onDragOverLate = (e: React.DragEvent) => { e.preventDefault(); setIsDraggingLate(true); };
-  const onDragLeaveLate = () => setIsDraggingLate(false);
-  const onDropLate = (e: React.DragEvent) => {
-    e.preventDefault(); setIsDraggingLate(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileChange(e.dataTransfer.files[0], true);
-    }
-  };
-
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] sm:max-w-[640px] md:max-w-[800px] mx-auto overflow-x-hidden border-x border-gray-200 bg-background text-text">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur-md">
@@ -47,6 +26,11 @@ export function AdminTeacherDetailsView() {
           <span className="material-symbols-outlined text-lg">arrow_back</span>
           Atrás
         </Link>
+        <div className="text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Administración</p>
+          <h1 className="text-base font-bold text-text">Detalle del Profesor</h1>
+        </div>
+        <div className="size-9" />
       </header>
 
       {loading && <div className="p-4 text-sm text-gray-500">Cargando profesor...</div>}
@@ -128,26 +112,21 @@ export function AdminTeacherDetailsView() {
             </div>
           </div>
 
-          <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">
-            Alumnos Asignados ({teacher.students?.length ?? 0})
-          </h3>
-          <div className="px-4 space-y-3">
-            {(!teacher.students || teacher.students.length === 0) ? (
-              <p className="text-sm text-muted px-2">No hay alumnos asignados a este profesor.</p>
+          <div className="px-4 pt-2">
+            <h3 className="text-text text-lg font-bold leading-tight tracking-[-0.015em] pb-2">Alumnos Asignados ({teacher.students ? teacher.students.length : 0})</h3>
+            {!teacher.students || teacher.students.length === 0 ? (
+              <div className="rounded-2xl border border-border bg-surface p-4 text-center text-xs text-muted">Este profesor no tiene alumnos asignados.</div>
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="space-y-2">
                 {teacher.students.map((student: any) => (
-                  <div key={student.dni} className="flex items-center justify-between bg-surface border border-border p-3 rounded-xl shadow-soft">
-                    <Link className="flex items-center gap-3 flex-1 min-w-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname)}`}>
-                      <div className="bg-primary/10 text-primary flex items-center justify-center rounded-full h-10 w-10 shrink-0">
-                        <span className="material-symbols-outlined text-xl">person</span>
+                  <div key={student.id} className="flex items-center justify-between p-3 bg-surface border border-border rounded-2xl">
+                    <Link to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname)}`} className="flex items-center gap-3 min-w-0 flex-1 hover:opacity-80 transition-opacity">
+                      <div className="h-9 w-9 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm shrink-0">
+                        {student.firstName[0]}{student.lastName[0]}
                       </div>
-                      <div className="flex flex-col justify-center truncate">
-                        <p className="text-text text-sm font-semibold leading-tight truncate">{student.firstName} {student.lastName}</p>
-                        <p className="text-[#9a4c4c] text-[11px] font-medium mt-0.5">DNI: {student.dni}</p>
-                        {student.classGroup?.name && (
-                          <p className="text-[10px] text-muted mt-0.5 truncate">Clase: {student.classGroup.name}</p>
-                        )}
+                      <div className="truncate">
+                        <p className="text-sm font-bold text-text truncate">{student.firstName} {student.lastName}</p>
+                        <p className="text-[11px] text-muted truncate">DNI: {student.user?.dni || 'S/D'} • {student.gym?.name || 'Sin Sede'}</p>
                       </div>
                     </Link>
                     <Link className="rounded-lg border border-border bg-surface text-text text-xs font-semibold px-3 py-1.5 hover:bg-primary hover:text-white transition-colors shrink-0" to={`/alumno/${student.dni}?returnTo=${encodeURIComponent(window.location.pathname)}`}>
@@ -166,7 +145,6 @@ export function AdminTeacherDetailsView() {
 
             <form onSubmit={handlePaymentSubmit} className="space-y-5">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Pago Normal */}
                 <div className="space-y-5">
                   <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-primary">Pago en Término (Normal)</h4>
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
@@ -174,47 +152,13 @@ export function AdminTeacherDetailsView() {
                       <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">link</span></div>
                       <div><h3 className="text-base font-bold">Enlace de Billetera</h3><p className="text-xs text-muted">URL directa de cobro normal</p></div>
                     </div>
-                    <div className="space-y-1.5">
-                      <div className="relative">
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
-                        <input id="wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias" value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
-                      </div>
-                    </div>
-                  </section>
-
-                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined">qr_code_2</span></div>
-                      <div><h3 className="text-base font-bold">Código QR Normal</h3><p className="text-xs text-muted">Imagen para escanear al abonar en término</p></div>
-                    </div>
-
-                    {qrCodeUrl && !previewUrl && (
-                      <div className="flex flex-col items-center justify-center p-4 bg-background rounded-2xl border border-border">
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-muted mb-2">QR Actual Registrado</span>
-                        <img src={qrCodeUrl} alt="QR Registrado" className="h-44 w-44 object-contain bg-white p-2 rounded-xl border border-border shadow-sm" />
-                      </div>
-                    )}
-
-                    <div
-                      onDragOver={onDragOverNormal} onDragLeave={onDragLeaveNormal} onDrop={onDropNormal}
-                      className={`border-2 border-dashed rounded-2xl p-6 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer min-h-[160px] ${isDraggingNormal ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
-                      onClick={() => document.getElementById('qr-upload-input')?.click()}
-                    >
-                      <input id="qr-upload-input" type="file" className="hidden" accept="image/*" onChange={(e) => { if (e.target.files && e.target.files.length > 0) handleFileChange(e.target.files[0], false); }} />
-                      {!previewUrl ? (
-                        <><span className="material-symbols-outlined text-4xl text-muted mb-2">cloud_upload</span><p className="text-sm font-bold text-text">Arrastrá un nuevo QR acá</p><p className="text-xs text-muted mt-1">o hacé clic para seleccionar un archivo</p></>
-                      ) : (
-                        <div className="w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                          <img src={previewUrl} alt="Vista previa del nuevo QR" className="h-36 w-36 object-contain bg-white p-2 rounded-xl border border-border mb-3 shadow-md" />
-                          <div className="max-w-[240px] truncate text-xs font-bold text-text">{selectedFile?.name}</div>
-                          <button type="button" onClick={() => handleRemovePreview(false)} className="mt-3 flex items-center gap-1 text-xs font-bold text-danger hover:text-red-700"><span className="material-symbols-outlined text-sm">delete</span>Cancelar reemplazo</button>
-                        </div>
-                      )}
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
+                      <input id="wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-primary focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias" value={walletUrl} onChange={(e) => setWalletUrl(e.target.value)} />
                     </div>
                   </section>
                 </div>
 
-                {/* Pago Fuera de Término (Mora) */}
                 <div className="space-y-5">
                   <h4 className="font-bold text-text mb-2 px-2 border-l-4 border-amber-500">Pago Fuera de Término (Mora)</h4>
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
@@ -222,42 +166,9 @@ export function AdminTeacherDetailsView() {
                       <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">link</span></div>
                       <div><h3 className="text-base font-bold">Enlace de Billetera (Mora)</h3><p className="text-xs text-muted">URL directa de cobro con mora incluida</p></div>
                     </div>
-                    <div className="space-y-1.5">
-                      <div className="relative">
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
-                        <input id="late-wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-amber-500 focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias-mora" value={lateFeeWalletUrl} onChange={(e) => setLateFeeWalletUrl(e.target.value)} />
-                      </div>
-                    </div>
-                  </section>
-
-                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0"><span className="material-symbols-outlined">qr_code_2</span></div>
-                      <div><h3 className="text-base font-bold">Código QR de Mora</h3><p className="text-xs text-muted">Imagen para escanear al abonar con recargo</p></div>
-                    </div>
-
-                    {lateFeeQrCodeUrl && !lateFeePreviewUrl && (
-                      <div className="flex flex-col items-center justify-center p-4 bg-background rounded-2xl border border-border">
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-muted mb-2">QR de Mora Actual Registrado</span>
-                        <img src={lateFeeQrCodeUrl} alt="QR Mora Registrado" className="h-44 w-44 object-contain bg-white p-2 rounded-xl border border-border shadow-sm" />
-                      </div>
-                    )}
-
-                    <div
-                      onDragOver={onDragOverLate} onDragLeave={onDragLeaveLate} onDrop={onDropLate}
-                      className={`border-2 border-dashed rounded-2xl p-6 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer min-h-[160px] ${isDraggingLate ? 'border-amber-500 bg-amber-50' : 'border-border hover:border-amber-500/50'}`}
-                      onClick={() => document.getElementById('late-qr-upload-input')?.click()}
-                    >
-                      <input id="late-qr-upload-input" type="file" className="hidden" accept="image/*" onChange={(e) => { if (e.target.files && e.target.files.length > 0) handleFileChange(e.target.files[0], true); }} />
-                      {!lateFeePreviewUrl ? (
-                        <><span className="material-symbols-outlined text-4xl text-muted mb-2">cloud_upload</span><p className="text-sm font-bold text-text">Arrastrá el QR con Mora acá</p><p className="text-xs text-muted mt-1">o hacé clic para seleccionar un archivo</p></>
-                      ) : (
-                        <div className="w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                          <img src={lateFeePreviewUrl} alt="Vista previa del nuevo QR Mora" className="h-36 w-36 object-contain bg-white p-2 rounded-xl border border-border mb-3 shadow-md" />
-                          <div className="max-w-[240px] truncate text-xs font-bold text-text">{selectedLateFeeFile?.name}</div>
-                          <button type="button" onClick={() => handleRemovePreview(true)} className="mt-3 flex items-center gap-1 text-xs font-bold text-danger hover:text-red-700"><span className="material-symbols-outlined text-sm">delete</span>Cancelar reemplazo</button>
-                        </div>
-                      )}
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-muted text-[22px]">account_balance_wallet</span>
+                      <input id="late-wallet-url" type="url" className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-2xl focus:border-amber-500 focus:outline-none text-sm transition-all duration-300 font-medium" placeholder="https://link.mercadopago.com.ar/tu-alias-mora" value={lateFeeWalletUrl} onChange={(e) => setLateFeeWalletUrl(e.target.value)} />
                     </div>
                   </section>
                 </div>

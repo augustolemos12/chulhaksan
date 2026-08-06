@@ -9,25 +9,18 @@ import {
   Query,
   UseGuards,
   ParseIntPipe,
-  UseInterceptors,
-  UploadedFiles,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { TeacherQueryDto } from './dto/teacher-query.dto';
 import { UpdateTeacherPaymentDto } from './dto/update-teacher-payment.dto';
-import { ApiCookieAuth, ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiTags, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Role } from '@prisma/client';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
 
 @ApiTags('Teachers')
 @ApiCookieAuth()
@@ -48,16 +41,6 @@ export class TeachersController {
 
   @Patch(':id/payment-info')
   @Roles(Role.ADMIN)
-  @UseInterceptors(
-    FileFieldsInterceptor(
-      [
-        { name: 'qrCode', maxCount: 1 },
-        { name: 'lateFeeQrCode', maxCount: 1 },
-      ],
-      { storage: memoryStorage() },
-    ),
-  )
-  @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
@@ -72,29 +55,14 @@ export class TeachersController {
           description: 'URL de redirección a la billetera virtual para mora',
           example: 'https://link.mercadopago.com.ar/mora',
         },
-        qrCode: {
-          type: 'string',
-          format: 'binary',
-          description: 'Imagen del código QR (jpg, jpeg, png o webp — máx. 5 MB)',
-        },
-        lateFeeQrCode: {
-          type: 'string',
-          format: 'binary',
-          description: 'Imagen del código QR para mora (jpg, jpeg, png o webp — máx. 5 MB)',
-        },
       },
     },
   })
   async updatePaymentDetails(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTeacherPaymentDto,
-    @UploadedFiles()
-    files?: {
-      qrCode?: Express.Multer.File[];
-      lateFeeQrCode?: Express.Multer.File[];
-    },
   ) {
-    return this.teachersService.updatePaymentDetails(id, dto, files);
+    return this.teachersService.updatePaymentDetails(id, dto);
   }
 
   // ==========================================

@@ -58,7 +58,6 @@ async function main() {
           lastName: 'Pérez',
           email: 'juan@chulhaksan.com',
           phone: '1234567890',
-          qrCodeUrl: 'https://res.cloudinary.com/demo/image/upload/v1620000000/sample_qr.png',
           walletUrl: 'https://link.mercadopago.com.ar/chulhaksan-juan',
         },
       },

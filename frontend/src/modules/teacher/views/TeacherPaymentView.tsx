@@ -10,7 +10,6 @@ export function TeacherPaymentView() {
   const [error, setError] = useState<string | null>(null);
 
   // Profile data
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [walletUrl, setWalletUrl] = useState<string>('');
   const [teacher, setTeacher] = useState<any>(null);
 
@@ -22,7 +21,6 @@ export function TeacherPaymentView() {
         if (res.ok) {
           const data = await res.json();
           setTeacher(data);
-          setQrCodeUrl(data.qrCodeUrl || null);
           setWalletUrl(data.walletUrl || '');
         } else {
           const errData = await res.json().catch(() => ({}));
@@ -74,18 +72,18 @@ export function TeacherPaymentView() {
           </div>
         ) : (
           <div className="space-y-5">
-            {!walletUrl && !qrCodeUrl && !error && (
+            {!walletUrl && !(teacher as any)?.lateFeeWalletUrl && !error && (
               <div className="bg-surface border border-border rounded-3xl p-8 shadow-soft flex flex-col items-center text-center">
                 <span className="material-symbols-outlined text-4xl text-muted mb-3">account_balance_wallet</span>
                 <p className="text-base font-bold text-text">No tienes medios de pago configurados</p>
-                <p className="text-sm text-muted mt-2">Comunícate con el administrador para registrar tu link de cobro o código QR.</p>
+                <p className="text-sm text-muted mt-2">Comunícate con el administrador para registrar tu link de cobro.</p>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-5">
                 <h2 className="font-bold text-text mb-2 px-2 border-l-4 border-primary">Pago Normal</h2>
                 {/* Wallet URL Card */}
-                {walletUrl && (
+                {walletUrl ? (
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -120,40 +118,17 @@ export function TeacherPaymentView() {
                       </a>
                     </div>
                   </section>
-                )}
-
-                {/* QR Code Card */}
-                {qrCodeUrl && (
-                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined">qr_code_2</span>
-                      </div>
-                      <div>
-                        <h3 className="text-base font-bold">Código QR Normal</h3>
-                        <p className="text-xs text-muted">Tus alumnos pueden escanear este QR para abonar en término</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-2xl border border-border">
-                      <img
-                        src={qrCodeUrl}
-                        alt="QR Registrado"
-                        className="h-56 w-56 object-contain bg-white p-3 rounded-2xl border border-border shadow-sm mb-4"
-                      />
-                      <p className="text-sm font-bold text-text">QR configurado correctamente</p>
-                      <p className="text-xs text-muted mt-1 text-center max-w-[280px]">
-                        Si necesitás modificar este código, solicitá el cambio a tu administrador.
-                      </p>
-                    </div>
-                  </section>
+                ) : (
+                  <div className="bg-surface border border-border rounded-3xl p-6 shadow-soft text-center opacity-70">
+                    <p className="text-xs text-muted">Sin enlace de pago normal configurado</p>
+                  </div>
                 )}
               </div>
 
               <div className="space-y-5">
                 <h2 className="font-bold text-text mb-2 px-2 border-l-4 border-amber-500">Pago Fuera de Término (Mora)</h2>
                 {/* Late Fee Wallet URL Card */}
-                {(teacher as any)?.lateFeeWalletUrl && (
+                {(teacher as any)?.lateFeeWalletUrl ? (
                   <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
@@ -188,40 +163,11 @@ export function TeacherPaymentView() {
                       </a>
                     </div>
                   </section>
-                )}
-
-                {/* Late Fee QR Code Card */}
-                {(teacher as any)?.lateFeeQrCodeUrl && (
-                  <section className="bg-surface border border-border rounded-3xl p-6 shadow-soft space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined">qr_code_2</span>
-                      </div>
-                      <div>
-                        <h3 className="text-base font-bold">Código QR de Mora</h3>
-                        <p className="text-xs text-muted">Tus alumnos pueden escanear este QR para abonar con recargo</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center p-6 bg-background rounded-2xl border border-border">
-                      <img
-                        src={(teacher as any)?.lateFeeQrCodeUrl}
-                        alt="QR Mora Registrado"
-                        className="h-56 w-56 object-contain bg-white p-3 rounded-2xl border border-border shadow-sm mb-4"
-                      />
-                      <p className="text-sm font-bold text-text">QR de Mora configurado correctamente</p>
-                      <p className="text-xs text-muted mt-1 text-center max-w-[280px]">
-                        Si necesitás modificar este código, solicitá el cambio a tu administrador.
-                      </p>
-                    </div>
-                  </section>
-                )}
-
-                {!((teacher as any)?.lateFeeWalletUrl) && !((teacher as any)?.lateFeeQrCodeUrl) && (
-                  <div className="bg-surface border border-border rounded-3xl p-8 shadow-soft flex flex-col items-center text-center opacity-70">
-                    <span className="material-symbols-outlined text-4xl text-muted mb-3">warning</span>
+                ) : (
+                  <div className="bg-surface border border-border rounded-3xl p-6 shadow-soft flex flex-col items-center text-center opacity-70">
+                    <span className="material-symbols-outlined text-3xl text-muted mb-2">warning</span>
                     <p className="text-sm font-bold text-text">Sin configuración para mora</p>
-                    <p className="text-xs text-muted mt-1">Si deseas usar QR o link diferenciado para mora, contáctate con el administrador.</p>
+                    <p className="text-xs text-muted mt-1">Si deseas usar un link diferenciado para mora, contáctate con el administrador.</p>
                   </div>
                 )}
               </div>
