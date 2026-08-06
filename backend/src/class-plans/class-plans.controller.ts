@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -30,20 +41,14 @@ export class ClassPlansController {
   @Get()
   @Roles(Role.ADMIN, Role.TEACHER)
   @ApiOperation({ summary: 'Obtener planes de clases con filtros' })
-  findAll(
-    @Query() query: ClassPlanQueryDto,
-    @CurrentUser() user: any,
-  ) {
+  findAll(@Query() query: ClassPlanQueryDto, @CurrentUser() user: any) {
     return this.classPlansService.findAll(query, user);
   }
 
   @Get(':id')
   @Roles(Role.ADMIN, Role.TEACHER)
   @ApiOperation({ summary: 'Obtener un plan de clases específico' })
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: any,
-  ) {
+  findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: any) {
     return this.classPlansService.findOne(id, user);
   }
 
@@ -61,10 +66,7 @@ export class ClassPlansController {
   @Delete(':id')
   @Roles(Role.ADMIN, Role.TEACHER)
   @ApiOperation({ summary: 'Eliminar un plan de clases (Hard Delete)' })
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: any,
-  ) {
+  remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: any) {
     return this.classPlansService.remove(id, user);
   }
 }

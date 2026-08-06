@@ -102,5 +102,3 @@ export class TeachersController {
     return this.teachersService.remove(id);
   }
 }
-
-

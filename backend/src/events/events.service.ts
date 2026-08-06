@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -19,7 +23,9 @@ export class EventsService {
       orderBy: { createdAt: 'desc' },
     });
     if (!event) {
-      throw new NotFoundException('No se ha configurado ningún evento del mes aún.');
+      throw new NotFoundException(
+        'No se ha configurado ningún evento del mes aún.',
+      );
     }
     return event;
   }
@@ -44,7 +50,9 @@ export class EventsService {
     }
 
     if (!dto.imageUrl) {
-      throw new BadRequestException('Se requiere una imagen para crear el evento por primera vez.');
+      throw new BadRequestException(
+        'Se requiere una imagen para crear el evento por primera vez.',
+      );
     }
 
     return this.prisma.event.create({
@@ -64,12 +72,16 @@ export class EventsService {
     });
 
     if (!existingEvent) {
-      throw new NotFoundException('No hay ningún evento activo del mes para eliminar.');
+      throw new NotFoundException(
+        'No hay ningún evento activo del mes para eliminar.',
+      );
     }
 
     // Eliminar la imagen de Cloudinary si existe
     if (existingEvent.imageUrl) {
-      const publicId = this.cloudinaryService.extractPublicId(existingEvent.imageUrl);
+      const publicId = this.cloudinaryService.extractPublicId(
+        existingEvent.imageUrl,
+      );
       if (publicId) {
         await this.cloudinaryService.deleteFile(publicId);
       }
@@ -79,6 +91,9 @@ export class EventsService {
       where: { id: existingEvent.id },
     });
 
-    return { success: true, message: 'Evento del mes y su imagen eliminados correctamente' };
+    return {
+      success: true,
+      message: 'Evento del mes y su imagen eliminados correctamente',
+    };
   }
 }

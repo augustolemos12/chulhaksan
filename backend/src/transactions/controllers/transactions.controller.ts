@@ -15,7 +15,14 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { ApiTags, ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import { TransactionsService } from '../services/transactions.service';
 import { CreateTransactionDto } from '../dto/create-transaction.dto';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
@@ -42,7 +49,9 @@ export class TransactionsController {
   @Roles(Role.STUDENT, Role.TEACHER, Role.ADMIN)
   @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
   @ApiConsumes('multipart/form-data', 'application/json')
-  @ApiOperation({ summary: 'Reportar un pago (subir comprobante si es transferencia)' })
+  @ApiOperation({
+    summary: 'Reportar un pago (subir comprobante si es transferencia)',
+  })
   async reportPayment(
     @Body() dto: CreateTransactionDto,
     @UploadedFile(
@@ -53,7 +62,8 @@ export class TransactionsController {
           new FileTypeValidator({ fileType: ALLOWED_MIME_TYPES }),
         ],
       }),
-    ) file?: Express.Multer.File,
+    )
+    file?: Express.Multer.File,
   ) {
     if (file) {
       const uploadResult = await this.cloudinaryService.uploadReceipt(file);
@@ -64,7 +74,9 @@ export class TransactionsController {
 
   @Post('direct')
   @Roles(Role.TEACHER, Role.ADMIN)
-  @ApiOperation({ summary: 'Registrar un pago en efectivo directamente (APPROVED automático)' })
+  @ApiOperation({
+    summary: 'Registrar un pago en efectivo directamente (APPROVED automático)',
+  })
   async registerDirectPayment(@Body() dto: CreateTransactionDto) {
     return this.transactionsService.registerDirectPayment(dto);
   }
@@ -74,7 +86,7 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Aprobar un pago PENDING' })
   async approveTransaction(
     @Param('id', ParseIntPipe) id: number,
-    @Body('amount') amount?: number
+    @Body('amount') amount?: number,
   ) {
     return this.transactionsService.approveTransaction(id, amount);
   }
@@ -95,7 +107,9 @@ export class TransactionsController {
 
   @Get('student/:studentId')
   @ApiOperation({ summary: 'Obtener pagos de un alumno específico' })
-  async getStudentTransactions(@Param('studentId', ParseIntPipe) studentId: number) {
+  async getStudentTransactions(
+    @Param('studentId', ParseIntPipe) studentId: number,
+  ) {
     return this.transactionsService.getTransactionsByStudent(studentId);
   }
 }

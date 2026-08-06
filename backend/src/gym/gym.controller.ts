@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -32,20 +43,14 @@ export class GymController {
 
   @Get('my')
   @Roles(Role.TEACHER)
-  findMyGyms(
-    @Query() query: GymQueryDto,
-    @CurrentUser() user: any,
-  ) {
+  findMyGyms(@Query() query: GymQueryDto, @CurrentUser() user: any) {
     return this.gymService.findMyGymsByUser(user.id, query);
   }
 
   @Get(':id')
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.gymService.findOne(id);
   }
-
 
   @Patch(':id')
   @Roles(Role.ADMIN)

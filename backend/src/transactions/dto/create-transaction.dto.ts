@@ -9,16 +9,25 @@ export class CreateTransactionDto {
   @Type(() => Number)
   feeId: number;
 
-  @ApiProperty({ description: 'Monto del pago (en centavos o unidad entera)', example: 15000 })
+  @ApiProperty({
+    description: 'Monto del pago (en centavos o unidad entera)',
+    example: 15000,
+  })
   @IsInt()
   @Type(() => Number)
   amount: number;
 
-  @ApiProperty({ enum: PaymentMethod, description: 'Método de pago (CASH o TRANSFER)' })
+  @ApiProperty({
+    enum: PaymentMethod,
+    description: 'Método de pago (CASH o TRANSFER)',
+  })
   @IsEnum(PaymentMethod)
   method: PaymentMethod;
 
-  @ApiPropertyOptional({ description: 'URL del comprobante (se asigna automáticamente tras la subida)' })
+  @ApiPropertyOptional({
+    description:
+      'URL del comprobante (se asigna automáticamente tras la subida)',
+  })
   @IsOptional()
   @IsString()
   proofImageUrl?: string;

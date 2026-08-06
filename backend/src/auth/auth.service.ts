@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -22,7 +26,9 @@ export class AuthService {
     });
 
     if (!user || user.status === 'BLOCKED') {
-      throw new UnauthorizedException('Credenciales inválidas o usuario bloqueado');
+      throw new UnauthorizedException(
+        'Credenciales inválidas o usuario bloqueado',
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -34,7 +40,8 @@ export class AuthService {
     const payload = { sub: user.id, role: user.role };
     const token = this.jwtService.sign(payload);
 
-    const expiresIn = Number(this.configService.get('JWT_EXPIRATION_TIME')) || 86400;
+    const expiresIn =
+      Number(this.configService.get('JWT_EXPIRATION_TIME')) || 86400;
 
     return {
       token,
@@ -43,8 +50,8 @@ export class AuthService {
         id: user.id,
         dni: user.dni,
         role: user.role,
-        mustChangePassword: user.mustChangePassword
-      }
+        mustChangePassword: user.mustChangePassword,
+      },
     };
   }
 
@@ -94,7 +101,8 @@ export class AuthService {
 
     const payload = { sub: user.id, role: user.role };
     const token = this.jwtService.sign(payload);
-    const expiresIn = Number(this.configService.get('JWT_EXPIRATION_TIME')) || 86400;
+    const expiresIn =
+      Number(this.configService.get('JWT_EXPIRATION_TIME')) || 86400;
 
     return {
       token,

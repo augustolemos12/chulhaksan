@@ -1,7 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Belt, StudentCategory } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsEnum, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateStudentDto {
   @ApiProperty({ description: 'DNI del alumno', example: '12345678' })
@@ -10,7 +20,10 @@ export class CreateStudentDto {
   @Transform(({ value }) => value?.trim())
   dni: string;
 
-  @ApiPropertyOptional({ description: 'Contraseña temporal (opcional, si no se envía se autogenera)', example: 'Temporal123!' })
+  @ApiPropertyOptional({
+    description: 'Contraseña temporal (opcional, si no se envía se autogenera)',
+    example: 'Temporal123!',
+  })
   @IsOptional()
   @IsString()
   @MinLength(6)
@@ -28,7 +41,10 @@ export class CreateStudentDto {
   @Transform(({ value }) => value?.trim())
   lastName: string;
 
-  @ApiPropertyOptional({ description: 'ID del Gimnasio al que pertenece', example: 1 })
+  @ApiPropertyOptional({
+    description: 'ID del Gimnasio al que pertenece',
+    example: 1,
+  })
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -39,7 +55,10 @@ export class CreateStudentDto {
   @IsPositive()
   classGroupId: number;
 
-  @ApiPropertyOptional({ description: 'ID del Profesor (Requerido solo si el creador es Admin)', example: 1 })
+  @ApiPropertyOptional({
+    description: 'ID del Profesor (Requerido solo si el creador es Admin)',
+    example: 1,
+  })
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -59,17 +78,22 @@ export class CreateStudentDto {
   @Transform(({ value }) => value?.trim())
   phone?: string;
 
-  @ApiPropertyOptional({ description: 'Email', example: 'juan.perez@example.com' })
+  @ApiPropertyOptional({
+    description: 'Email',
+    example: 'juan.perez@example.com',
+  })
   @IsOptional()
   @IsEmail()
   @Transform(({ value }) => value?.trim())
   email?: string;
 
-  @ApiPropertyOptional({ description: 'Dirección física', example: 'Calle Falsa 123' })
+  @ApiPropertyOptional({
+    description: 'Dirección física',
+    example: 'Calle Falsa 123',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   @Transform(({ value }) => value?.trim())
   address?: string;
 }
-

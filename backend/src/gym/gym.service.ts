@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGymDto } from './dto/create-gym.dto';
 import { UpdateGymDto } from './dto/update-gym.dto';
@@ -40,7 +45,7 @@ export class GymService {
 
     if (existingGym) {
       throw new ConflictException(
-        `Ya existe un gimnasio activo con el nombre "${normalizedName}"`
+        `Ya existe un gimnasio activo con el nombre "${normalizedName}"`,
       );
     }
 
@@ -61,9 +66,9 @@ export class GymService {
     const where: Prisma.GymWhereInput = {
       deletedAt: null,
     };
-    
+
     if (isActive !== undefined) where.isActive = isActive;
-    
+
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
     }
@@ -85,7 +90,7 @@ export class GymService {
           where: { gymId: gym.id, deletedAt: null },
         });
         return { ...gym, studentsCount };
-      })
+      }),
     );
 
     return {
@@ -112,7 +117,6 @@ export class GymService {
     return this.mapGymResponse(gym);
   }
 
-
   async update(id: number, updateGymDto: UpdateGymDto) {
     const gym = await this.prisma.gym.findFirst({
       where: { id, deletedAt: null },
@@ -124,7 +128,7 @@ export class GymService {
 
     if (updateGymDto.name) {
       const normalizedName = updateGymDto.name.trim().toUpperCase();
-      
+
       const existingGym = await this.prisma.gym.findFirst({
         where: {
           name: normalizedName,
@@ -135,10 +139,10 @@ export class GymService {
 
       if (existingGym) {
         throw new ConflictException(
-          `Ya existe otro gimnasio activo llamado "${normalizedName}"`
+          `Ya existe otro gimnasio activo llamado "${normalizedName}"`,
         );
       }
-      
+
       updateGymDto.name = normalizedName;
     }
 
@@ -157,7 +161,9 @@ export class GymService {
     });
 
     if (!teacher) {
-      throw new NotFoundException('Perfil de profesor no encontrado para este usuario');
+      throw new NotFoundException(
+        'Perfil de profesor no encontrado para este usuario',
+      );
     }
 
     const { isActive, search, page = 1, limit = 10 } = query;
@@ -166,7 +172,7 @@ export class GymService {
     const where: Prisma.GymWhereInput = {
       deletedAt: null,
     };
-    
+
     if (isActive !== undefined) where.isActive = isActive;
     if (search) where.name = { contains: search, mode: 'insensitive' };
 
@@ -181,16 +187,18 @@ export class GymService {
       this.prisma.gym.count({ where }),
     ]);
 
-    const itemsWithCount = await Promise.all(items.map(async (gym) => {
-      const studentsCount = await this.prisma.student.count({
-        where: {
-          gymId: gym.id,
-          teacherId: teacher.id,
-          deletedAt: null,
-        }
-      });
-      return { ...gym, studentsCount };
-    }));
+    const itemsWithCount = await Promise.all(
+      items.map(async (gym) => {
+        const studentsCount = await this.prisma.student.count({
+          where: {
+            gymId: gym.id,
+            teacherId: teacher.id,
+            deletedAt: null,
+          },
+        });
+        return { ...gym, studentsCount };
+      }),
+    );
 
     return {
       items: itemsWithCount.map((gym) => this.mapGymResponse(gym)),
@@ -222,6 +230,4 @@ export class GymService {
 
     return { success: true, message: 'Gimnasio eliminado correctamente' };
   }
-
 }
-

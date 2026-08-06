@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
@@ -29,7 +33,8 @@ export class TeachersService {
   }
 
   async create(createTeacherDto: CreateTeacherDto) {
-    const { dni, firstName, lastName, phone, email, password } = createTeacherDto;
+    const { dni, firstName, lastName, phone, email, password } =
+      createTeacherDto;
 
     const existingUser = await this.prisma.user.findUnique({ where: { dni } });
     if (existingUser) {
@@ -60,8 +65,8 @@ export class TeachersService {
         include: {
           user: true,
           classGroups: {
-            where: { isActive: true }
-          }
+            where: { isActive: true },
+          },
         },
       });
 
@@ -96,15 +101,15 @@ export class TeachersService {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
-        include: { 
+        include: {
           user: true,
           classGroups: {
-            where: { isActive: true }
+            where: { isActive: true },
           },
           students: {
-            where: { deletedAt: null }
-          }
-        }
+            where: { deletedAt: null },
+          },
+        },
       }),
       this.prisma.teacher.count({ where }),
     ]);
@@ -123,18 +128,18 @@ export class TeachersService {
   async findOne(id: number) {
     const teacher = await this.prisma.teacher.findFirst({
       where: { id, deletedAt: null },
-      include: { 
+      include: {
         user: true,
         classGroups: {
-          where: { isActive: true }
+          where: { isActive: true },
         },
         students: {
           where: { deletedAt: null },
           include: {
             classGroup: true,
-            gym: true
-          }
-        }
+            gym: true,
+          },
+        },
       },
     });
 
@@ -151,18 +156,18 @@ export class TeachersService {
     const updatedTeacher = await this.prisma.teacher.update({
       where: { id },
       data: updateTeacherDto,
-      include: { 
+      include: {
         user: true,
         classGroups: {
-          where: { isActive: true }
+          where: { isActive: true },
         },
         students: {
           where: { deletedAt: null },
           include: {
             classGroup: true,
-            gym: true
-          }
-        }
+            gym: true,
+          },
+        },
       },
     });
 
@@ -187,10 +192,10 @@ export class TeachersService {
 
       await tx.user.update({
         where: { id: teacherData.userId },
-        data: { 
+        data: {
           status: 'BLOCKED',
           deletedAt: new Date(),
-          dni: `${teacherData.user.dni}_del_${Date.now()}`
+          dni: `${teacherData.user.dni}_del_${Date.now()}`,
         },
       });
     });
@@ -243,13 +248,12 @@ export class TeachersService {
           where: { deletedAt: null },
           include: {
             classGroup: true,
-            gym: true
-          }
-        }
+            gym: true,
+          },
+        },
       },
     });
 
     return this.mapTeacherResponse(updatedTeacher);
   }
 }
-

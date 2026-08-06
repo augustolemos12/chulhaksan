@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClassPlanDto } from './dto/create-class-plan.dto';
 import { UpdateClassPlanDto } from './dto/update-class-plan.dto';
@@ -32,7 +38,10 @@ export class ClassPlansService {
     },
   };
 
-  async create(createClassPlanDto: CreateClassPlanDto, actor: { id: number; role: Role }) {
+  async create(
+    createClassPlanDto: CreateClassPlanDto,
+    actor: { id: number; role: Role },
+  ) {
     const { classGroupId, month, year, totalClasses } = createClassPlanDto;
 
     // 1. Validar ClassGroup
@@ -41,7 +50,9 @@ export class ClassPlansService {
     });
 
     if (!classGroup || !classGroup.isActive) {
-      throw new BadRequestException('La clase seleccionada no existe o está inactiva');
+      throw new BadRequestException(
+        'La clase seleccionada no existe o está inactiva',
+      );
     }
 
     // 2. Ownership
@@ -50,7 +61,9 @@ export class ClassPlansService {
         where: { userId: actor.id },
       });
       if (!teacher || classGroup.teacherId !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para crear planes para esta clase');
+        throw new ForbiddenException(
+          'No tienes permiso para crear planes para esta clase',
+        );
       }
     }
 
@@ -66,9 +79,12 @@ export class ClassPlansService {
         include: this.commonInclude,
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
         throw new ConflictException(
-          `Ya existe un plan de clases para esta clase en ${month}/${year}`
+          `Ya existe un plan de clases para esta clase en ${month}/${year}`,
         );
       }
       throw error;
@@ -76,22 +92,30 @@ export class ClassPlansService {
   }
 
   async findAll(query: ClassPlanQueryDto, actor: { id: number; role: Role }) {
-    const { classGroupId, gymId, teacherId, month, year, page = 1, limit = 10 } = query;
+    const {
+      classGroupId,
+      gymId,
+      teacherId,
+      month,
+      year,
+      page = 1,
+      limit = 10,
+    } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ClassPlanWhereInput = {};
 
     if (month) where.month = month;
     if (year) where.year = year;
-    
+
     // Filtro por clase específica
     if (classGroupId) {
-        where.classGroupId = classGroupId;
+      where.classGroupId = classGroupId;
     } else if (gymId || teacherId) {
-        where.classGroup = {
-            ...(gymId ? { gymId } : {}),
-            ...(teacherId ? { teacherId } : {}),
-        };
+      where.classGroup = {
+        ...(gymId ? { gymId } : {}),
+        ...(teacherId ? { teacherId } : {}),
+      };
     }
 
     // Restricción de Ownership para TEACHER
@@ -99,12 +123,12 @@ export class ClassPlansService {
       const teacher = await this.prisma.teacher.findUnique({
         where: { userId: actor.id },
       });
-      
+
       if (!teacher) {
         throw new ForbiddenException('Perfil de profesor no encontrado');
       }
 
-      // Si el profesor pidió una clase específica, ya se filtró arriba, 
+      // Si el profesor pidió una clase específica, ya se filtró arriba,
       // pero debemos asegurar que sea SUYA.
       // Si no pidió ninguna, mostramos todas las SUYAS.
       where.classGroup = {
@@ -151,33 +175,45 @@ export class ClassPlansService {
         where: { userId: actor.id },
       });
       if (!teacher || classPlan.classGroup.teacher.id !== teacher.id) {
-        throw new ForbiddenException('No tienes permiso para ver este plan de clases');
+        throw new ForbiddenException(
+          'No tienes permiso para ver este plan de clases',
+        );
       }
     }
 
     return classPlan;
   }
 
-  async update(id: number, updateClassPlanDto: UpdateClassPlanDto, actor: { id: number; role: Role }) {
+  async update(
+    id: number,
+    updateClassPlanDto: UpdateClassPlanDto,
+    actor: { id: number; role: Role },
+  ) {
     const classPlan = await this.findOne(id, actor); // Incluye chequeo de existencia y ownership
 
     const { classGroupId, month, year } = updateClassPlanDto;
 
     // Si se cambia la clase, validar
     if (classGroupId && classGroupId !== classPlan.classGroupId) {
-        const newClassGroup = await this.prisma.classGroup.findUnique({
-            where: { id: classGroupId },
+      const newClassGroup = await this.prisma.classGroup.findUnique({
+        where: { id: classGroupId },
+      });
+      if (!newClassGroup || !newClassGroup.isActive) {
+        throw new BadRequestException(
+          'La nueva clase no existe o está inactiva',
+        );
+      }
+
+      if (actor.role === Role.TEACHER) {
+        const teacher = await this.prisma.teacher.findUnique({
+          where: { userId: actor.id },
         });
-        if (!newClassGroup || !newClassGroup.isActive) {
-            throw new BadRequestException('La nueva clase no existe o está inactiva');
+        if (newClassGroup.teacherId !== teacher?.id) {
+          throw new ForbiddenException(
+            'No puedes mover el plan a una clase que no te pertenece',
+          );
         }
-        
-        if (actor.role === Role.TEACHER) {
-            const teacher = await this.prisma.teacher.findUnique({ where: { userId: actor.id } });
-            if (newClassGroup.teacherId !== teacher?.id) {
-                throw new ForbiddenException('No puedes mover el plan a una clase que no te pertenece');
-            }
-        }
+      }
     }
 
     try {
@@ -187,9 +223,12 @@ export class ClassPlansService {
         include: this.commonInclude,
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
         throw new ConflictException(
-          `Ya existe un plan de clases para esta clase en el periodo especificado`
+          `Ya existe un plan de clases para esta clase en el periodo especificado`,
         );
       }
       throw error;

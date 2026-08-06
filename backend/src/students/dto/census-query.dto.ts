@@ -1,7 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { StudentCategory } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export enum BeltGroup {
   GROUP1 = 'group1', // Blancos y puntas amarillas
@@ -25,14 +31,19 @@ export class CensusQueryDto {
   @IsPositive()
   teacherId?: number;
 
-  @ApiPropertyOptional({ description: 'Filtrar por categoría', enum: StudentCategory })
+  @ApiPropertyOptional({
+    description: 'Filtrar por categoría',
+    enum: StudentCategory,
+  })
   @IsOptional()
   @IsEnum(StudentCategory)
   category?: StudentCategory;
 
-  @ApiPropertyOptional({ description: 'Filtrar por grupo de cinturón', enum: BeltGroup })
+  @ApiPropertyOptional({
+    description: 'Filtrar por grupo de cinturón',
+    enum: BeltGroup,
+  })
   @IsOptional()
   @IsEnum(BeltGroup)
   beltGroup?: BeltGroup;
 }
-

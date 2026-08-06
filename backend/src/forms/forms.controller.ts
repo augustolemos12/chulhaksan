@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { FormsService } from './forms.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
@@ -40,7 +50,10 @@ export class FormsController {
   // ADMIN: Actualizar forma
   @Patch(':id')
   @Roles(Role.ADMIN)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateFormDto: UpdateFormDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateFormDto: UpdateFormDto,
+  ) {
     return this.formsService.update(id, updateFormDto);
   }
 

@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ClassGroupsService } from './class-groups.service';
 import { CreateClassGroupDto } from './dto/create-class-group.dto';
 import { UpdateClassGroupDto } from './dto/update-class-group.dto';
@@ -21,7 +33,11 @@ export class ClassGroupsController {
   @Post()
   create(@Req() req, @Body() createClassGroupDto: CreateClassGroupDto) {
     const isAdmin = req.user.role === Role.ADMIN;
-    return this.classGroupsService.create(req.user.id, isAdmin, createClassGroupDto);
+    return this.classGroupsService.create(
+      req.user.id,
+      isAdmin,
+      createClassGroupDto,
+    );
   }
 
   @Roles(Role.ADMIN)
@@ -48,9 +64,17 @@ export class ClassGroupsController {
   @Roles(Role.ADMIN, Role.TEACHER)
   @ApiOperation({ summary: 'Actualizar una clase' })
   @Patch(':id')
-  update(@Req() req, @Param('id', ParseIntPipe) id: number, @Body() updateClassGroupDto: UpdateClassGroupDto) {
+  update(
+    @Req() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateClassGroupDto: UpdateClassGroupDto,
+  ) {
     const teacherUserId = req.user.role === Role.TEACHER ? req.user.id : null;
-    return this.classGroupsService.update(id, teacherUserId, updateClassGroupDto);
+    return this.classGroupsService.update(
+      id,
+      teacherUserId,
+      updateClassGroupDto,
+    );
   }
 
   @Roles(Role.ADMIN, Role.TEACHER)
