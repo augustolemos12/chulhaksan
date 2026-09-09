@@ -205,6 +205,12 @@ export class FeesService {
     if (status) where.status = status;
     if (studentId !== undefined) where.studentId = studentId;
 
+    // Siempre excluir cuotas de alumnos eliminados (soft-delete)
+    where.student = {
+      ...where.student,
+      deletedAt: null,
+    };
+
     if (teacherId !== undefined) {
       where.student = {
         ...where.student,
