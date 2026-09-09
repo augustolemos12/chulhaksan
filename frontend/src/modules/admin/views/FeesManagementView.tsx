@@ -148,7 +148,7 @@ export function FeesManagementView() {
             const pendingTx = fee.payments?.find(tx => tx.status === 'PENDING');
 
             return (
-              <div key={fee.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-surface p-4 rounded-xl justify-between shadow-soft border border-border/50">
+              <div key={fee.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-surface p-4 rounded-xl justify-between shadow-soft border border-border/50 dark:border-transparent">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <div className="bg-primary/10 text-primary flex shrink-0 items-center justify-center rounded-full h-12 w-12 relative">
                     <span className="material-symbols-outlined">person</span>
