@@ -168,10 +168,27 @@ export class FeesService {
   async getFeeById(feeId: number) {
     const fee = await this.prisma.fee.findUnique({
       where: { id: feeId },
-      include: { payments: true },
+      include: {
+        student: {
+          include: {
+            user: {
+              select: { dni: true },
+            },
+          },
+        },
+        payments: true,
+      },
     });
     if (!fee) throw new NotFoundException(`Fee ${feeId} no encontrada`);
-    return fee;
+    if (!fee.student) return fee;
+    const studentObj = fee.student as any;
+    return {
+      ...fee,
+      student: {
+        ...studentObj,
+        dni: studentObj.user?.dni ?? studentObj.dni ?? null,
+      },
+    };
   }
 
   async getAllFees(filters: {
@@ -195,10 +212,16 @@ export class FeesService {
       };
     }
 
-    return this.prisma.fee.findMany({
+    const fees = await this.prisma.fee.findMany({
       where,
       include: {
-        student: true,
+        student: {
+          include: {
+            user: {
+              select: { dni: true },
+            },
+          },
+        },
         payments: true,
       },
       orderBy: [
@@ -206,6 +229,18 @@ export class FeesService {
         { month: 'desc' },
         { student: { lastName: 'asc' } },
       ],
+    });
+
+    return fees.map((fee) => {
+      if (!fee.student) return fee;
+      const studentObj = fee.student as any;
+      return {
+        ...fee,
+        student: {
+          ...studentObj,
+          dni: studentObj.user?.dni ?? studentObj.dni ?? null,
+        },
+      };
     });
   }
 
