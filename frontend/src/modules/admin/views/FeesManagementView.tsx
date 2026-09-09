@@ -163,7 +163,7 @@ export function FeesManagementView() {
                     <p className="text-text text-base font-semibold leading-tight truncate">
                       {fee.student?.firstName} {fee.student?.lastName}
                     </p>
-                    <p className="text-muted text-xs font-medium mt-1">DNI: {fee.student?.dni}</p>
+                    <p className="text-muted text-xs font-medium mt-1">DNI: {fee.student?.dni || (fee.student as any)?.user?.dni || '-'}</p>
                     <div className="flex flex-col gap-1 mt-1">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium text-text">Total: ${fee.totalAmount}</span>

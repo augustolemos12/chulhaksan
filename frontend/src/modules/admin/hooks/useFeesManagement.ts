@@ -122,11 +122,16 @@ export function useFeesManagement() {
 
   // Filter fees locally by search query
   const filteredFees = fees.filter(fee => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    const name = `${fee.student?.firstName} ${fee.student?.lastName}`.toLowerCase();
-    const dni = fee.student?.dni.toLowerCase();
-    return name.includes(q) || dni?.includes(q);
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+
+    const firstName = fee.student?.firstName ?? '';
+    const lastName = fee.student?.lastName ?? '';
+    const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
+    const studentDni = fee.student?.dni ?? (fee.student as any)?.user?.dni;
+    const dni = studentDni ? String(studentDni).toLowerCase() : '';
+
+    return fullName.includes(q) || dni.includes(q);
   });
 
   return {
