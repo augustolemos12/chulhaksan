@@ -40,31 +40,111 @@ export class EventsService {
     });
 
     if (existingEvent) {
+      // Manejar reemplazo o eliminación de imagen cuadrada
+      let squareUrl = existingEvent.imageUrlSquare;
+      if (dto.removeSquare === 'true' && !dto.imageUrlSquare) {
+        if (squareUrl) {
+          const publicId = this.cloudinaryService.extractPublicId(squareUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId).catch(() => {});
+        }
+        squareUrl = null;
+      } else if (dto.imageUrlSquare) {
+        if (squareUrl && squareUrl !== dto.imageUrlSquare) {
+          const publicId = this.cloudinaryService.extractPublicId(squareUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId).catch(() => {});
+        }
+        squareUrl = dto.imageUrlSquare;
+      }
+
+      // Manejar reemplazo o eliminación de imagen vertical
+      let verticalUrl = existingEvent.imageUrlVertical;
+      if (dto.removeVertical === 'true' && !dto.imageUrlVertical) {
+        if (verticalUrl) {
+          const publicId = this.cloudinaryService.extractPublicId(verticalUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId).catch(() => {});
+        }
+        verticalUrl = null;
+      } else if (dto.imageUrlVertical) {
+        if (verticalUrl && verticalUrl !== dto.imageUrlVertical) {
+          const publicId = this.cloudinaryService.extractPublicId(verticalUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId).catch(() => {});
+        }
+        verticalUrl = dto.imageUrlVertical;
+      }
+
+      // Manejar reemplazo o eliminación de imagen horizontal / banner
+      let bannerUrl = existingEvent.imageUrlBanner;
+      if (dto.removeBanner === 'true' && !dto.imageUrlBanner) {
+        if (bannerUrl) {
+          const publicId = this.cloudinaryService.extractPublicId(bannerUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId).catch(() => {});
+        }
+        bannerUrl = null;
+      } else if (dto.imageUrlBanner) {
+        if (bannerUrl && bannerUrl !== dto.imageUrlBanner) {
+          const publicId = this.cloudinaryService.extractPublicId(bannerUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId).catch(() => {});
+        }
+        bannerUrl = dto.imageUrlBanner;
+      }
+
+      // Manejo de compatibilidad con imageUrl clásica
+      let legacyUrl = existingEvent.imageUrl;
+      if (dto.imageUrl) {
+        if (legacyUrl && legacyUrl !== dto.imageUrl) {
+          const publicId = this.cloudinaryService.extractPublicId(legacyUrl);
+          if (publicId) await this.cloudinaryService.deleteFile(publicId).catch(() => {});
+        }
+        legacyUrl = dto.imageUrl;
+      } else {
+        legacyUrl = bannerUrl || squareUrl || verticalUrl || legacyUrl;
+      }
+
+      // Validar que al menos una imagen siga existiendo
+      if (!bannerUrl && !squareUrl && !verticalUrl && !legacyUrl) {
+        throw new BadRequestException(
+          'El evento debe tener al menos una imagen (cuadrada, vertical o horizontal).',
+        );
+      }
+
       return this.prisma.event.update({
         where: { id: existingEvent.id },
         data: {
           title: dto.title,
-          imageUrl: dto.imageUrl,
+          imageUrl: legacyUrl,
+          imageUrlSquare: squareUrl,
+          imageUrlVertical: verticalUrl,
+          imageUrlBanner: bannerUrl,
         },
       });
     }
 
-    if (!dto.imageUrl) {
+    // Creación de nuevo evento
+    const legacyUrl =
+      dto.imageUrlBanner ||
+      dto.imageUrlSquare ||
+      dto.imageUrlVertical ||
+      dto.imageUrl;
+
+    if (!legacyUrl) {
       throw new BadRequestException(
-        'Se requiere una imagen para crear el evento por primera vez.',
+        'Se requiere al menos una imagen (cuadrada, vertical o horizontal) para crear el evento.',
       );
     }
 
     return this.prisma.event.create({
       data: {
         title: dto.title,
-        imageUrl: dto.imageUrl,
+        imageUrl: legacyUrl,
+        imageUrlSquare: dto.imageUrlSquare || null,
+        imageUrlVertical: dto.imageUrlVertical || null,
+        imageUrlBanner: dto.imageUrlBanner || null,
       },
     });
   }
 
   /**
-   * Elimina el evento del mes de la base de datos y su imagen en Cloudinary.
+   * Elimina el evento del mes de la base de datos y todas sus imágenes en Cloudinary.
    */
   async removeEvent() {
     const existingEvent = await this.prisma.event.findFirst({
@@ -77,14 +157,23 @@ export class EventsService {
       );
     }
 
-    // Eliminar la imagen de Cloudinary si existe
-    if (existingEvent.imageUrl) {
-      const publicId = this.cloudinaryService.extractPublicId(
-        existingEvent.imageUrl,
-      );
-      if (publicId) {
-        await this.cloudinaryService.deleteFile(publicId);
-      }
+    const imagesToDelete = [
+      existingEvent.imageUrl,
+      existingEvent.imageUrlSquare,
+      existingEvent.imageUrlVertical,
+      existingEvent.imageUrlBanner,
+    ].filter(Boolean) as string[];
+
+    const publicIds = Array.from(
+      new Set(
+        imagesToDelete
+          .map((url) => this.cloudinaryService.extractPublicId(url))
+          .filter(Boolean),
+      ),
+    );
+
+    for (const pid of publicIds) {
+      await this.cloudinaryService.deleteFile(pid).catch(() => {});
     }
 
     await this.prisma.event.delete({
@@ -93,7 +182,7 @@ export class EventsService {
 
     return {
       success: true,
-      message: 'Evento del mes y su imagen eliminados correctamente',
+      message: 'Evento del mes y sus imágenes eliminados correctamente',
     };
   }
 }

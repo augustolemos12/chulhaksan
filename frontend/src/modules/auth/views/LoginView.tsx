@@ -7,11 +7,8 @@ import { httpClient } from '../../../core/api/httpClient';
 
 import logoColor from '../../../assets/logo-fotor-2026052717752.png';
 
-interface MonthEvent {
-  id: number;
-  title: string;
-  imageUrl: string;
-}
+import type { MonthEvent } from '../../events/types/event.types';
+import { resolveEventImageUrl } from '../../events/utils/eventImageResolver';
 
 export function LoginView() {
   const {
@@ -29,9 +26,16 @@ export function LoginView() {
   const [event, setEvent] = useState<MonthEvent | null>(null);
 
   useEffect(() => {
-    httpClient.get<MonthEvent>('/events')
+    httpClient
+      .get<MonthEvent>('/events')
       .then((data) => {
-        if (data && data.imageUrl) {
+        if (
+          data &&
+          (data.imageUrl ||
+            data.imageUrlBanner ||
+            data.imageUrlSquare ||
+            data.imageUrlVertical)
+        ) {
           setEvent(data);
         }
       })
@@ -108,16 +112,18 @@ export function LoginView() {
         </div>
       </div>
 
-      {/* Columna Evento (Desktop) */}
+      {/* Columna Evento (Desktop: prioridad Banner -> Cuadrada -> Vertical) */}
       {event && (
         <div className="flex-1 hidden md:flex items-center justify-center bg-surface/50 border-l border-border p-8 lg:p-12 xl:p-16">
-          <div className="relative w-full max-w-lg max-h-[75vh] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-border group">
+          <div className="relative w-full max-w-lg max-h-[75vh] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-border group bg-neutral-950">
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent z-10 pointer-events-none transition-opacity duration-300 group-hover:from-black"></div>
-            <img 
-              src={event.imageUrl} 
-              alt={event.title} 
-              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
-            />
+            {resolveEventImageUrl(event, 'desktop') ? (
+              <img 
+                src={resolveEventImageUrl(event, 'desktop')!} 
+                alt={event.title} 
+                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
+              />
+            ) : null}
             <div className="absolute bottom-0 left-0 p-8 lg:p-10 z-20 w-full">
               <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-primary text-white rounded-full text-xs font-bold mb-3 uppercase tracking-wider shadow-glow">
                 Evento del Mes
@@ -130,17 +136,19 @@ export function LoginView() {
         </div>
       )}
 
-      {/* Tarjeta Evento (Mobile: abajo) */}
+      {/* Tarjeta Evento (Mobile: Vertical 9:16 -> 1:1 -> Banner) */}
       {event && (
         <div className="md:hidden px-6 pb-12 w-full max-w-md mx-auto">
-          <div className="overflow-hidden rounded-3xl relative group shadow-soft w-full border border-border">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none"></div>
-            <img 
-              src={event.imageUrl} 
-              alt={event.title} 
-              className="w-full h-56 object-cover object-center"
-            />
-            <div className="absolute bottom-0 left-0 p-6 z-20 w-full">
+          <div className="overflow-hidden rounded-3xl relative group shadow-soft w-full border border-border aspect-[4/5] min-h-[380px] max-h-[500px] bg-neutral-950 flex flex-col justify-end">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10 pointer-events-none"></div>
+            {resolveEventImageUrl(event, 'mobile') ? (
+              <img 
+                src={resolveEventImageUrl(event, 'mobile')!} 
+                alt={event.title} 
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            ) : null}
+            <div className="relative p-6 z-20 w-full">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-white rounded-full text-[10px] font-bold mb-2 uppercase tracking-wider shadow-soft">
                 Evento del Mes
               </span>

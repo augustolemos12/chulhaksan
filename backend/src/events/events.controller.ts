@@ -6,10 +6,8 @@ import {
   Body,
   UseGuards,
   UseInterceptors,
-  UploadedFile,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
+  UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -19,7 +17,7 @@ import {
   ApiTags,
   ApiConsumes,
 } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -29,7 +27,7 @@ import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
-/** Tamaño máximo permitido: 5 MB */
+/** Tamaño máximo permitido por imagen: 5 MB */
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 /** Tipos MIME aceptados */
@@ -59,47 +57,111 @@ export class EventsController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'imageSquare', maxCount: 1 },
+        { name: 'imageVertical', maxCount: 1 },
+        { name: 'imageBanner', maxCount: 1 },
+        { name: 'image', maxCount: 1 }, // compatibilidad con clientes existentes
+      ],
+      { storage: memoryStorage() },
+    ),
+  )
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
-    summary: 'Crear o actualizar el evento del mes (requiere imagen)',
+    summary: 'Crear o actualizar el evento del mes con hasta 3 imágenes responsivas',
   })
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['title', 'image'],
+      required: ['title'],
       properties: {
         title: {
           type: 'string',
           description: 'Título del evento (2–200 caracteres)',
-          example: 'Examen de Cinturones de Mayo',
+          example: 'Torneo Nacional de Taekwon-Do',
         },
-        image: {
+        imageSquare: {
           type: 'string',
           format: 'binary',
-          description: 'Imagen del evento (jpg, jpeg, png o webp — máx. 5 MB)',
+          description: 'Imagen cuadrada (1:1) — máx. 5 MB',
+        },
+        imageVertical: {
+          type: 'string',
+          format: 'binary',
+          description: 'Imagen vertical (9:16) — máx. 5 MB',
+        },
+        imageBanner: {
+          type: 'string',
+          format: 'binary',
+          description: 'Imagen horizontal / banner — máx. 5 MB',
+        },
+        removeSquare: {
+          type: 'string',
+          description: '"true" para eliminar la imagen cuadrada existente',
+        },
+        removeVertical: {
+          type: 'string',
+          description: '"true" para eliminar la imagen vertical existente',
+        },
+        removeBanner: {
+          type: 'string',
+          description: '"true" para eliminar la imagen horizontal existente',
         },
       },
     },
   })
   async upsert(
     @Body() createEventDto: CreateEventDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        // fileIsRequired lanza 400 automáticamente si no se adjunta ningún archivo
-        fileIsRequired: true,
-        validators: [
-          // Rechaza archivos mayores a 5 MB
-          new MaxFileSizeValidator({ maxSize: MAX_FILE_SIZE }),
-          // Permite únicamente jpg/jpeg, png y webp
-          new FileTypeValidator({ fileType: ALLOWED_MIME_TYPES }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
+    @UploadedFiles()
+    files: {
+      imageSquare?: Express.Multer.File[];
+      imageVertical?: Express.Multer.File[];
+      imageBanner?: Express.Multer.File[];
+      image?: Express.Multer.File[];
+    },
   ) {
-    const uploadResult = await this.cloudinaryService.uploadFile(file);
-    createEventDto.imageUrl = uploadResult.secure_url;
+    const uploadedList = [
+      files?.imageSquare?.[0],
+      files?.imageVertical?.[0],
+      files?.imageBanner?.[0],
+      files?.image?.[0],
+    ].filter(Boolean) as Express.Multer.File[];
+
+    for (const f of uploadedList) {
+      if (f.size > MAX_FILE_SIZE) {
+        throw new BadRequestException(
+          `El archivo "${f.originalname}" supera el tamaño máximo permitido de 5 MB.`,
+        );
+      }
+      if (!ALLOWED_MIME_TYPES.test(f.mimetype)) {
+        throw new BadRequestException(
+          `El archivo "${f.originalname}" tiene un formato no válido. Solo se permiten JPG, PNG o WebP.`,
+        );
+      }
+    }
+
+    if (files?.imageSquare?.[0]) {
+      const res = await this.cloudinaryService.uploadFile(files.imageSquare[0]);
+      createEventDto.imageUrlSquare = res.secure_url;
+    }
+
+    if (files?.imageVertical?.[0]) {
+      const res = await this.cloudinaryService.uploadFile(files.imageVertical[0]);
+      createEventDto.imageUrlVertical = res.secure_url;
+    }
+
+    if (files?.imageBanner?.[0]) {
+      const res = await this.cloudinaryService.uploadFile(files.imageBanner[0]);
+      createEventDto.imageUrlBanner = res.secure_url;
+    }
+
+    if (files?.image?.[0]) {
+      const res = await this.cloudinaryService.uploadFile(files.image[0]);
+      createEventDto.imageUrl = res.secure_url;
+    }
+
     return this.eventsService.upsertEvent(createEventDto);
   }
 

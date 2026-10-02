@@ -21,20 +21,22 @@ export class CloudinaryService {
    */
   uploadFile(
     file: Express.Multer.File,
+    options?: {
+      folder?: string;
+      transformation?: Record<string, any>[];
+    },
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: 'chulhaksan_events',
-          // ── Transformaciones ─────────────────────────────────────────────
-          transformation: [
+          folder: options?.folder || 'chulhaksan_events',
+          transformation: options?.transformation || [
             {
-              width: 1200,
-              aspect_ratio: '16:9',
-              crop: 'fill', // Recorta para cubrir exactamente el área 16:9
-              gravity: 'auto', // El SDK detecta el sujeto principal (cara, objeto, etc.)
-              quality: 'auto', // Cloudinary elige la calidad óptima por sí mismo
-              fetch_format: 'auto', // Sirve WebP, AVIF, etc. según el navegador del cliente
+              width: 1920,
+              height: 1920,
+              crop: 'limit', // Conserva la proporción original (1:1, 9:16, horizontal) sin recortar ni deformar
+              quality: 'auto',
+              fetch_format: 'auto',
             },
           ],
         },

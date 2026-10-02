@@ -1,4 +1,5 @@
 import { useDashboardData } from '../hooks/useDashboardData';
+import { ResponsiveEventImage } from '../../events/components/ResponsiveEventImage';
 import {
   DashboardHeader,
   ProfileGreeting,
@@ -41,12 +42,13 @@ export function DashboardView() {
           <div className="flex flex-col gap-6">
             {/* Evento del Mes Section */}
             {monthEvent && (
-              <div className="overflow-hidden rounded-3xl relative group shadow-md w-full">
+              <div className="overflow-hidden rounded-3xl relative group shadow-md w-full bg-neutral-950">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 pointer-events-none transition-opacity duration-300 group-hover:from-black/90"></div>
-                <img 
-                  src={monthEvent.imageUrl} 
-                  alt={monthEvent.title} 
-                  className="w-full h-48 md:h-64 object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                <ResponsiveEventImage
+                  event={monthEvent}
+                  context="auto"
+                  className="w-full h-48 md:h-64"
+                  imgClassName="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute bottom-0 left-0 p-5 md:p-6 z-20 w-full flex flex-col justify-end gap-2">
                   <div>

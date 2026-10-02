@@ -9,11 +9,8 @@ export interface TeacherSummary {
   assignedAt?: string;
 }
 
-export interface MonthEvent {
-  id: string;
-  title: string;
-  imageUrl: string;
-}
+export type { MonthEvent } from '../../events/types/event.types';
+import type { MonthEvent } from '../../events/types/event.types';
 
 export function useDashboardData() {
   const navigate = useNavigate();

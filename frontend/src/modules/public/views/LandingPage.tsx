@@ -1,8 +1,12 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logoColor from '../../../assets/logo-fotor-2026052717752.png';
 import logoNavbar from '../../../assets/logo-fotor-2026052717752.png';
 import filosofiaImg from '../../../assets/filosofia.png';
 import { useAppTheme } from '../../../core/theme/ThemeProvider';
+import { httpClient } from '../../../core/api/httpClient';
+import type { MonthEvent } from '../../events/types/event.types';
+import { EventWelcomeModal } from '../../events/components/EventWelcomeModal';
 
 const TENETS = [
   { label: 'Cortesía', korean: 'Ye Ui', icon: 'front_hand' },
@@ -12,20 +16,31 @@ const TENETS = [
   { label: 'Espíritu Indomable', korean: 'Baekjul Boolgool', icon: 'bolt', colSpan: 2 },
 ];
 
-function TopNavigation() {
+function TopNavigation({ event, onOpenEvent }: { event?: MonthEvent | null; onOpenEvent?: () => void }) {
   const { theme, changeTheme } = useAppTheme();
   const handleToggleTheme = () => changeTheme(theme === 'dark' ? 'light' : 'dark');
 
   return (
-    <header className="sticky top-0 z-50 flex items-center bg-surface/95 backdrop-blur-md px-4 py-3 justify-between border-b border-border">
+    <header className="sticky top-0 z-40 flex items-center bg-surface/95 backdrop-blur-md px-4 py-3 justify-between border-b border-border">
       <div className="flex items-center gap-3">
         <img alt="Chul Hak San" className="h-9 w-9 rounded-full bg-surface p-0.5 shadow-soft" src={logoNavbar} />
         <span className="text-[10px] font-bold text-primary tracking-[0.4em] uppercase">CHS</span>
       </div>
-      <div>
+      <div className="flex items-center gap-2">
+        {event && onOpenEvent && (
+          <button
+            type="button"
+            onClick={onOpenEvent}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-all border border-primary/25 cursor-pointer"
+            title="Ver Evento del Mes"
+          >
+            <span className="material-symbols-outlined text-[16px]">campaign</span>
+            <span className="hidden sm:inline">Evento del Mes</span>
+          </button>
+        )}
         <button
           onClick={handleToggleTheme}
-          className="text-muted hover:text-text transition-colors active:scale-95 flex items-center justify-center p-2 rounded-full hover:bg-black/5 dark:hover:bg-surface/10"
+          className="text-muted hover:text-text transition-colors active:scale-95 flex items-center justify-center p-2 rounded-full hover:bg-black/5 dark:hover:bg-surface/10 cursor-pointer"
           title="Alternar tema"
         >
           <span className="material-symbols-outlined">{theme === 'dark' ? 'light_mode' : 'dark_mode'}</span>
@@ -134,12 +149,60 @@ function TenetsSection() {
 }
 
 export function LandingPage() {
+  const [event, setEvent] = useState<MonthEvent | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    httpClient
+      .get<MonthEvent>('/events')
+      .then((data) => {
+        if (
+          data &&
+          (data.imageUrl ||
+            data.imageUrlBanner ||
+            data.imageUrlSquare ||
+            data.imageUrlVertical)
+        ) {
+          setEvent(data);
+          // Pop-up automático al ingresar si no se cerró previamente en esta sesión de navegación
+          const wasDismissed = sessionStorage.getItem(
+            `chs_event_popup_closed_${data.id}`,
+          );
+          if (!wasDismissed) {
+            setIsModalOpen(true);
+          }
+        }
+      })
+      .catch(() => {
+        // No hay evento activo publicado
+        setEvent(null);
+      });
+  }, []);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    if (event) {
+      sessionStorage.setItem(`chs_event_popup_closed_${event.id}`, 'true');
+    }
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden pb-10 bg-background text-text antialiased transition-colors duration-300">
-      <TopNavigation />
+      <TopNavigation event={event} onOpenEvent={handleOpenModal} />
       <HeroSection />
       <VisionMissionSection />
       <TenetsSection />
+
+      {/* Pop-up de bienvenida con Evento del Mes */}
+      <EventWelcomeModal
+        event={event}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }

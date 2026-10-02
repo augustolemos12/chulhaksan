@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react';
 import { httpClient } from '../../../core/api/httpClient';
+import type { MonthEvent } from '../../events/types/event.types';
 
-export type MonthEvent = {
-  id: number;
+export type { MonthEvent };
+
+export interface SaveEventPayload {
   title: string;
-  imageUrl: string;
-  createdAt: string;
-  updatedAt: string;
-};
+  imageSquare?: File | null;
+  imageVertical?: File | null;
+  imageBanner?: File | null;
+  removeSquare?: boolean;
+  removeVertical?: boolean;
+  removeBanner?: boolean;
+}
 
 export function useAdminEvent() {
   const [event, setEvent] = useState<MonthEvent | null>(null);
@@ -43,17 +48,42 @@ export function useAdminEvent() {
     loadEvent();
   }, []);
 
-  const uploadEvent = async (title: string, imageFile: File) => {
+  const uploadEvent = async (payloadOrTitle: SaveEventPayload | string, legacyFile?: File) => {
     setSaving(true);
     setActionError('');
     try {
       const formData = new FormData();
-      formData.append('title', title);
-      formData.append('image', imageFile);
+
+      if (typeof payloadOrTitle === 'string') {
+        formData.append('title', payloadOrTitle);
+        if (legacyFile) {
+          formData.append('image', legacyFile);
+        }
+      } else {
+        formData.append('title', payloadOrTitle.title);
+        if (payloadOrTitle.imageSquare) {
+          formData.append('imageSquare', payloadOrTitle.imageSquare);
+        }
+        if (payloadOrTitle.imageVertical) {
+          formData.append('imageVertical', payloadOrTitle.imageVertical);
+        }
+        if (payloadOrTitle.imageBanner) {
+          formData.append('imageBanner', payloadOrTitle.imageBanner);
+        }
+        if (payloadOrTitle.removeSquare) {
+          formData.append('removeSquare', 'true');
+        }
+        if (payloadOrTitle.removeVertical) {
+          formData.append('removeVertical', 'true');
+        }
+        if (payloadOrTitle.removeBanner) {
+          formData.append('removeBanner', 'true');
+        }
+      }
 
       const res = await httpClient.request('/events', {
         method: 'POST',
-        // httpClient takes care of NOT setting application/json when passing FormData
+        // httpClient does not set application/json when passing FormData
         body: formData,
       });
 

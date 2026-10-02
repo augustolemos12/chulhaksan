@@ -32,8 +32,6 @@ export class CreateEventDto {
    * El cliente nunca debe enviar este campo directamente.
    */
   @ApiPropertyOptional({
-    example:
-      'https://res.cloudinary.com/demo/image/upload/v1234567/chulhaksan_events/sample.jpg',
     description:
       'URL de la imagen en Cloudinary (asignada por el backend, no enviar desde el cliente)',
   })
@@ -41,4 +39,46 @@ export class CreateEventDto {
   @IsString()
   @IsUrl()
   imageUrl?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL de la imagen cuadrada (1:1) en Cloudinary',
+  })
+  @IsOptional()
+  @IsString()
+  imageUrlSquare?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL de la imagen vertical (9:16) en Cloudinary',
+  })
+  @IsOptional()
+  @IsString()
+  imageUrlVertical?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL de la imagen banner / horizontal en Cloudinary',
+  })
+  @IsOptional()
+  @IsString()
+  imageUrlBanner?: string;
+
+  @ApiPropertyOptional({
+    description: 'Flag para eliminar imagen cuadrada existente ("true" o "false")',
+  })
+  @IsOptional()
+  @IsString()
+  removeSquare?: string;
+
+  @ApiPropertyOptional({
+    description: 'Flag para eliminar imagen vertical existente ("true" o "false")',
+  })
+  @IsOptional()
+  @IsString()
+  removeVertical?: string;
+
+  @ApiPropertyOptional({
+    description: 'Flag para eliminar imagen banner existente ("true" o "false")',
+  })
+  @IsOptional()
+  @IsString()
+  removeBanner?: string;
 }
